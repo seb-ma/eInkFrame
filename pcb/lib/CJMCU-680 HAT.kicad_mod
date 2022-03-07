@@ -1,0 +1,99 @@
+(footprint "CJMCU-680 HAT" (version 20211014) (generator pcbnew)
+  (layer "F.Cu")
+  (tedit 6213D7F0)
+  (attr through_hole)
+  (fp_text reference "REF**" (at 0 -0.5 unlocked) (layer "F.SilkS")
+    (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp 0f209b95-d61b-4f97-be06-fddd53f138de)
+  )
+  (fp_text value "CJMCU-680" (at 0 1 unlocked) (layer "F.Fab")
+    (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp ef8724be-f485-499f-a63b-11039fa04cfe)
+  )
+  (fp_line (start 5.055 4.18) (end 5.055 6.84) (layer "F.SilkS") (width 0.12) (tstamp 0b8a78ab-3e05-4b03-9d3f-65c3ad267afb))
+  (fp_line (start 7.655 6.84) (end 6.325 6.84) (layer "F.SilkS") (width 0.12) (tstamp 0e856ef4-7f65-48de-ada1-5a4baa9e685a))
+  (fp_line (start 8 7) (end 8 -5) (layer "F.SilkS") (width 0.2) (tstamp 4092cf80-d43b-4568-8d18-b77398c3e998))
+  (fp_line (start -8 7) (end 8 7) (layer "F.SilkS") (width 0.2) (tstamp 4b355d96-1c0b-4ff4-91f0-4fd5a7144671))
+  (fp_line (start 5.055 4.18) (end -7.705 4.18) (layer "F.SilkS") (width 0.12) (tstamp 727b2488-95a8-41e4-a63f-098729786e40))
+  (fp_line (start -8 7) (end -8 -5) (layer "F.SilkS") (width 0.2) (tstamp 8d1fa4de-2b6f-41c8-b466-7a5dba8c5a02))
+  (fp_line (start 5.055 6.84) (end -7.705 6.84) (layer "F.SilkS") (width 0.12) (tstamp 90cbaa9a-3385-4bc6-b0bc-f0dcb34b580e))
+  (fp_line (start 7.655 5.51) (end 7.655 6.84) (layer "F.SilkS") (width 0.12) (tstamp a507def9-aee8-48a7-91bb-1d8d1457c1eb))
+  (fp_line (start 5.75 -7) (end 2.5 -7) (layer "F.SilkS") (width 0.2) (tstamp afe7b7b1-8bdf-4cba-aa33-dae3980ecf74))
+  (fp_line (start -5.75 -7) (end -8 -5) (layer "F.SilkS") (width 0.2) (tstamp b8bbd581-c79b-4cf2-a1c6-3fdb3dead88d))
+  (fp_line (start -2.5 -7) (end -5.75 -7) (layer "F.SilkS") (width 0.2) (tstamp c13eee10-4bba-466f-a9fe-a5907705f6d9))
+  (fp_line (start -7.705 4.18) (end -7.705 6.84) (layer "F.SilkS") (width 0.12) (tstamp c4a10c80-a780-41b4-bb7f-cb081f13cb1f))
+  (fp_line (start 5.75 -7) (end 8 -5) (layer "F.SilkS") (width 0.2) (tstamp de630cf1-e7af-46b1-a50f-dfc0576b0f02))
+  (fp_circle (center 5.75 -4.5) (end 7.95 -4.5) (layer "Cmts.User") (width 0.15) (fill none) (tstamp 0e60c4f8-c884-4386-bbe4-3d9adff002f3))
+  (fp_circle (center -5.75 -4.5) (end -3.55 -4.5) (layer "Cmts.User") (width 0.15) (fill none) (tstamp 18f33c15-2d89-4304-9c8f-98c3582bdb83))
+  (fp_line (start -8.125 7.26) (end -8.125 3.71) (layer "F.CrtYd") (width 0.05) (tstamp 152e32c2-e0fb-44f8-8d88-d6407d12d020))
+  (fp_line (start 8.125 3.71) (end 8.125 7.26) (layer "F.CrtYd") (width 0.05) (tstamp 495f93a0-10fc-4f72-908d-1ce1bae3571e))
+  (fp_line (start 8.125 7.26) (end -8.125 7.26) (layer "F.CrtYd") (width 0.05) (tstamp bd4838c9-2e17-4551-b604-7f9b698c9a71))
+  (fp_line (start -8.125 3.71) (end 8.125 3.71) (layer "F.CrtYd") (width 0.05) (tstamp fc36199d-cb36-4cbd-a66d-2e19a74c42d0))
+  (fp_circle (center 5.75 -4.5) (end 8.2 -4.5) (layer "F.CrtYd") (width 0.05) (fill none) (tstamp 5ba70460-7653-4ee2-919c-d79060991042))
+  (fp_circle (center -5.75 -4.5) (end -3.3 -4.5) (layer "F.CrtYd") (width 0.05) (fill none) (tstamp 8dae7557-8452-4051-b181-047b82396f91))
+  (fp_line (start 7.595 4.24) (end 7.595 6.145) (layer "F.Fab") (width 0.1) (tstamp 26e06b53-e1e0-417d-9ad2-46495e545be2))
+  (fp_line (start 2.5 -7) (end 2.5 -12) (layer "F.Fab") (width 0.2) (tstamp 342a82f5-cf75-4350-821b-0573a593efa7))
+  (fp_line (start 6.96 6.78) (end -7.645 6.78) (layer "F.Fab") (width 0.1) (tstamp 4e2c4999-142e-423f-ac5e-d341db50f0ea))
+  (fp_line (start 7.595 6.145) (end 6.96 6.78) (layer "F.Fab") (width 0.1) (tstamp 6b768a04-ca6e-4f7f-b31f-c74bd51468a7))
+  (fp_line (start -2.5 -12) (end 2.5 -12) (layer "F.Fab") (width 0.2) (tstamp 6de9bffb-135e-48fe-907c-ab09fef4feb5))
+  (fp_line (start -2.5 -7) (end -2.5 -12) (layer "F.Fab") (width 0.2) (tstamp c26109fd-97bd-4a63-a432-8cef7fd24301))
+  (fp_line (start -7.645 6.78) (end -7.645 4.24) (layer "F.Fab") (width 0.1) (tstamp e2d0dbca-b126-4dea-80f2-d802bd17caff))
+  (fp_line (start -7.645 4.24) (end 7.595 4.24) (layer "F.Fab") (width 0.1) (tstamp ec1c392d-3774-4583-85ae-afddaea191ae))
+  (pad "" np_thru_hole circle (at 5.75 -4.5) (size 2.2 2.2) (drill 2.2) (layers *.Cu *.Mask) (tstamp 74980ca6-404f-4c59-960a-788683942a63))
+  (pad "" np_thru_hole circle (at -5.75 -4.5) (size 2.2 2.2) (drill 2.2) (layers *.Cu *.Mask) (tstamp cec63c84-ac55-4e84-99f9-686dee18e9b3))
+  (pad "1" thru_hole rect (at 6.325 5.51 270) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask) (tstamp 91afc1bb-fff5-4a41-a20a-11e52b52ab07))
+  (pad "2" thru_hole oval (at 3.785 5.51 270) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask) (tstamp d1f26828-6af7-4271-ad1e-eb9ab8030504))
+  (pad "3" thru_hole oval (at 1.245 5.51 270) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask) (tstamp ca9c025c-4f53-41fa-a8dd-a7e42d69b876))
+  (pad "4" thru_hole oval (at -1.295 5.51 270) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask) (tstamp 613d62ee-66a0-45b1-b438-bf70f3891b05))
+  (pad "5" thru_hole oval (at -3.835 5.51 270) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask) (tstamp 5b4bd01a-58a3-427e-9bf9-6ce1f8b5722c))
+  (pad "6" thru_hole oval (at -6.375 5.51 270) (size 1.7 1.7) (drill 1) (layers *.Cu *.Mask) (tstamp df1994f4-7382-4cd0-9264-d08aea678fa6))
+  (zone (net 0) (net_name "") (layer "F.Cu") (tstamp 5061796c-b226-4512-8922-7a94d5b059df) (hatch edge 0.508)
+    (connect_pads (clearance 0))
+    (min_thickness 0.254)
+    (keepout (tracks allowed) (vias allowed) (pads allowed ) (copperpour allowed) (footprints not_allowed))
+    (fill (thermal_gap 0.508) (thermal_bridge_width 0.508))
+    (polygon
+      (pts
+        (xy 2.5 -7)
+        (xy -2.5 -7)
+        (xy -2.5 -12)
+        (xy 2.5 -12)
+      )
+    )
+  )
+  (group "" (id e72891a3-ab12-4714-9962-8e94bf03c784)
+    (members
+      0b8a78ab-3e05-4b03-9d3f-65c3ad267afb
+      0e856ef4-7f65-48de-ada1-5a4baa9e685a
+      152e32c2-e0fb-44f8-8d88-d6407d12d020
+      26e06b53-e1e0-417d-9ad2-46495e545be2
+      495f93a0-10fc-4f72-908d-1ce1bae3571e
+      4e2c4999-142e-423f-ac5e-d341db50f0ea
+      5b4bd01a-58a3-427e-9bf9-6ce1f8b5722c
+      613d62ee-66a0-45b1-b438-bf70f3891b05
+      6b768a04-ca6e-4f7f-b31f-c74bd51468a7
+      727b2488-95a8-41e4-a63f-098729786e40
+      90cbaa9a-3385-4bc6-b0bc-f0dcb34b580e
+      91afc1bb-fff5-4a41-a20a-11e52b52ab07
+      a507def9-aee8-48a7-91bb-1d8d1457c1eb
+      bd4838c9-2e17-4551-b604-7f9b698c9a71
+      c4a10c80-a780-41b4-bb7f-cb081f13cb1f
+      ca9c025c-4f53-41fa-a8dd-a7e42d69b876
+      d1f26828-6af7-4271-ad1e-eb9ab8030504
+      df1994f4-7382-4cd0-9264-d08aea678fa6
+      e2d0dbca-b126-4dea-80f2-d802bd17caff
+      ec1c392d-3774-4583-85ae-afddaea191ae
+      fc36199d-cb36-4cbd-a66d-2e19a74c42d0
+    )
+  )
+  (model "${KIPRJMOD}/grabcad/cjmcu-680-bme680-sensor-1.snapshot.1/CJMCU-680, BME680 Ambient Temperature, Relative Humidity, Barometric Pressure, and Gas VOC Sensor.STEP"
+    (offset (xyz 0 0.4 10))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 90 0 180))
+  )
+  (model "${KICAD6_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x06_P2.54mm_Vertical.step"
+    (offset (xyz -6.4 -5.5 9))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 180 0 90))
+  )
+)

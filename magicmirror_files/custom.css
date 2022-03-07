@@ -1,0 +1,167 @@
+/* Magic Mirror Custom CSS
+ *
+ * Beware that properties cannot be unitless, so for example write '--gap-body: 0px;' instead of just '--gap-body: 0;'
+ *
+ * By Sébastien Mazzon
+ * MIT Licensed.
+ */
+
+/*
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@100;200;300;400;500;600;700;800;900&display=swap');
+*/
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@100;200;300;400;500;600;700;800;900&family=PT+Sans+Narrow&display=swap');
+
+:root {
+  --color-text: black;
+  --color-text-dimmed: #333;
+  --color-text-bright: #666;
+  --color-background: white;
+
+  --font-size: 30px;
+  --font-primary: "Fira Sans Condensed";
+  --font-secondary: "Fira Sans Condensed";
+  font-feature-settings: "lnum";
+  font-feature-settings: "liga", "clig";
+}
+
+body {
+  font-weight: 500;
+}
+
+header {
+  font-weight: 200;
+}
+
+
+/* clock
+ -------- */
+.clockGrid {
+  display: block;
+  min-width: 400px;
+}
+
+.module.clock .wi {
+  min-width: 1.4rem;
+  text-align: center;
+}
+
+/* newsfeed
+ ----------- */
+ .region.bottom .container .module.newsfeed {
+   height: 140px;
+}
+
+/* weather
+ ----------*/
+ .weather .unit {
+  font-size: 1rem;
+}
+
+
+/* MMM-Freebox-Monitor
+ ---------------------- */
+.MMM-FreeBox-Monitor .tableheader {
+  text-align: center;
+
+  /* Apply header style */
+  text-transform: uppercase;
+  font-size: var(--font-size-small);
+  font-family: var(--font-primary), Arial, Helvetica, sans-serif;
+  font-weight: 200;
+  border-bottom: 1px solid var(--color-text-dimmed);
+  line-height: 15px;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  color: var(--color-text);
+}
+
+/* MMM-Nantes-TAN
+ ----------------- */
+.nantestan table {
+  width: 500px;
+  /*font-size: 100%;*/
+}
+
+.nantestan table td:nth-child(3) {
+  color: var(--color-text-dimmed);
+  font-size: 80%;
+}
+.nantestan table td:nth-child(4) {
+  font-size: 90%;
+}
+
+
+/* MMM-Pollen-FR
+ ---------------- */
+.pollen-low {
+	color: var(--color-text-bright);
+}
+
+.pollen-lowmedium {
+	color: var(--color-text-bright);
+}
+
+.pollen-medium {
+	color: var(--color-text-dimmed);
+}
+
+.pollen-mediumhigh {
+	color: var(--color-text);
+}
+
+.pollen-high {
+	color: var(--color-text);
+}
+
+
+/* MMM-Saint
+ ------------ */
+ .MMM-Saint {
+  color: var(--color-text);
+  /* .medium */
+  font-size: 1.2rem;
+  line-height: 1.225;
+}
+
+
+/* MMM-Spotify
+ -------------- */
+#SPOTIFY {
+  color: var(--color-text);
+  font-size:1rem;
+  text-shadow: none !important;
+}
+
+#SPOTIFY_BACKGROUND {
+  background-image: none !important;
+}
+
+#SPOTIFY_COVER_IMAGE {
+  background: #d9d9d9;
+  box-shadow: none;
+}
+
+#SPOTIFY_INFO .infoicon {
+  text-shadow: none;
+}
+
+#SPOTIFY_TITLE {
+  color: var(--color-text);
+}
+
+progress[value]#SPOTIFY_PROGRESS_BAR::-webkit-progress-value {
+  background-color: black;
+}
+
+progress[value]#SPOTIFY_PROGRESS_BAR::-webkit-progress-bar {
+  background-color: #666;
+}
+
+
+/* MMM-Traffic
+ -------------- */
+ .mmmtraffic-firstline {
+  color: var(--color-text);
+  font-size: var(--font-size);
+}

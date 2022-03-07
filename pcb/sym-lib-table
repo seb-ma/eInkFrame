@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name "eInkFrame")(type "KiCad")(uri "${KIPRJMOD}/lib/eInkFrame.kicad_sym")(options "")(descr ""))
+)

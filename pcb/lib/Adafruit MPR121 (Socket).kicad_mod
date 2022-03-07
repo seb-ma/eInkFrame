@@ -1,0 +1,63 @@
+(footprint "Adafruit MPR121 (Socket)" (version 20211014) (generator pcbnew)
+  (layer "F.Cu")
+  (tedit 6212D379)
+  (attr smd)
+  (fp_text reference "REF**" (at 0 -0.5 unlocked) (layer "F.Fab")
+    (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp 3277c317-d68c-40ef-9ff1-491b0ee82bea)
+  )
+  (fp_text value "Adafruit MPR121 (Socket)" (at 0 1 unlocked) (layer "F.Fab")
+    (effects (font (size 1 1) (thickness 0.15)))
+    (tstamp 9603bd82-8b53-4439-bae7-e2ae25dd7aa7)
+  )
+  (fp_circle (center -14 7.15) (end -11.8 7.15) (layer "Cmts.User") (width 0.15) (fill none) (tstamp 660feb2f-ed14-424b-9bf2-c6c2c987a377))
+  (fp_circle (center 14 7.15) (end 16.2 7.15) (layer "Cmts.User") (width 0.15) (fill none) (tstamp e23ada5b-04e6-4a3f-9649-dd9db9061631))
+  (fp_circle (center -14 7.15) (end -11.55 7.15) (layer "F.CrtYd") (width 0.05) (fill none) (tstamp 390741a1-056f-4471-96af-67e5a38ee177))
+  (fp_circle (center 14 7.15) (end 16.45 7.15) (layer "F.CrtYd") (width 0.05) (fill none) (tstamp 79073c57-46e7-4396-b557-04a02bba0109))
+  (fp_line (start -16.51 7.152) (end -16.51 -9.652) (layer "F.Fab") (width 0.2) (tstamp 01d282c8-300a-48bc-8604-8f0ab33a5a37))
+  (fp_line (start -16.6 -7.005) (end -16.6 -8.91) (layer "F.Fab") (width 0.1) (tstamp 09b31d66-ab63-40c4-ba60-433d08ad67c3))
+  (fp_line (start -16.6 -8.91) (end -15.965 -9.545) (layer "F.Fab") (width 0.1) (tstamp 11040e2c-48c3-4f50-a6e0-d5a89f1c2a43))
+  (fp_line (start 16.51 -9.652) (end -16.51 -9.652) (layer "F.Fab") (width 0.2) (tstamp 1c1e5c7a-9db3-43ed-9104-2e568b3da3f0))
+  (fp_line (start 8.99 6.405) (end 8.99 8.31) (layer "F.Fab") (width 0.1) (tstamp 1e224772-c48f-49fd-9b92-bd97ed186099))
+  (fp_line (start 16.51 7.152) (end 16.51 -9.652) (layer "F.Fab") (width 0.2) (tstamp 424cf156-dd16-437e-9973-03fc4b4b8d11))
+  (fp_line (start -15.965 -9.545) (end 16.62 -9.545) (layer "F.Fab") (width 0.1) (tstamp 4548c354-c53c-4839-99fd-fdbdc95a2e94))
+  (fp_line (start 16.62 -7.005) (end -16.6 -7.005) (layer "F.Fab") (width 0.1) (tstamp 845984cb-9f63-49b1-9015-e0a7f613f8e8))
+  (fp_line (start 16.62 -9.545) (end 16.62 -7.005) (layer "F.Fab") (width 0.1) (tstamp 912e4396-0a04-46db-9887-a7d7c9608031))
+  (fp_line (start -8.99 8.945) (end -8.99 6.405) (layer "F.Fab") (width 0.1) (tstamp 9538022c-1d37-4614-9850-14af9ad26ff2))
+  (fp_line (start 8.355 8.945) (end -8.99 8.945) (layer "F.Fab") (width 0.1) (tstamp 9fb2b509-9407-40e2-8c14-766d4d9d74fd))
+  (fp_line (start -8.99 6.405) (end 8.99 6.405) (layer "F.Fab") (width 0.1) (tstamp b89c0bed-aaff-4042-8ea5-082434065c3d))
+  (fp_line (start 13.995 9.652) (end -14.025 9.652) (layer "F.Fab") (width 0.2) (tstamp be704520-f797-44d9-9184-23dbcb04474d))
+  (fp_line (start 8.99 8.31) (end 8.355 8.945) (layer "F.Fab") (width 0.1) (tstamp dd0d3bb7-76a2-4afb-930b-a001ef93bd5f))
+  (fp_arc (start 16.51 7.152) (mid 15.777767 8.919767) (end 14.01 9.652) (layer "F.Fab") (width 0.2) (tstamp b08b0b09-1a19-4f05-a54c-a1b95ada5a39))
+  (fp_arc (start -14.01 9.652) (mid -15.777767 8.919767) (end -16.51 7.152) (layer "F.Fab") (width 0.2) (tstamp d5ef6386-3a5b-4eb4-8b0f-14e6080aee09))
+  (pad "" np_thru_hole circle (at 14 7.15 180) (size 2.2 2.2) (drill 2.2) (layers *.Cu *.Mask) (tstamp 6766eb3f-cea4-4521-aa0a-171be6569eb2))
+  (pad "" np_thru_hole circle (at -14 7.15 180) (size 2.2 2.2) (drill 2.2) (layers *.Cu *.Mask) (tstamp c6d1a5ed-a9f5-400d-9242-15501f9eaaf7))
+  (group "" (id 00aba787-14f7-4d39-8092-593cf73aa065)
+    (members
+      1e224772-c48f-49fd-9b92-bd97ed186099
+      9538022c-1d37-4614-9850-14af9ad26ff2
+      9fb2b509-9407-40e2-8c14-766d4d9d74fd
+      b89c0bed-aaff-4042-8ea5-082434065c3d
+      dd0d3bb7-76a2-4afb-930b-a001ef93bd5f
+    )
+  )
+  (group "" (id 3e95bfe4-69cb-4742-8525-be00e3f4643c)
+    (members
+      09b31d66-ab63-40c4-ba60-433d08ad67c3
+      11040e2c-48c3-4f50-a6e0-d5a89f1c2a43
+      4548c354-c53c-4839-99fd-fdbdc95a2e94
+      845984cb-9f63-49b1-9015-e0a7f613f8e8
+      912e4396-0a04-46db-9887-a7d7c9608031
+    )
+  )
+  (model "${KICAD6_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x07_P2.54mm_Vertical.step"
+    (offset (xyz 7.6 -7.7 9.5))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 180 90))
+  )
+  (model "${KICAD6_3DMODEL_DIR}/Connector_PinHeader_2.54mm.3dshapes/PinHeader_1x13_P2.54mm_Vertical.step"
+    (offset (xyz 15.2 8.3 9.5))
+    (scale (xyz 1 1 1))
+    (rotate (xyz 0 180 90))
+  )
+)
