@@ -1,0 +1,12 @@
+diff --git a/package.json b/package.json
+index d9616a3..9fe0c29 100644
+--- a/package.json
++++ b/package.json
+@@ -18,6 +18,7 @@
+   "dependencies": {
+     "ical.js": "^1.4.0",
+     "moment": "^2.23.0",
++    "request": "^2.88.2",
+     "uuid": "^8.3.2"
+   }
+ }

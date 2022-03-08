@@ -1,0 +1,13 @@
+diff --git a/MMM-Saint.js b/MMM-Saint.js
+index 19306fc..1de9789 100644
+--- a/MMM-Saint.js
++++ b/MMM-Saint.js
+@@ -46,7 +46,7 @@ Module.register("MMM-Saint", {
+ 
+   displayData: function() {
+     var saint = document.getElementById("SAINT")
+-    saint.innerHTML = "<span class=\"fas fa-bible\"></span> " + this.Saint
++    saint.innerHTML = "<span class=\"fas fa-crown\"></span> " + this.Saint
+   },
+ 
+ /*

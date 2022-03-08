@@ -1,0 +1,60 @@
+diff --git a/MMM-Pollen-FR.js b/MMM-Pollen-FR.js
+index 4d34a77..0766505 100644
+--- a/MMM-Pollen-FR.js
++++ b/MMM-Pollen-FR.js
+@@ -8,7 +8,8 @@ Module.register("MMM-Pollen-FR", {
+         updateInterval: 3 * 60 * 60 * 1000, // every 12 hours
+         region_code: "75",
+         fadeSpeed: 2000,
+-		minLevel: 0
++		minLevel: 0,
++        hideBelowMinLevel: true,
+     },
+ 
+     start: function() {
+@@ -35,6 +36,7 @@ Module.register("MMM-Pollen-FR", {
+ 		
+         console.log("MMM-Pollen-FR : starting generate DOM ...");
+ 		var minlevel = 0
++		var isLevel = false;
+ 
+         if(this.config.minLevel != undefined){
+             minlevel = this.config.minLevel;
+@@ -112,6 +114,7 @@ Module.register("MMM-Pollen-FR", {
+                 var allergens = [];
+ 
+                 if (level > minlevel) {
++					isLevel = true;
+                     allergens.push(pollenName);
+                 
+ 					var td1 = document.createElement("td");
+@@ -141,6 +144,17 @@ Module.register("MMM-Pollen-FR", {
+         }
+ 
+         wrapper.appendChild(tbl);
++		if (!isLevel) {
++			wrapper.innerHTML = "Pas d'allergène niveau ≥ " + minlevel;
++
++            if (this.config.hideBelowMinLevel) {
++                this.hide();
++            } else {
++                this.show();
++            }    
++		} else {
++            this.show();
++        }
+         return wrapper;
+     },
+ 
+diff --git a/README.md b/README.md
+index 3f60e01..f4e306b 100644
+--- a/README.md
++++ b/README.md
+@@ -17,6 +17,7 @@ The entry in `config.js` can include the following options:
+ |`updateInterval`|**Required** update interval to refresh data for api pollen FR<br><br>**Type:** `string`<br>**Default value:** `null`|
+ |`region_code`|This is the region code (example : 75 for Paris) of the location you want to get the pollen risks for.<br><br>**Type:** `number`<br>**Default value:** `null`|
+ |`minLevel`|This is the minimal risk you want to display.<br><br>**Type:** `number`<br>**Default value:** `1`|
++|`hideBelowMinLevel`|Hide module if level is below minimal risk you want to display.<br><br>**Type:** `boolean`<br>**Default value:** `true`|
+ 
+ Here is an example of an entry in `config.js`
+ ```

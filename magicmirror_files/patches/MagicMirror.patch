@@ -1,0 +1,379 @@
+diff --git a/modules/default/clock/clock.js b/modules/default/clock/clock.js
+index 52cdb7e0..425646b3 100644
+--- a/modules/default/clock/clock.js
++++ b/modules/default/clock/clock.js
+@@ -88,6 +88,30 @@ Module.register("clock", {
+ 		// Set locale.
+ 		moment.locale(config.language);
+ 	},
++
++	getMoonIcon: function(phase) {
++		const intPercent = (phase * 100) .toFixed();
++		if (intPercent === 0) {
++			return "moon-alt-new";
++		} else if (intPercent < 25) {
++			return "moon-alt-waxing-crescent-" + (1 + Math.floor((intPercent - 0) * 6 / 25));
++		} else if (intPercent === 25) {
++			return "moon-alt-first-quarter";
++		} else if (intPercent < 50) {
++			return "moon-alt-waxing-gibbous-" + (1 + Math.floor((intPercent - 25) * 6 / 25));
++		} else if (intPercent === 50) {
++			return "moon-alt-full";
++		} else if (intPercent < 75) {
++			return "moon-alt-waning-gibbous-" + (1 + Math.floor((intPercent - 50) * 6 / 25));
++		} else if (intPercent === 75) {
++			return "moon-alt-third-quarter";
++		} else if (intPercent < 100) {
++			return "moon-alt-waning-crescent-" + (1 + Math.floor((intPercent - 75) * 6 / 25));
++		} else /* if (intPercent === 100) */ {
++			return "moon-alt-new";
++		}
++	},
++
+ 	// Override dom generator.
+ 	getDom: function () {
+ 		const wrapper = document.createElement("div");
+@@ -186,26 +210,33 @@ Module.register("clock", {
+ 			const sunTimes = SunCalc.getTimes(now, this.config.lat, this.config.lon);
+ 			const isVisible = now.isBetween(sunTimes.sunrise, sunTimes.sunset);
+ 			let nextEvent;
++			let sunDelta;
+ 			if (now.isBefore(sunTimes.sunrise)) {
++				const yesterdaySunTimes = SunCalc.getTimes(now.clone().subtract(1, "day"), this.config.lat, this.config.lon);
++				sunDelta = moment.duration(moment(sunTimes.sunset).diff(sunTimes.sunrise)).subtract(moment(yesterdaySunTimes.sunset).diff(yesterdaySunTimes.sunrise));				
+ 				nextEvent = sunTimes.sunrise;
+ 			} else if (now.isBefore(sunTimes.sunset)) {
++				const yesterdaySunTimes = SunCalc.getTimes(now.clone().subtract(1, "day"), this.config.lat, this.config.lon);
++				sunDelta = moment.duration(moment(sunTimes.sunset).diff(sunTimes.sunrise)).subtract(moment(yesterdaySunTimes.sunset).diff(yesterdaySunTimes.sunrise));				
+ 				nextEvent = sunTimes.sunset;
+ 			} else {
+ 				const tomorrowSunTimes = SunCalc.getTimes(now.clone().add(1, "day"), this.config.lat, this.config.lon);
++				sunDelta = moment.duration(moment(tomorrowSunTimes.sunset).diff(tomorrowSunTimes.sunrise)).subtract(moment(sunTimes.sunset).diff(sunTimes.sunrise));
+ 				nextEvent = tomorrowSunTimes.sunrise;
+ 			}
+ 			const untilNextEvent = moment.duration(moment(nextEvent).diff(now));
+-			const untilNextEventString = untilNextEvent.hours() + "h " + untilNextEvent.minutes() + "m";
++			//const untilNextEventString = untilNextEvent.hours() + "h " + untilNextEvent.minutes() + "m";
++			const untilNextEventString = ((sunDelta.minutes() > 0) ? "+" : "") + sunDelta.minutes() + "m";
+ 			sunWrapper.innerHTML =
+ 				'<span class="' +
+ 				(isVisible ? "bright" : "") +
+-				'"><i class="fa fa-sun-o" aria-hidden="true"></i> ' +
++				'"><i class="wi weathericon wi-day-sunny" aria-hidden="true"></i> ' +
+ 				untilNextEventString +
+ 				"</span>" +
+-				'<span><i class="fa fa-arrow-up" aria-hidden="true"></i> ' +
++				'<span><i class="wi weathericon wi-sunrise" aria-hidden="true"></i> ' +
+ 				formatTime(this.config, sunTimes.sunrise) +
+ 				"</span>" +
+-				'<span><i class="fa fa-arrow-down" aria-hidden="true"></i> ' +
++				'<span><i class="wi weathericon wi-sunset" aria-hidden="true"></i> ' +
+ 				formatTime(this.config, sunTimes.sunset) +
+ 				"</span>";
+ 			digitalWrapper.appendChild(sunWrapper);
+@@ -227,16 +258,18 @@ Module.register("clock", {
+ 			}
+ 			const isVisible = now.isBetween(moonRise, moonSet) || moonTimes.alwaysUp === true;
+ 			const illuminatedFractionString = Math.round(moonIllumination.fraction * 100) + "%";
++
++			const moonIcon = this.getMoonIcon(moonIllumination.phase);
+ 			moonWrapper.innerHTML =
+ 				'<span class="' +
+ 				(isVisible ? "bright" : "") +
+-				'"><i class="fa fa-moon-o" aria-hidden="true"></i> ' +
++				`"><i class="wi weathericon wi-${moonIcon} aria-hidden="true"></i> ` +
+ 				illuminatedFractionString +
+ 				"</span>" +
+-				'<span><i class="fa fa-arrow-up" aria-hidden="true"></i> ' +
++				'<span><i class="wi weathericon wi-moonrise" aria-hidden="true"></i> ' +
+ 				(moonRise ? formatTime(this.config, moonRise) : "...") +
+ 				"</span>" +
+-				'<span><i class="fa fa-arrow-down" aria-hidden="true"></i> ' +
++				'<span><i class="wi weathericon wi-moonset" aria-hidden="true"></i> ' +
+ 				(moonSet ? formatTime(this.config, moonSet) : "...") +
+ 				"</span>";
+ 			digitalWrapper.appendChild(moonWrapper);
+diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
+index 40746e82..75b8e27b 100755
+--- a/modules/default/weather/current.njk
++++ b/modules/default/weather/current.njk
+@@ -1,15 +1,20 @@
+ {% if current %}
+     {% if not config.onlyTemp %}
+         <div class="normal medium">
++            {% if config.useBeaufort %}
+             <span class="wi wi-strong-wind dimmed"></span>
++            {% else %}
++            <span class="wi wi-wind-beaufort-{{ current.beaufortWindSpeed() | round }} dimmed"></span>
++            {% endif %}
++            <span>
+             <span>
+                 {% if config.useBeaufort %}
+-                    {{ current.beaufortWindSpeed() | round }}
++                    {{ current.beaufortWindSpeed() | round }}</span>
+                 {% else %}
+                     {% if config.useKmh %}
+-                        {{ current.kmhWindSpeed() | round }}
++                        {{ current.kmhWindSpeed() | round }} </span><span class="unit">km/h</span>
+                     {% else %}
+-                        {{ current.windSpeed | round }}
++                        {{ current.windSpeed | round }} </span><span class="unit">mi/h</span>
+                     {% endif %}
+                 {% endif %}
+                 {% if config.showWindDirection %}
+diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
+index c1258d3c..eaca5fc3 100755
+--- a/modules/default/weather/providers/openweathermap.js
++++ b/modules/default/weather/providers/openweathermap.js
+@@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
+ 		location: false,
+ 		lat: 0, // the onecall endpoint needs lat / lon values, it doesn'T support the locationId
+ 		lon: 0,
+-		apiKey: ""
++		apiKey: "",
++		expandDaySections: false,
+ 	},
+ 
+ 	// Overwrite the fetchCurrentWeather method.
+@@ -86,6 +87,28 @@ WeatherProvider.register("openweathermap", {
+ 			.finally(() => this.updateAvailable());
+ 	},
+ 
++	// Fill all data (current, hourly, forecast) with only 1 call to /onecall API
++	fetchWeatherAll() {
++		if (this.config.weatherEndpoint === "/onecall") {
++			this.fetchData(this.getUrl())
++			.then((data) => {
++				const weatherData = this.generateWeatherObjectsFromOnecall(data);
++				// onecall get all the data - so fill them at once
++				this.setCurrentWeather(weatherData.current);
++				this.setWeatherHourly(weatherData.hours);
++				this.setWeatherForecast(weatherData.days);		
++
++				this.setFetchedLocation(`${data.timezone}`);
++			})
++			.catch(function (request) {
++				Log.error("Could not load data ... ", request);
++			})
++			.finally(() => this.updateAvailable());
++		} else {
++			Log.error("Must be called with weatherEndpoint /onecall");
++		}
++	},
++
+ 	/**
+ 	 * Overrides method for setting config to check if endpoint is correct for hourly
+ 	 *
+@@ -135,7 +158,7 @@ WeatherProvider.register("openweathermap", {
+ 			currentWeather.windSpeed = currentWeatherData.wind.speed;
+ 		}
+ 		currentWeather.windDirection = currentWeatherData.wind.deg;
+-		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.weather[0].icon);
++		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.weather[0].icon, currentWeatherData.weather[0].id);
+ 		currentWeather.sunrise = moment(currentWeatherData.sys.sunrise, "X");
+ 		currentWeather.sunset = moment(currentWeatherData.sys.sunset, "X");
+ 
+@@ -208,11 +231,11 @@ WeatherProvider.register("openweathermap", {
+ 				weather.date = moment(forecast.dt, "X");
+ 
+ 				// If the first value of today is later than 17:00, we have an icon at least!
+-				weather.weatherType = this.convertWeatherType(forecast.weather[0].icon);
++				weather.weatherType = this.convertWeatherType(forecast.weather[0].icon, forecast.weather[0].id);
+ 			}
+ 
+ 			if (moment(forecast.dt, "X").format("H") >= 8 && moment(forecast.dt, "X").format("H") <= 17) {
+-				weather.weatherType = this.convertWeatherType(forecast.weather[0].icon);
++				weather.weatherType = this.convertWeatherType(forecast.weather[0].icon, forecast.weather[0].id);
+ 			}
+ 
+ 			// the same day as before
+@@ -262,7 +285,7 @@ WeatherProvider.register("openweathermap", {
+ 			weather.date = moment(forecast.dt, "X");
+ 			weather.minTemperature = forecast.temp.min;
+ 			weather.maxTemperature = forecast.temp.max;
+-			weather.weatherType = this.convertWeatherType(forecast.weather[0].icon);
++			weather.weatherType = this.convertWeatherType(forecast.weather[0].icon, forecast.weather[0].id);
+ 			weather.rain = 0;
+ 			weather.snow = 0;
+ 
+@@ -311,7 +334,7 @@ WeatherProvider.register("openweathermap", {
+ 			current.sunrise = moment(data.current.sunrise, "X").utcOffset(data.timezone_offset / 60);
+ 			current.sunset = moment(data.current.sunset, "X").utcOffset(data.timezone_offset / 60);
+ 			current.temperature = data.current.temp;
+-			current.weatherType = this.convertWeatherType(data.current.weather[0].icon);
++			current.weatherType = this.convertWeatherType(data.current.weather[0].icon, data.current.weather[0].id);
+ 			current.humidity = data.current.humidity;
+ 			if (data.current.hasOwnProperty("rain") && !isNaN(data.current["rain"]["1h"])) {
+ 				if (this.config.units === "imperial") {
+@@ -348,7 +371,7 @@ WeatherProvider.register("openweathermap", {
+ 				weather.humidity = hour.humidity;
+ 				weather.windSpeed = hour.wind_speed;
+ 				weather.windDirection = hour.wind_deg;
+-				weather.weatherType = this.convertWeatherType(hour.weather[0].icon);
++				weather.weatherType = this.convertWeatherType(hour.weather[0].icon, hour.weather[0].id);
+ 				precip = false;
+ 				if (hour.hasOwnProperty("rain") && !isNaN(hour.rain["1h"])) {
+ 					if (this.config.units === "imperial") {
+@@ -379,7 +402,17 @@ WeatherProvider.register("openweathermap", {
+ 		const days = [];
+ 		if (data.hasOwnProperty("daily")) {
+ 			for (const day of data.daily) {
+-				weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60);
++				let offset = [12];
++				let sections = [day.temp.day]
++				if (this.config.expandDaySections) {
++					offset = [6, 12, 18, 21]; // 6 hours between each section
++					sections = [day.temp.morn, day.temp.day, day.temp.eve, day.temp.night];
++					sections_feelsLike = [day.feels_like.morn, day.feels_like.day, day.feels_like.eve, day.feels_like.night];
++				}
++				for (i = 0; i < sections.length; i++) {
++					weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60).startOf('day').add(offset[i], 'hours');
++					weather.temperature = sections[i];
++					weather.feelsLikeTemp = sections_feelsLike[i];
+ 					weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
+ 					weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
+ 					weather.minTemperature = day.temp.min;
+@@ -387,7 +420,7 @@ WeatherProvider.register("openweathermap", {
+ 					weather.humidity = day.humidity;
+ 					weather.windSpeed = day.wind_speed;
+ 					weather.windDirection = day.wind_deg;
+-				weather.weatherType = this.convertWeatherType(day.weather[0].icon);
++					weather.weatherType = this.convertWeatherType(day.weather[0].icon, day.weather[0].id);
+ 					precip = false;
+ 					if (!isNaN(day.rain)) {
+ 						if (this.config.units === "imperial") {
+@@ -395,6 +428,7 @@ WeatherProvider.register("openweathermap", {
+ 						} else {
+ 							weather.rain = day.rain;
+ 						}
++						weather.rain /= sections.length;
+ 						precip = true;
+ 					}
+ 					if (!isNaN(day.snow)) {
+@@ -403,6 +437,7 @@ WeatherProvider.register("openweathermap", {
+ 						} else {
+ 							weather.snow = day.snow;
+ 						}
++						weather.snow /= sections.length;
+ 						precip = true;
+ 					}
+ 					if (precip) {
+@@ -413,6 +448,7 @@ WeatherProvider.register("openweathermap", {
+ 					weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
+ 				}
+ 			}
++		}
+ 
+ 		return { current: current, hours: hours, days: days };
+ 	},
+@@ -445,6 +481,98 @@ WeatherProvider.register("openweathermap", {
+ 		return weatherTypes.hasOwnProperty(weatherType) ? weatherTypes[weatherType] : null;
+ 	},
+ 
++/*	convertWeatherType(weatherIcon, weatherId) {
++		const weatherTypes = {
++			// "11d": "thunderstorm",
++			// "11n": "night-thunderstorm",
++			"200": ["day-storm-showers", "night-alt-storm-showers"],
++			"201": ["day-thunderstorm", "night-alt-thunderstorm"],
++			"202": ["thunderstorm", "thunderstorm"],
++			"210": ["day-storm-showers", "night-alt-storm-showers"],
++			"211": ["day-thunderstorm", "night-alt-thunderstorm"],
++			"212": ["thunderstorm", "thunderstorm"],
++			"221": ["thunderstorm", "thunderstorm"],
++			"230": ["day-storm-showers", "night-alt-storm-showers"],
++			"231": ["day-thunderstorm", "night-alt-thunderstorm"],
++			"232": ["thunderstorm", "thunderstorm"],
++
++			// "09d": "showers",
++			// "09n": "night-showers",
++			"300": ["showers", "showers"],
++			"301": ["rain-mix", "rain-mix"],
++			"302": ["rain", "rain"],
++			"310": ["showers", "showers"],
++			"311": ["rain-mix", "rain-mix"],
++			"312": ["rain", "rain"],
++			"313": ["showers", "showers"],
++			"314": ["rain-mix", "rain-mix"],
++			"321": ["rain", "rain"],
++
++			// "10d": "rain",
++			// "10n": "night-rain",
++			"500": ["day-showers", "night-alt-showers"],
++			"501": ["day-rain-mix", "night-alt-rain-mix"],
++			"502": ["day-rain", "night-alt-rain"],
++			"503": ["rain", "rain"],
++			"504": ["rain", "rain"],
++			// "13d": "snow",
++			// "13n": "night-snow",
++			"511": ["day-snow", "night-alt-snow"],
++			// "09d": "showers",
++			// "09n": "night-showers",
++			"520": ["day-showers", "night-alt-showers"],
++			"521": ["day-rain-mix", "night-alt-rain-mix"],
++			"522": ["rain", "rain"],
++			"531": ["rain", "rain"],
++
++			// "13d": "snow",
++			// "13n": "night-snow",
++			"600": ["day-snow", "night-alt-snow"],
++			"601": ["day-snow", "night-alt-snow"],
++			"602": ["snow", "snow"],
++			"611": ["day-sleet", "night-alt-sleet"],
++			"612": ["day-sleet", "night-alt-sleet"],
++			"613": ["day-sleet", "night-alt-sleet"],
++			"615": ["day-snow", "night-alt-snow"],
++			"616": ["day-snow", "night-alt-snow"],
++			"620": ["day-snow", "night-alt-snow"],
++			"621": ["day-snow", "night-alt-snow"],
++			"622": ["snow", "wi-day-snow"],
++
++			// "50d": "fog",
++			// "50n": "night-alt-cloudy-windy"
++			"701": ["day-fog", "night-fog"],
++			"711": ["smoke", "smoke"],
++			"721": ["day-haze", "night-fog"],
++			"731": ["sandstorm", "sandstorm"],
++			"741": ["day-fog", "night-fog"], // or neutral "fog"
++			"751": ["sandstorm", "sandstorm"],
++			"761": ["dust", "dust"],
++			"762": ["volcan", "volcan"],
++			"771": ["", ""],
++			"781": ["tornado", "tornado"],
++
++			// "01d": "day-sunny",
++			// "01n": "night-clear",
++			"800": ["day-sunny", "night-clear"],
++
++			// "02d": "day-cloudy",
++			// "02n": "night-cloudy",
++			"801": ["day-cloudy-high", "night-cloudy-high"],
++			// "03d": "cloudy",
++			// "03n": "night-cloudy",
++			"802": ["day-cloudy", "night-cloudy"],
++			// "04d": "cloudy-windy",
++			// "04n": "night-cloudy",
++			"803": ["cloud", "cloud"],
++			"804": ["cloudy", "cloudy"],
++		};
++
++		const idxDay = weatherIcon.match(/n$/) ? 1 : 0;
++		return weatherTypes.hasOwnProperty(weatherId) ? weatherTypes[weatherId][idxDay] : null;
++	},
++*/
++
+ 	/* getParams(compliments)
+ 	 * Generates an url with api parameters based on the config.
+ 	 *
+diff --git a/package.json b/package.json
+index ca01ad5e..78f77ebe 100644
+--- a/package.json
++++ b/package.json
+@@ -83,6 +83,7 @@
+ 		"moment": "^2.29.1",
+ 		"node-fetch": "^2.6.6",
+ 		"node-ical": "^0.13.0",
++		"request": "^2.88.2",
+ 		"socket.io": "^4.4.0"
+ 	},
+ 	"_moduleAliases": {

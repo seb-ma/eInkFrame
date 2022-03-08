@@ -1,0 +1,138 @@
+diff --git a/MMM-Nantes-TAN.js b/MMM-Nantes-TAN.js
+index 4e168e3..bd0b85a 100644
+--- a/MMM-Nantes-TAN.js
++++ b/MMM-Nantes-TAN.js
+@@ -20,7 +20,7 @@ Module.register("MMM-Nantes-TAN",{
+     showSecondsToNextUpdate: true,  // display a countdown to the next update pull (should I wait for a refresh before going ?)
+     showLastUpdateTime: false,  //display the time when the last pulled occured (taste & color...)
+     debug: false, //console.log more things to help debugging
+-    tanURL: 'http://open.tan.fr/ewp/',
++    tanURL: 'https://open.tan.fr/ewp/',
+     colorBlue: "rgb(0,121,188)",
+     colorGreen: "rgb(0, 118,125)",
+     colorYellow: "rgb(253,197,16)",
+@@ -44,13 +44,16 @@ Module.register("MMM-Nantes-TAN",{
+     this.busSchedules = {};
+     this.arretData = {};
+     this.busLastUpdate = {};
++    this.infoTraffic = [];
+     this.loaded = false;
+     this.updateTimer = null;
+     var self = this;
++    if (this.config.showSecondsToNextUpdate) {
+     setInterval(function () {
+       self.caller = 'updateInterval';
+       self.updateDom();
+     }, 1000);
++    }
+   },
+ 
+   getHeader: function () {
+@@ -139,6 +142,13 @@ getDom: function() {
+       wrapper.className = "nantestan";
+     }
+     
++	var alerts = document.createElement("div");
++	for (var infoIndex = 0; infoIndex < this.infoTraffic.length; infoIndex++) {
++		alerts.className = "alertstan";
++		alerts.innerHTML = this.infoTraffic[infoIndex];
++	}
++    wrapper.appendChild(alerts);
++
+     var table = document.createElement("table");
+ 
+     var stopIndex;
+@@ -153,6 +163,7 @@ getDom: function() {
+         var comingBuses = this.busSchedules[stopIndex];
+         var comingBusLastUpdate = this.busLastUpdate[stopIndex];
+         var arretData = this.arretData[stopIndex];
++        if (arretData === undefined) { continue; }
+         row = document.createElement("tr");
+         this.setColor(row,stop.color);
+         var symbol = document.createElement("span");
+@@ -184,8 +195,7 @@ getDom: function() {
+         for (var comingIndex = 0; (comingIndex < this.config.maximumEntries) && (comingIndex < comingBuses.length); comingIndex++) {
+             comingBus = comingBuses[comingIndex];
+             var time = this.timeCleaning(comingBus.temps);
+-            if (comingIndex == 0) {
+-                
++            if (comingIndex == 0 || time === "") {
+                 depCell.innerHTML=time;
+             } else {
+                 depCell.innerHTML=depCell.innerHTML+" / " + time;
+@@ -206,12 +216,15 @@ getDom: function() {
+         this.busSchedules[payload.id] = payload.schedules;
+         this.busLastUpdate[payload.id] = payload.lastUpdate;
+         this.arretData[payload.id] = payload.arret;
+-        this.loaded = true;
+-        this.updateDom();
++        break;
++
++      case "TRAFFIC":
++        this.infoTraffic = payload;
+         break;
+ 
+       case "UPDATE":
+         this.config.lastUpdate = payload.lastUpdate;
++        this.loaded = true;
+         this.updateDom();
+         break;
+     }
+diff --git a/node_helper.js b/node_helper.js
+index 165884b..d051101 100644
+--- a/node_helper.js
++++ b/node_helper.js
+@@ -83,7 +83,6 @@ module.exports = NodeHelper.create({
+     var self = this;
+     var urlArret, urlHoraire, stopConfig;
+     if (this.config.debug) { console.log (' *** fetching update');}
+-    self.sendSocketNotification("UPDATE", { lastUpdate : new Date()});
+     for (var index in self.config.busStations) {
+         var stopData = {};
+       stopConfig = self.config.busStations[index];
+@@ -92,6 +91,10 @@ module.exports = NodeHelper.create({
+       urlHoraire = self.config.tanURL+'tempsattente.json/'+stopConfig.arret;
+       self.getResponse(urlHoraire, self.processHorairesLigne.bind(this), stopConfig, stopData);
+     }
++    urlInfoTrafic = 'https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_info-trafic-tan-temps-reel&q=';
++    self.getResponse(urlInfoTrafic, self.processInfoTrafic.bind(this), self.config.busStations);
++
++    self.sendSocketNotification("UPDATE", { lastUpdate : new Date()});
+   },
+ 
+   processArret: function(data, stopConfig,stopData) {
+@@ -119,4 +122,34 @@ module.exports = NodeHelper.create({
+       this.sendSocketNotification("BUS", stopData);
+   },
+ 
++  processInfoTrafic: function(data, busStations, unused) {
++    if (this.config.debug) { console.log (' *** processInfoTrafic request response'); console.log (data); }
++    var traficInfo = []
++    var currentDate = new Date();
++    for (var i = 0; i < data.records.length; i++) {
++      var fields = data.records[i].fields;
++      var startDate = new Date(fields.date_debut + 'T' + fields.heure_debut + 'Z');
++      var endDate = null;
++      if (fields.date_fin) {
++        endDate = new Date(fields.date_fin + 'T' + fields.heure_fin + 'Z');
++      }
++
++      var isApplied = false;
++      if (fields.perturbation_terminee == 0 && startDate <= currentDate
++      && (endDate == null || endDate >= currentDate)) {
++        var tronconsList = fields.troncons.split(";");
++        for (var j = 0 ; j < tronconsList.length && !isApplied; j++) {
++          var tronconInfo = tronconsList[j].slice(1).split("/");
++          for (var k = 0; k < busStations.length && !isApplied; k++) {
++            if (tronconInfo[0] == busStations[k].ligne && (tronconInfo[1] == '' || tronconInfo[1] == busStations[k].sens)) {
++              traficInfo.push(fields.intitule);
++              isApplied = true;
++            }
++          }
++        }
++      }
++    }
++    this.sendSocketNotification("TRAFFIC", traficInfo);
++  },
++
+ });

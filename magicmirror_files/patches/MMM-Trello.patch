@@ -1,0 +1,81 @@
+diff --git a/MMM-Trello.js b/MMM-Trello.js
+index 25de6a4..adc170c 100644
+--- a/MMM-Trello.js
++++ b/MMM-Trello.js
+@@ -24,7 +24,8 @@ Module.register("MMM-Trello", {
+         showChecklists: true,
+         showChecklistTitle: false,
+         wholeList: false,
+-        isCompleted: false
++        isCompleted: false,
++        hideCompletedItems: false,
+     },
+ 
+     // Define start sequence.
+@@ -55,6 +56,20 @@ Module.register("MMM-Trello", {
+         this.pause = false;
+     },
+ 
++    suspend: function() {
++        if (this.timerRequest) {
++            clearInterval(this.timerRequest);
++        }
++        if (this.timerVisual) {
++            clearInterval(this.timerVisual);
++        }
++    },
++
++    resume: function() {
++        this.timerVisual = this.scheduleVisualUpdateInterval();
++        this.timerRequest = this.scheduleVisualUpdateInterval();
++    },
++
+     /* scheduleVisualUpdateInterval()
+      * Schedule visual update.
+      */
+@@ -63,7 +78,7 @@ Module.register("MMM-Trello", {
+ 
+         self.updateDom(self.config.animationSpeed);
+ 
+-        setInterval(function () {
++        this.timerVisual = setInterval(function () {
+             if (self.pause) {
+                 return;
+             }
+@@ -78,7 +93,7 @@ Module.register("MMM-Trello", {
+     scheduleUpdateRequestInterval: function () {
+         var self = this;
+ 
+-        setInterval(function () {
++        this.timerRequest = setInterval(function () {
+             if (self.pause) {
+                 return;
+             }
+@@ -211,6 +226,9 @@ Module.register("MMM-Trello", {
+                 }
+ 
+                 for (var item in checklist.checkItems) {
++                    if (this.config.hideCompletedItems && checklist.checkItems[item].state === "complete") {
++                        continue;
++                    }
+                     var itemWrapper = document.createElement("div");
+                     itemWrapper.className = "small light checklist-item";
+ 
+diff --git a/README.md b/README.md
+index c9c636a..7342848 100644
+--- a/README.md
++++ b/README.md
+@@ -144,6 +144,13 @@ The following properties can be configured:
+ 				<br><b>Default value:</b> <code>false</code>
+ 			</td>
+ 		</tr>
++		<tr>
++			<td><code>hideCompletedItems</code></td>
++			<td>If set to true, completed items in lists are not displayed.<br>
++				<br><b>Possible values:</b> <code>true</code> or <code>false</code>
++				<br><b>Default value:</b> <code>false</code>
++			</td>
++		</tr>
+ 	</tbody>
+ </table>
+ 

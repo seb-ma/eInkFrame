@@ -46,7 +46,7 @@ git clone https://github.com/skuethe/MMM-Spotify
 ### Nantes Bus Traffic Timetable, from given stops, given bus / tramway & navibus number, and direction
 git clone https://github.com/normyx/MMM-Nantes-TAN
 # Gas Station Price
-git clone https://github.com/fewieden/MMM-Fuel
+#git clone https://github.com/fewieden/MMM-Fuel
 ### Map with traffic and incidents information from TomTom
 #git clone https://github.com/Travelbacon/MMM-TomTomTrafficIncidents
 ### Travel time between two locations
@@ -82,7 +82,7 @@ git clone https://github.com/seb-ma/MMM-IT8951
 ### Executing custom actions on broadcast notifications
 git clone https://github.com/seb-ma/MMM-NotifCustomActions
 ### Weather charts
-git clone https://github.com/mtatsuma/MMM-WeatherChartD3
+git clone https://github.com/seb-ma/MMM-WeatherChartD3
 
 ## Default installed modules (some of them)
 ##
@@ -99,6 +99,7 @@ git clone https://github.com/mtatsuma/MMM-WeatherChartD3
 # Dependencies installation for each module
 # (given each module is from a git repository)
 ##
+#find . -name .git -print -execdir npm update \;
 find . -name .git -print -execdir npm install --only=production \;
 # Specific case for i2c-bus dependency in MMM-MPR121
 cd MMM-MPR121/; npm install; npm rebuild i2c-bus --update-binary; cd -

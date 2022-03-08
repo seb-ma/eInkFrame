@@ -11,31 +11,31 @@ const configPrivateParts = {
 	"mock": false,
 
 	"home": {"lat": 0.000000, "lon": 0.000000},
-    "work": {"lat": 0.000000, "lon": 0.000000},
+	"work": {"lat": 0.000000, "lon": 0.000000},
 
-    "apikey_openweather": "xxx",
-    "apikey_tomtom": "xxx",
-    "vCard": {
-        "url": "https://xxx",
-        "username": "xxx",
-        "password": "xxx"
-    },
-    "trello": {
-        "api_key": "xxx",
-        "token": "xxx",
-        "list": "xxx"
-    },
-    "caldav_config": {
-        "serverUrl": "xxx",
-        "username": "xxx",
-        "password": "xxx"
-    },
+	"apikey_openweather": "xxx",
+	"apikey_tomtom": "xxx",
+	"vCard": {
+		"url": "https://xxx",
+		"username": "xxx",
+		"password": "xxx"
+	},
+	"trello": {
+		"api_key": "xxx",
+		"token": "xxx",
+		"list": "xxx"
+	},
+	"caldav_config": {
+		"serverUrl": "xxx",
+		"username": "xxx",
+		"password": "xxx"
+	},
 	"department": "00",
-    "tan_busStations": [
-        {"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
-        {"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
-        {"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"}
-    ]
+	"tan_busStations": [
+		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
+		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
+		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"}
+	]
 }
 
 let config = {
@@ -54,7 +54,9 @@ let config = {
 	useHttps: false, 		// Support HTTPS or not, default "false" will use HTTP
 	httpsPrivateKey: "", 	// HTTPS private key path, only require when useHttps is true
 	httpsCertificate: "", 	// HTTPS Certificate path, only require when useHttps is true
-	ipWhitelist: ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::fff:192.168.1.1/112"], 	// Set [] to allow all IP addresses
+	ipWhitelist: ["127.0.0.1", "::ffff:127.0.0.1", "::1",
+				  "::ffff:192.168.1.1/120", "192.168.1.1/24",
+				  "::ffff:192.168.2.1/120", "192.168.2.1/24"], 	// Set [] to allow all IP addresses
 															// or add a specific IPv4 of 192.168.1.5 :
 															// ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::ffff:192.168.1.5"],
 															// or IPv4 range of 192.168.3.0 --> 192.168.3.15 use CIDR format :
@@ -272,7 +274,7 @@ let config = {
 			}
 		},
 		{
-			module: "MMM-VigilanceMeteoFrance", // https://github.com/grenagit/MMM-VigilanceMeteoFrance 
+			module: "MMM-VigilanceMeteoFrance", // https://github.com/grenagit/MMM-VigilanceMeteoFrance
 			position: "top_right",
 			pages: {mainPage: "top_right", musicPage: "top_right"}, // Config for MMM-Page-Selector
 			config: {
@@ -365,43 +367,44 @@ let config = {
 			}
 		},
 		{
-            module: "MMM-WeatherChartD3", // https://github.com/seb-ma/MMM-WeatherChartD3
-            position: "bottom_right",
+			module: "MMM-WeatherChartD3", // https://github.com/seb-ma/MMM-WeatherChartD3
+			position: "bottom_right",
 			pages: {mainPage: "bottom_right", musicPage: "bottom_right"}, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
-            config: {
+			config: {
 				updateInterval: 10 * 60 * 1000, // valeur par défaut : 10 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				apiKey: configPrivateParts.apikey_openweather,
-                type: "full",
-                height: 350,
-                width: 1300,
+				type: "full",
+				height: 350,
+				width: 1300,
+				iconSize: 48, // in px or undefined to define automatically at first call
 				hoursRatio: 0.5,
 				lat: configPrivateParts.home.lat,
 				lon: configPrivateParts.home.lon,
 				color: "#000",
 				fillColor: "#ccc",
-            }
-        },
+			}
+		},
 		{
-            module: "MMM-WeatherChartD3", // https://github.com/seb-ma/MMM-WeatherChartD3
-            position: "middle_center",
+			module: "MMM-WeatherChartD3", // https://github.com/seb-ma/MMM-WeatherChartD3
+			position: "middle_center",
 			hiddenOnStartup: true,
 			pages: {weatherPage: "middle_center"}, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
-            config: {
+			config: {
 				updateInterval: 10 * 60 * 1000, // valeur par défaut : 10 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				apiKey: configPrivateParts.apikey_openweather,
-                type: "full",
-                height: 1000,
-                width: 1700,
+				type: "full",
+				height: 1000,
+				width: 1700,
 				lat: configPrivateParts.home.lat,
 				lon: configPrivateParts.home.lon,
 				color: "#000",
 				fillColor: "#ccc",
-            }
-        },
+			}
+		},
 		{
 			module: "newsfeed", // https://docs.magicmirror.builders/modules/newsfeed.html
 			position: "bottom_bar",

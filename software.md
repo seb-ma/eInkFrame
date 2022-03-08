@@ -106,7 +106,7 @@ sudo visudo
 Add line:
 
 ```bash
-serverusr ALL=NOPASSWD: /bin/shutdown
+serverusr ALL=NOPASSWD: /sbin/shutdown
 ```
 
 ### Installation of the necessary packages
@@ -269,10 +269,8 @@ sudo apt full-upgrade -y
 sudo apt clean
 
 # nodejs and all packages
+nvm install-latest-npm
 nvm install node --reinstall-packages-from=node
-
-# npm packages
-npm update --save/--save-dev
 ```
 
 ### Reboot the OS
@@ -302,6 +300,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 
 # Install the latest version
 nvm install node
+
 ```
 
 ### Installation
@@ -309,10 +308,12 @@ nvm install node
 See [Installation & Usage | MagicMirror² Documentation](https://docs.magicmirror.builders/getting-started/installation.html#manual-installation) for details.
 
 Run the script [installMM.sh](magicmirror_files/installMM.sh) commands to retrieve and install MagicMirror² and all necessary modules for this project:
+Then, apply patch [applyPatch.sh](magicmirror_files/applyPatch.sh) to adapt some modules that need it.
 
 ```bash
 
 installMM.sh
+applyPatch.sh
 
 ```
 
@@ -401,6 +402,9 @@ To update MagicMirror² and all installed modules, run the commands in the scrip
 ```bash
 
 updateMM.sh
+
+# npm packages
+#npm update --save/--save-dev
 
 ```
 

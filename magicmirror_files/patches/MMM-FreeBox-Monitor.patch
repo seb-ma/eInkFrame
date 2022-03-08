@@ -1,0 +1,39 @@
+diff --git a/MMM-FreeBox-Monitor.js b/MMM-FreeBox-Monitor.js
+index cdbc859..6bc2d77 100644
+--- a/MMM-FreeBox-Monitor.js
++++ b/MMM-FreeBox-Monitor.js
+@@ -31,10 +31,7 @@ Module.register("MMM-FreeBox-Monitor",{
+ 		this.systemData ="";
+ 		this.needRefresh = true;
+ 		this.wrapper = "";
+-		var self = this;
+-			setInterval(function() {
+-			self.updateDom(); // no speed defined, so it updates instantly.
+-		}, 5000);
++		this.updateDom();
+ 		moment.locale(config.language);
+ 		this.sendSocketNotification("CONNECT", {
+ 				config: this.config
+@@ -341,7 +338,10 @@ Module.register("MMM-FreeBox-Monitor",{
+ 					self.getConnectionStatus();
+ 					setInterval(function() {self.getCalls();self.getDownloads();self.getConnectionStatus();	}, (this.config.requestRefresh) * 1000);
+ 				}
++			}
+ 			
++			if (payload.type !== "connection") {
++				self.updateDom();
+ 			}
+ 		}
+ 		self.needRefresh = true;
+diff --git a/node_helper.js b/node_helper.js
+index c0ff8f0..fb852cd 100644
+--- a/node_helper.js
++++ b/node_helper.js
+@@ -7,6 +7,7 @@
+ 
+ 
+ var fs = require("fs");
++var NodeHelper = require("node_helper");
+ var Freeboxapi = require("./freeboxapi.js");
+ var fapi;
+ 

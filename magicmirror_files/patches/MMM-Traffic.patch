@@ -1,0 +1,85 @@
+diff --git a/MMM-Traffic.js b/MMM-Traffic.js
+index 1b6dc02..af26402 100644
+--- a/MMM-Traffic.js
++++ b/MMM-Traffic.js
+@@ -15,7 +15,8 @@ Module.register('MMM-Traffic', {
+     mode: 'driving',
+     days: [0, 1, 2, 3, 4, 5, 6],
+     hoursStart: '00:00',
+-    hoursEnd: '23:59'
++    hoursEnd: '23:59',
++    provider: "mapbox",
+   },
+ 
+   start: function () {
+@@ -39,15 +40,19 @@ Module.register('MMM-Traffic', {
+ 
+   updateCommute: function () {
+     let mode = this.config.mode == 'driving' ? 'driving-traffic' : this.config.mode;
++    if (this.config.provider == "tomtom") {
++      this.url = encodeURI(`https://api.tomtom.com/routing/1/calculateRoute/${this.config.originCoords}:${this.config.destinationCoords}/json?maxAlternatives=0&language=fr-FR&computeBestOrder=false&routeRepresentation=polyline&computeTravelTimeFor=all&sectionType=travelMode&callback=callback&departAt=now&routeType=fastest&traffic=true&avoid=unpavedRoads&travelMode=car&vehicleMaxSpeed=0&vehicleWeight=0&vehicleAxleWeight=0&vehicleLength=0&vehicleWidth=0&vehicleHeight=0&vehicleCommercial=false&vehicleEngineType=combustion&key=${this.config.accessToken}`);
++    } else {
+       this.url = encodeURI(`https://api.mapbox.com/directions/v5/mapbox/${mode}/${this.config.originCoords};${this.config.destinationCoords}?access_token=${this.config.accessToken}`);
++    }
+ 
+     // only run getDom once at the start of a hidden period to remove the module from the screen, then just wait until time to unhide to run again
+-    if (this.shouldHide() && !this.internalHidden) {
++    if (this.shouldHide()) {
+       console.log('Hiding MMM-Traffic due to config options: days, hoursStart, hoursEnd');
+       this.internalHidden = true;
+-      this.updateDom();
++      this.hide();
+     } else if (!this.shouldHide()) {
+-      this.internalHidden = false;
++      this.show();
+       this.getCommute(this.url);
+     }
+     // no network requests are made when the module is hidden, so check every 30 seconds during hidden
+@@ -60,7 +65,14 @@ Module.register('MMM-Traffic', {
+     fetch(api_url)
+       .then(self.checkStatus)
+       .then(json => {
++		self.trafficDelay = "—"
++        if (this.config.provider == "tomtom") {
++          self.duration = Math.round(json.routes[0].summary.travelTimeInSeconds / 60);
++          self.trafficDelay = Math.round(json.routes[0].summary.trafficDelayInSeconds / 60);
++        } else {
+           self.duration = Math.round(json.routes[0].duration / 60);
++        }
++
+         self.errorMessage = self.errorDescription = undefined;
+         self.loading = false;
+         self.updateDom();
+@@ -141,7 +153,7 @@ Module.register('MMM-Traffic', {
+   },
+ 
+   replaceTokens: function (text) {
+-    return text.replace(/{duration}/g, this.duration);
++    return text.replace(/{duration}/g, this.duration).replace(/{trafficDelay}/g, this.trafficDelay);
+   },
+ 
+   shouldHide: function () {
+diff --git a/README.md b/README.md
+index 034ecbc..0f9846a 100644
+--- a/README.md
++++ b/README.md
+@@ -78,6 +78,7 @@ _Note: Google maps coordinates are `latitude,longitude`, but Mapbox uses `longit
+ | Option       | Description                                       | Type    | Default Value           | Supported Options    |
+ | ------------ | ------------------------------------------------- | ------- | ----------------------- | -------------------  |
+ | `mode`       | Change the module to cycling or walking.          | string  | `'driving'`             | `'walking' 'cycling'`|
++| `provider`   | mapbox or tomtom                                  | string  | `'mapbox'`              | `'mapbox' 'tomtom'`  |
+ | `language`   | Define the commute time language.                 | string  | `config.language`       | Any language string  |
+ | `interval`   | How often the traffic is updated in milliseconds. | integer | `300000`<br>(5 minutes) |                      |
+ | `showSymbol` | Whether to show the car symbol or not.            | boolean | true                    |                      |
+@@ -98,8 +99,9 @@ in firstLine/secondLine._
+ #### Tokens
+ 
+ | Token            | Value                                            |
+-| ------------ | --------------------------------------------- |
+-| `{duration}` | The driving time returned from the mapbox API |
++| ---------------- | ------------------------------------------------ |
++| `{duration}`     | The driving time  returned from the provider API |
++| `{trafficDelay}` | The driving delay returned from the provider API (only with tomtom) |
+ 
+ ### Per Day/Time Customization
+ 

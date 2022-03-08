@@ -1,4 +1,4 @@
-# Weather e-ink frame
+# Weather station e-ink frame
 
 This is a project (hardware and software parts) designed to have a full Weather station (and many more features) displayed on a e-ink screen put in a photo frame.
 

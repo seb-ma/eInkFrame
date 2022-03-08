@@ -1,0 +1,18 @@
+diff --git a/package.json b/package.json
+index 05a2a15..70c6cd6 100644
+--- a/package.json
++++ b/package.json
+@@ -24,9 +24,11 @@
+     "postinstall": "node_modules/.bin/electron-rebuild -e ../../node_modules/electron"
+   },
+   "dependencies": {
+-    "adafruit-mpr121":"latest"
++    "gyp": "^0.5.0",
++    "node-gyp": "^8.4.1",
++    "adafruit-mpr121":"github:adafruit/node_mpr121"
+   },
+   "devDependencies": {
+-    "electron-rebuild": "^1.2.1"
++    "electron-rebuild": "^3.2.7"
+   }
+ }
