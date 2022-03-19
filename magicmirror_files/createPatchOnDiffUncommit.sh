@@ -1,24 +1,38 @@
 #!/bin/bash
 
-export currentpath=$(pwd)
+export SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
-echo "#!/bin/bash" > applyPatches.sh
-echo "pushd /opt/local/MagicMirror/" >> applyPatches.sh
+cat > $SCRIPT_DIR/applyPatches.sh<< EOF
+#!/bin/bash
+SCRIPT_DIR=\$(cd "\$(dirname "\${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
-pushd /opt/local/MagicMirror/
+# Installation directory
+pushd ~/MagicMirror/
+
+EOF
+
+# Delete previous generated patches
+rm $SCRIPT_DIR/patches/*.patch
+
+# Installation directory
+pushd ../../MagicMirror/
+
 export fullPath=$(readlink -f .)
-
+# Generate patch files and add lsit to applyPatches.sh script
 find . -name .git -execdir sh -c '
 	for dirN do
 		cd $dirN/..
 		fname=${PWD##*/}.patch
-		git diff --ignore-space-change ":(exclude)package-lock.json" ":(exclude).gitignore" > $currentpath/patches/$fname
-		echo cd ".${PWD#"$fullPath"}" >> $currentpath/applyPatches.sh
-		echo "patch < patches/$fname" >> $currentpath/applyPatches.sh
-		echo "cd -" >> $currentpath/applyPatches.sh
-		echo "" >> $currentpath/applyPatches.sh
+		git diff --ignore-space-change ":(exclude)package-lock.json" ":(exclude).gitignore" > $SCRIPT_DIR/patches/$fname
+		echo cd ".${PWD#"$fullPath"}" >> $SCRIPT_DIR/applyPatches.sh
+		echo "patch -p1 -i \$SCRIPT_DIR/patches/$fname" >> $SCRIPT_DIR/applyPatches.sh
+		echo "cd -" >> $SCRIPT_DIR/applyPatches.sh
+		echo "" >> $SCRIPT_DIR/applyPatches.sh
 	done' sh {} +
 
-echo "popd" >> applyPatches.sh
+cat >> $SCRIPT_DIR/applyPatches.sh<< EOF
+
+popd
+EOF
 
 popd

@@ -2,7 +2,18 @@
 
 This is a project (hardware and software parts) designed to have a full Weather station (and many more features) displayed on a e-ink screen put in a photo frame.
 
-It is done with a Rapsberry Pi, a 7.8" e-ink screen, a capactive touch sensor, a temperature/humidity/pressure/gas sensor and needs a internet connection.
+It is done with a Raspberry Pi, a 7.8" e-ink screen, a capacitive touch sensor, a temperature/humidity/pressure/gas sensor and needs a internet connection.
+
+
+## Status
+
+<aside>
+⚠️ This is currently a Work In Project ⚠️
+
+Most elements are functional (hardware is cleaned, software guide is ok BUT access to /dev/mem (needed for e-ink - rpio) does not work thru npm call at this stage - to be investigated.
+
+Thus, this is currently not functional at this stage.
+</aside>
 
 ## Features
 
@@ -13,7 +24,7 @@ Basic:
 - [X] Current day and time
 - [X] sunrise/sunset
 - [X] moonrise/moonset
-- [X] Gain/loss of sun minutes since yeasterday
+- [X] Gain/loss of sun minutes since yesterday
 - [X] Moon phase
 - [X] Saint of the day
 

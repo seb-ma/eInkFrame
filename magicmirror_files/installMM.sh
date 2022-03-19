@@ -1,18 +1,16 @@
 #!/bin/bash
 
-pushd /opt/local/
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+
+# Installation directory
+pushd ~/
 
 
-# Retrieving MagicMirror²
+# Retrieve MagicMirror²
 git clone https://github.com/MichMich/MagicMirror
-cd MagicMirror/
 
-# Installation (~10 minutes on RP3)
-npm install --only=production
-
-
-# Modules
-
+# Retrieve Modules
+cd MagicMirror/modules/
 
 ## Core
 ##
@@ -95,18 +93,29 @@ git clone https://github.com/seb-ma/MMM-WeatherChartD3
 ### Displays a current weather view or the forecast
 # https://docs.magicmirror.builders/modules/weather.html
 
-##
-# Dependencies installation for each module
-# (given each module is from a git repository)
-##
-#find . -name .git -print -execdir npm update \;
+cd ..
+
+# Apply patch
+$SCRIPT_DIR/applyPatches.sh
+
+
+# Install MagicMirror² and modules
 find . -name .git -print -execdir npm install --only=production \;
+#find . -name .git -print -execdir npm update \;
+
 # Specific case for i2c-bus dependency in MMM-MPR121
-cd MMM-MPR121/; npm install; npm rebuild i2c-bus --update-binary; cd -
+cd modules/MMM-MPR121/; npm install; npm rebuild i2c-bus --update-binary; cd -
+# Specific case for rpio dependency in MMM-IT8951
+#cd modules/MMM-IT8951/; npm install; npm rebuild rpio --update-binary; cd -
 
-
-popd
 
 # Copy config file and css
-cp config.js /opt/local/MagicMirror/config/config.js
-cp custom.css /opt/local/MagicMirror/css/custom.css
+cp $SCRIPT_DIR/config.js ./config/
+cp $SCRIPT_DIR/custom.css ./css/
+
+# List bad applyied patches
+echo "Failed patches:"
+find . -name "*.rej"
+echo "---"
+
+popd

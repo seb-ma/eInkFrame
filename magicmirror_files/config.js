@@ -9,6 +9,7 @@ const configPrivateParts = {
 	"animationSpeed": 0,
 
 	"mock": false,
+	"it8951_vcom": "1480",
 
 	"home": {"lat": 0.000000, "lon": 0.000000},
 	"work": {"lat": 0.000000, "lon": 0.000000},
@@ -36,7 +37,7 @@ const configPrivateParts = {
 		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
 		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"}
 	]
-}
+};
 
 let config = {
 	serverOnly: true,	// true/false/"local"
@@ -74,7 +75,7 @@ let config = {
 		{
 			module: "MMM-IT8951", // https://github.com/seb-ma/MMM-IT8951
 			config: {
-				driverParam: {VCOM: 1480},
+				driverParam: {VCOM: configPrivateParts.it8951_vcom},
 				mock: configPrivateParts.mock,
 			}
 		},
