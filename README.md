@@ -8,17 +8,15 @@ It is done with a Raspberry Pi, a 7.8" e-ink screen, a capacitive touch sensor, 
 ## Status
 
 <aside>
-⚠️ This is currently a Work In Project ⚠️
+⚠️ This is currently a Work In Progress Project ⚠️
 
-Most elements are functional (hardware is cleaned, software guide is ok BUT access to /dev/mem (needed for e-ink - rpio) does not work thru npm call at this stage - to be investigated.
-
-Thus, this is currently not functional at this stage.
+Most elements are functional (hardware is cleaned, software guide is ok BUT access to /dev/mem (needed for e-ink - rpio) does not work thru npm call at this stage - It works only with user `root` (`sudo su`) - (not even `sudo npm` works).
 </aside>
 
 ## Features
 
 At this stage, only the ticked features are available (the other features may never be done).
-It can also be customized by adding new modules (see [Module Installation](software.md#Module-Installation)).
+It can also be customized by adding new modules (see [MagicMirror² Installation](software.md#MagicMirror²)).
 
 Basic:
 - [X] Current day and time

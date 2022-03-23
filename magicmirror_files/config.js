@@ -36,7 +36,8 @@ const configPrivateParts = {
 		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
 		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
 		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"}
-	]
+	],
+	"trafficLine": "Dest_xxx {duration} mins – Impact trafic : {trafficDelay} min"
 };
 
 let config = {
@@ -127,7 +128,7 @@ let config = {
 						name: "spotify_next_previous",
 						shortPress: {notification: "SPOTIFY_NEXT", payload: {}},
 						longPress: {
-							title: "Piste prédédente",
+							title: "Piste précédente",
 							message: "Garder appuyé 3 secondes pour revenir à la piste précédente",
 							imageFA: "backward-step",
 							notification: "SPOTIFY_PREVIOUS",
@@ -246,7 +247,7 @@ let config = {
 				ip: "http://192.168.0.254",
 				displaySystemData: false,
 				displayDownloads: false,
-				requestRefresh: 300, // en secondes - entre 30 et 300
+				requestRefresh: 300, // secondes - [30 .. 300]
 			}
 		},*/
 		{
@@ -262,7 +263,7 @@ let config = {
 				control: "hidden", // "default" or "hidden"
 				showAlbumLabel: true, // if you want to show the label for the current song album
 				showVolumeLabel: true, // if you want to show the label for the current volume
-				showAccountName: true, // also show the current account name in the device label; usefull for multi account setup
+				showAccountName: true, // also show the current account name in the device label; useful for multi account setup
 				showAccountButton: false, // if you want to show the "switch account" control button
 				showDeviceButton: false, // if you want to show the "switch device" control button
 				useExternalModal: false, // if you want to use MMM-Modal for account and device popup selection instead of the build-in one (which is restricted to the album image size)
@@ -322,7 +323,7 @@ let config = {
 				accessToken: configPrivateParts.apikey_tomtom,
 				originCoords: `${configPrivateParts.home.lat},${configPrivateParts.home.lon}`,
 				destinationCoords: `${configPrivateParts.work.lat},${configPrivateParts.work.lon}`,
-				firstLine: "CGI {duration} mins – Impact trafic : {trafficDelay} min",
+				firstLine: configPrivateParts.trafficLine,
 				//secondLine: "Trajet : {duration} mins",
 				days: [1, 2, 3, 4, 5], // 0 = sunday
 				hoursStart: "06:00",
@@ -340,6 +341,7 @@ let config = {
 				decimalSymbol: configPrivateParts.decimalSymbol,
 				mock: configPrivateParts.mock,
 				offsetTemperature: 0,
+				i2cAddress: 0x77,
 			}
 		},
 		{
@@ -373,7 +375,7 @@ let config = {
 			pages: {mainPage: "bottom_right", musicPage: "bottom_right"}, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
 			config: {
-				updateInterval: 10 * 60 * 1000, // valeur par défaut : 10 minutes
+				updateInterval: 10 * 60 * 1000, // 10 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				apiKey: configPrivateParts.apikey_openweather,
 				type: "full",
@@ -394,7 +396,7 @@ let config = {
 			pages: {weatherPage: "middle_center"}, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
 			config: {
-				updateInterval: 10 * 60 * 1000, // valeur par défaut : 10 minutes
+				updateInterval: 10 * 60 * 1000, // 10 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				apiKey: configPrivateParts.apikey_openweather,
 				type: "full",
@@ -415,7 +417,7 @@ let config = {
 				reloadInterval: 5 * 60 * 1000, // 5 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				ignoreOldItems: true,
-				ignoreOlderThan: 24 * 60 * 60 * 1000, // 1 jour
+				ignoreOlderThan: 24 * 60 * 60 * 1000, // 1 day
 				showSourceTitle: true,
 				showPublishDate: true,
 				broadcastNewsFeeds: true,
