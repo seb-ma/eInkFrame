@@ -10,7 +10,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@100;200;300;400;500;600;700;800;900&display=swap');
 */
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@100;200;300;400;500;600;700;800;900&family=PT+Sans+Narrow&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@400;500;600;700&family=PT+Sans+Narrow&display=swap');
 
 :root {
 	--color-text: black;
@@ -26,13 +26,19 @@
 }
 
 body {
-	font-weight: 500;
+	font-weight: 600;
 }
 
 header {
-	font-weight: 200;
+	font-weight: 400;
 }
 
+
+/* calendar
+ ----------- */
+ .calendar .event .title {
+	text-align: start;
+}
 
 /* clock
  -------- */
@@ -50,7 +56,7 @@ header {
 /* newsfeed
  ----------- */
 .region.bottom .container .newsfeed-title {
-	height: 100px;
+	height: 110px;
  } 
 
 
@@ -70,7 +76,7 @@ header {
 	text-transform: uppercase;
 	font-size: var(--font-size-small);
 	font-family: var(--font-primary), Arial, Helvetica, sans-serif;
-	font-weight: 200;
+	font-weight: 400;
 	border-bottom: 1px solid var(--color-text-dimmed);
 	line-height: 15px;
 	padding-bottom: 5px;
@@ -82,7 +88,7 @@ header {
 /* MMM-Nantes-TAN
  ----------------- */
 .nantestan table {
-	width: 500px;
+	width: 520px;
 	/*font-size: 100%;*/
 }
 
@@ -90,6 +96,7 @@ header {
 	color: var(--color-text-dimmed);
 	font-size: 80%;
 }
+
 .nantestan table td:nth-child(4) {
 	font-size: 90%;
 }

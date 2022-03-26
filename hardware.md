@@ -95,7 +95,7 @@ To check that screen works, compile the following projects:
 cd
 wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz
 tar zxvf bcm2835-1.71.tar.gz
-cd bcm2835-1.71
+cd bcm2835-1.71/
 ./configure
 make
 sudo make check
@@ -106,7 +106,7 @@ cd
 # Correction of pointers for 64bits
 git clone https://github.com/nodfur/IT8951-ePaper.git
 
-cd IT8951-ePaper/Raspberry
+cd IT8951-ePaper/Raspberry/
 sudo make clean
 sudo make -j4
 ```
@@ -116,6 +116,47 @@ Then run:
 ```sh
 # Change value according to value specified on screen (each screen has a different value)
 sudo ./epd -1.48 0
+```
+
+## Check i²c addresses
+
+i²c communication can be checked with command:
+
+```sh
+i2cdetect -y 1
+```
+
+## Test BME680 sensor
+
+To check that BME680 sensor works:
+
+```sh
+cd
+git clone https://github.com/ftmazzone/bme680
+cd bme680/
+npm install
+```
+
+Then run:
+
+```sh
+# Test reading values
+npm run testSensor
+```
+
+## Test MPR121
+
+```sh
+cd
+git clone https://github.com/adafruit/node_mpr121
+cd node_mpr121/
+npm install
+```
+
+Then run and touch each key:
+
+```sh
+node example.js
 ```
 
 ## Assembly result
