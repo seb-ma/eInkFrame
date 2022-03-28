@@ -14,8 +14,8 @@
 
 :root {
 	--color-text: black;
-	--color-text-dimmed: black /*#333*/;
-	--color-text-bright: black /*#666*/;
+	--color-text-dimmed: black; /*#333*/
+	--color-text-bright: black; /*#666*/
 	--color-background: white;
 
 	--font-size: 30px;
@@ -36,7 +36,7 @@ header {
 
 /* calendar
  ----------- */
- .calendar .event .title {
+.calendar .event .title {
 	text-align: start;
 }
 
@@ -57,7 +57,7 @@ header {
  ----------- */
 .region.bottom .container .newsfeed-title {
 	height: 110px;
- } 
+}
 
 
 /* weather
@@ -139,7 +139,7 @@ header {
  -------------- */
 #SPOTIFY {
 	color: var(--color-text);
-	font-size:1rem;
+	font-size: 1rem;
 	text-shadow: none !important;
 }
 
@@ -158,6 +158,18 @@ header {
 
 #SPOTIFY_TITLE {
 	color: var(--color-text);
+}
+
+#SPOTIFY_DEVICE {
+	display: none;
+}
+
+#SPOTIFY_VOLUME {
+	display: none;
+}
+
+#SPOTIFY_PROGRESS_TIME {
+	display: none;	
 }
 
 progress[value]#SPOTIFY_PROGRESS_BAR::-webkit-progress-value {
@@ -179,6 +191,6 @@ progress[value]#SPOTIFY_PROGRESS_BAR::-webkit-progress-bar {
 
 /* MMM-WeatherChartD3
  -------------------- */
- .MMM-WeatherChartD3 .night {
+.MMM-WeatherChartD3 .night {
 	opacity: 0.1;
 }

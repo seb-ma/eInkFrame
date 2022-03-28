@@ -52,7 +52,7 @@ Approximate price: 430€ (in 2022)
 | Adafruit MPR121 |  | 1 | Capacitive keys<br/>Warn: 2 revisions exist with different pins |
 | Socket MPR121 contacts | 200-SSM113SSV | 1 | 7-pins female socket |
 | Socket MPR121 comm | 200-SSM107LSV | 1 | 13-pins female socket |
-| Screw Terminal 01x03 | 571-2383945-3 | 4 | Hard to source. May be optional by directly ironing wires on pads |
+| Screw Terminal 01x03 | 651-1814647 | 4 | May be optional by directly ironing wires on pads |
 | Wire 24AWG | 650-100G0111-0.25-0 | 4 | Probably less is needed (wires needed from screw terminals to frame picture turn buttons) |
 | Terminal | 571-151439 | 12 (or # of needed keys) | To fix wires on frame picture turn buttons |
 | Frame picture turn button |  | 12 (or # of needed keys) | As large as possible: used as capacitive keys<br/>May be another system like rivets through frame |

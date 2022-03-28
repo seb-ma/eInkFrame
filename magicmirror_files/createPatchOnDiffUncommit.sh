@@ -24,10 +24,17 @@ find . -name .git -execdir sh -c '
 		cd $dirN/..
 		fname=${PWD##*/}.patch
 		git diff --ignore-space-change ":(exclude)package-lock.json" ":(exclude).gitignore" > $SCRIPT_DIR/patches/$fname
-		echo cd ".${PWD#"$fullPath"}" >> $SCRIPT_DIR/applyPatches.sh
-		echo "patch -p1 -i \$SCRIPT_DIR/patches/$fname" >> $SCRIPT_DIR/applyPatches.sh
-		echo "cd -" >> $SCRIPT_DIR/applyPatches.sh
-		echo "" >> $SCRIPT_DIR/applyPatches.sh
+
+		if [ -s $SCRIPT_DIR/patches/$fname ]
+		then
+			echo cd ".${PWD#"$fullPath"}" >> $SCRIPT_DIR/applyPatches.sh
+			echo "patch -p1 -i \$SCRIPT_DIR/patches/$fname" >> $SCRIPT_DIR/applyPatches.sh
+			echo "cd -" >> $SCRIPT_DIR/applyPatches.sh
+			echo "" >> $SCRIPT_DIR/applyPatches.sh
+		else
+			rm $SCRIPT_DIR/patches/$fname
+		fi
+
 	done' sh {} +
 
 cat >> $SCRIPT_DIR/applyPatches.sh<< EOF

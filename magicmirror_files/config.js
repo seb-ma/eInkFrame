@@ -1,8 +1,8 @@
- /* Magic Mirror Config
- *
- * By Sébastien Mazzon
- * MIT License
- */
+/* Magic Mirror Config
+*
+* By Sébastien Mazzon
+* MIT License
+*/
 
 const configPrivateParts = {
 	"decimalSymbol": ",",
@@ -11,8 +11,8 @@ const configPrivateParts = {
 	"mock": false,
 	"it8951_vcom": "1480",
 
-	"home": {"lat": 0.000000, "lon": 0.000000},
-	"work": {"lat": 0.000000, "lon": 0.000000},
+	"home": { "lat": 0.000000, "lon": 0.000000 },
+	"work": { "lat": 0.000000, "lon": 0.000000 },
 
 	"apikey_openweather": "xxx",
 	"apikey_tomtom": "xxx",
@@ -33,9 +33,9 @@ const configPrivateParts = {
 	},
 	"department": "00",
 	"tan_busStations": [
-		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
-		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"},
-		{"arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus"}
+		{ "arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus" },
+		{ "arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus" },
+		{ "arret": "xxxx", "ligne": "xx", "sens": "x", "symbol": "bus" }
 	],
 	"trafficLine": "Dest_xxx {duration} mins – Impact trafic : {trafficDelay} min"
 };
@@ -76,7 +76,7 @@ let config = {
 		{
 			module: "MMM-IT8951", // https://github.com/seb-ma/MMM-IT8951
 			config: {
-				driverParam: {VCOM: configPrivateParts.it8951_vcom},
+				driverParam: { VCOM: configPrivateParts.it8951_vcom },
 				mock: configPrivateParts.mock,
 			}
 		},
@@ -84,12 +84,12 @@ let config = {
 			module: "MMM-NotifCustomActions", // https://github.com/seb-ma/MMM-NotifCustomActions
 			config: {
 				actions: [
-					{notification: "ACTION_SHUTDOWN", action_node: function(sender, payload) {exec("sudo shutdown -h now");}},
+					{ notification: "ACTION_SHUTDOWN", action_node: function (sender, payload) { exec("sudo shutdown -h now"); } },
 
-					{notification: "SPOTIFY_CONNECTED",    action_module: function(sender, payload) {self.sendNotification("PAGE_SELECT", "musicPage");}},
-					{notification: "SPOTIFY_DISCONNECTED", action_module: function(sender, payload) {self.sendNotification("PAGE_SELECT", "mainPage");}},
+					{ notification: "SPOTIFY_CONNECTED", action_module: function (sender, payload) { self.sendNotification("PAGE_SELECT", "musicPage"); } },
+					{ notification: "SPOTIFY_DISCONNECTED", action_module: function (sender, payload) { self.sendNotification("PAGE_SELECT", "mainPage"); } },
 
-					{notification: "PAGE_CHANGED",         action_module: function(sender, payload) {self.sendNotification("IT8951_ASK_FULL_REFRESH");}},
+					{ notification: "PAGE_CHANGED", action_module: function (sender, payload) { setTimeout(() => { self.sendNotification("IT8951_ASK_FULL_REFRESH"); }, 1000) } },
 				]
 			}
 		},
@@ -106,27 +106,27 @@ let config = {
 							imageFA: "power-off",
 							notification: "ACTION_SHUTDOWN", // MMM-NotifCustomActions
 						},
-						shortPress: {notification: "IT8951_ASK_FULL_REFRESH", payload: {}},
+						shortPress: { notification: "IT8951_ASK_FULL_REFRESH", payload: {} },
 					},
 					{
 						pin: 1,
 						name: "page_previous",
-						shortPress: {notification: "DECREMENT_PAGE", payload: {}},
+						shortPress: { notification: "DECREMENT_PAGE", payload: {} },
 					},
 					{
 						pin: 2,
 						name: "page_next",
-						shortPress: {notification: "INCREMENT_PAGE", payload: {}},
+						shortPress: { notification: "INCREMENT_PAGE", payload: {} },
 					},
 					{
 						pin: 3,
 						name: "spotify_toggle",
-						shortPress: {notification: "SPOTIFY_TOGGLE", payload: {}}, // Play/pause
+						shortPress: { notification: "SPOTIFY_TOGGLE", payload: {} }, // Play/pause
 					},
 					{
 						pin: 4,
 						name: "spotify_next_previous",
-						shortPress: {notification: "SPOTIFY_NEXT", payload: {}},
+						shortPress: { notification: "SPOTIFY_NEXT", payload: {} },
 						longPress: {
 							title: "Piste précédente",
 							message: "Garder appuyé 3 secondes pour revenir à la piste précédente",
@@ -137,13 +137,18 @@ let config = {
 					{
 						pin: 5,
 						name: "spotify_volume_up",
-						shortPress: {notification: "SPOTIFY_VOLUME_UP", payload: {}},
+						shortPress: { notification: "SPOTIFY_VOLUME_UP", payload: {} },
 					},
 					{
 						pin: 6,
 						name: "spotify_volume_down",
-						shortPress: {notification: "SPOTIFY_VOLUME_DOWN", payload: {}}
+						shortPress: { notification: "SPOTIFY_VOLUME_DOWN", payload: {} }
 					},
+					{ pin: 7, name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin: 8, name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin: 9, name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin: 10, name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin: 11, name: "unused", shortPress: { notification: "unused", payload: {} } },
 				]
 			}
 		},
@@ -162,12 +167,12 @@ let config = {
 		{
 			module: "updatenotification", // https://docs.magicmirror.builders/modules/updatenotification.html
 			position: "top_bar",
-			pages: {mainPage: "top_bar", musicPage: "top_bar"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "top_bar", musicPage: "top_bar" }, // Config for MMM-Page-Selector
 		},
 		{
 			module: "clock", // https://docs.magicmirror.builders/modules/clock.html
 			position: "top_left",
-			pages: {mainPage: "top_left", musicPage: "top_left"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
 			config: {
 				displaySeconds: false,
 				showWeek: false,
@@ -180,7 +185,7 @@ let config = {
 		{
 			module: 'MMM-Saint', // https://github.com/bugsounet/MMM-Saint#readme
 			position: "top_left",
-			pages: {mainPage: "top_left", musicPage: "top_left"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
 			configDeepMerge: true,
 			config: {
 				debug: false,
@@ -190,15 +195,15 @@ let config = {
 		{
 			module: "MMM-CalDAV", // https://github.com/MMRIZE/MMM-CalDAV#readme
 			config: {
-			  name: "familial",
-			  serverUrl: configPrivateParts.caldav_config.serverUrl,
-			  credentials: {
-				username: configPrivateParts.caldav_config.username,
-				password: configPrivateParts.caldav_config.password,
-			  },
-			  calendarFilter: ["Familial"],
-			  updateInterval: 10 * 60 * 1000, // 10 minutes
-			  vcalendarHeader: false,
+				name: "familial",
+				serverUrl: configPrivateParts.caldav_config.serverUrl,
+				credentials: {
+					username: configPrivateParts.caldav_config.username,
+					password: configPrivateParts.caldav_config.password,
+				},
+				calendarFilter: ["Familial"],
+				updateInterval: 10 * 60 * 1000, // 10 minutes
+				vcalendarHeader: false,
 			}
 		},
 		{
@@ -215,12 +220,12 @@ let config = {
 			module: "calendar", // https://docs.magicmirror.builders/modules/calendar.html
 			header: "Prochains événements",
 			position: "top_center",
-			pages: {mainPage: "top_center", taskPage: "top_right"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "top_center", taskPage: "top_right" }, // Config for MMM-Page-Selector
 			config: {
 				maximumEntries: 15,
 				fetchInterval: 15 * 60 * 1000, // 15 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
-					calendars: [
+				calendars: [
 					{
 						symbol: "house-user",
 						displaySymbol: true,
@@ -253,7 +258,7 @@ let config = {
 		{
 			module: "MMM-Spotify", // https://github.com/skuethe/MMM-Spotify#readme
 			position: "top_center",
-			pages: {musicPage: "top_center"}, // Config for MMM-Page-Selector
+			pages: { musicPage: "top_center" }, // Config for MMM-Page-Selector
 			hiddenOnStartup: true,
 			config: {
 				deviceDisplay: "en écoute sur",
@@ -278,7 +283,7 @@ let config = {
 		{
 			module: "MMM-VigilanceMeteoFrance", // https://github.com/grenagit/MMM-VigilanceMeteoFrance
 			position: "top_right",
-			pages: {mainPage: "top_right", musicPage: "top_right"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			config: {
 				department: configPrivateParts.department, // Department number
 				updateInterval: 10 * 60 * 1000, // 10 minutes
@@ -293,7 +298,7 @@ let config = {
 		{
 			module: "MMM-Pollen-FR", // https://github.com/lekesako/MMM-Pollen-FR#readme
 			position: "top_right",
-			pages: {mainPage: "top_right", musicPage: "top_right"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			header: "Alertes pollens",
 			config: {
 				updateInterval: 2 * 60 * 60 * 1000, // every 2 hours
@@ -305,7 +310,7 @@ let config = {
 		{
 			module: 'MMM-Nantes-TAN', // https://github.com/normyx/MMM-Nantes-TAN#readme
 			position: 'top_right',
-			pages: {mainPage: "top_right", musicPage: "top_right"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			header: 'TAN',
 			config: {
 				showSecondsToNextUpdate: false,
@@ -315,7 +320,7 @@ let config = {
 		{
 			module: "MMM-Traffic", // https://github.com/samlewis0602/MMM-Traffic#readme
 			position: "top_right",
-			pages: {mainPage: "top_right", musicPage: "top_right"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			header: "Trajet voiture",
 			interval: 5 * 60 * 1000, // 5 minutes
 			config: {
@@ -334,7 +339,7 @@ let config = {
 			module: "MMM-Bosch-BME680-sensor", // https://github.com/seb-ma/MMM-Bosch-BME680-sensor
 			header: "Intérieur",
 			position: "bottom_left", // Remove position to have only notifications
-			pages: {mainPage: "bottom_left", musicPage: "bottom_left"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			config: {
 				updateInterval: 1 * 60 * 1000, // full refresh screen delay // 1 minute
 				animationSpeed: configPrivateParts.animationSpeed,
@@ -347,7 +352,7 @@ let config = {
 		{
 			module: "weather", // https://docs.magicmirror.builders/modules/weather.html
 			position: "bottom_left",
-			pages: {mainPage: "bottom_left", musicPage: "bottom_left"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			header: "Extérieur",
 			config: {
 				updateInterval: 2 * 60 * 1000, // 2  minutes
@@ -372,14 +377,14 @@ let config = {
 		{
 			module: "MMM-WeatherChartD3", // https://github.com/seb-ma/MMM-WeatherChartD3
 			position: "bottom_right",
-			pages: {mainPage: "bottom_right", musicPage: "bottom_right"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "bottom_right", musicPage: "bottom_right" }, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
 			config: {
 				updateInterval: 10 * 60 * 1000, // 10 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				apiKey: configPrivateParts.apikey_openweather,
 				type: "full",
-				height: 350,
+				height: 400,
 				width: 1300,
 				iconSize: 48, // in px or undefined to define automatically at first call
 				hoursRatio: 0.5,
@@ -393,15 +398,15 @@ let config = {
 			module: "MMM-WeatherChartD3", // https://github.com/seb-ma/MMM-WeatherChartD3
 			position: "middle_center",
 			hiddenOnStartup: true,
-			pages: {weatherPage: "middle_center"}, // Config for MMM-Page-Selector
+			pages: { weatherPage: "middle_center" }, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
 			config: {
 				updateInterval: 10 * 60 * 1000, // 10 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				apiKey: configPrivateParts.apikey_openweather,
 				type: "full",
-				height: 1000,
-				width: 1700,
+				height: 1300,
+				width: 1800,
 				lat: configPrivateParts.home.lat,
 				lon: configPrivateParts.home.lon,
 				color: "#000",
@@ -411,7 +416,7 @@ let config = {
 		{
 			module: "newsfeed", // https://docs.magicmirror.builders/modules/newsfeed.html
 			position: "bottom_bar",
-			pages: {mainPage: "bottom_bar", musicPage: "bottom_bar"}, // Config for MMM-Page-Selector
+			pages: { mainPage: "bottom_bar", musicPage: "bottom_bar" }, // Config for MMM-Page-Selector
 			config: {
 				updateInterval: 10 * 1000, // 10 secondes
 				reloadInterval: 5 * 60 * 1000, // 5 minutes
@@ -438,7 +443,7 @@ let config = {
 			module: 'MMM-Trello', // https://github.com/Jopyth/MMM-Trello#readme
 			position: 'middle_center',
 			hiddenOnStartup: true,
-			pages: {taskPage: "top_left"}, // Config for MMM-Page-Selector
+			pages: { taskPage: "top_left" }, // Config for MMM-Page-Selector
 			config: {
 				reloadInterval: 5 * 60 * 1000, // 10 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
@@ -453,4 +458,4 @@ let config = {
 };
 
 /*************** DO NOT EDIT THE LINE BELOW ***************/
-if (typeof module !== "undefined") {module.exports = config;}
+if (typeof module !== "undefined") { module.exports = config; }

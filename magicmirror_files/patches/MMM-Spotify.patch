@@ -1,3 +1,17 @@
+diff --git a/MMM-Spotify.js b/MMM-Spotify.js
+index c86846d..af595f3 100644
+--- a/MMM-Spotify.js
++++ b/MMM-Spotify.js
+@@ -1085,7 +1085,8 @@ Module.register("MMM-Spotify", {
+ 
+   suspend: function() {
+     console.log(this.name + " is suspended.")
+-    this.sendSocketNotification("SUSPENDING")
++    // Let Spotify listen accounts even if suspended
++    //this.sendSocketNotification("SUSPENDING")
+     if (typeof this.config.notificationsOnSuspend === "object" && this.config.notificationsOnSuspend.length > 0) {
+       for (let i = 0; i < this.config.notificationsOnSuspend.length; i++) {
+         this.sendNotification(this.config.notificationsOnSuspend[i].notification, this.config.notificationsOnSuspend[i].payload)
 diff --git a/Spotify.js b/Spotify.js
 index da28e28..4a1af88 100644
 --- a/Spotify.js
