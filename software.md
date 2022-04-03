@@ -2,7 +2,22 @@
 
 This project works thanks to [MagicMirror²](https://magicmirror.builders/) *("The open source modular smart mirror platform”)* running on [Raspberry Pi OS](https://www.raspberrypi.com/software/).
 
+![homescreen](images/d-screen-home.png)
+
+![screen music](images/d-screen-music.png)
+
 This document is a guide (step-by-step) to install and configure all software, dependencies and modules from scratch.
+
+## Disclaimer
+
+This guide works but only with the `root` user.
+
+This is due to a problem accessing /dev/mem (witch is needed for e-ink).
+It currently can't be accessed thru npm call at this stage, neither as `sudo npm` nor with sticky bit or `cap_sys_rawio` capability set.
+
+It works only with user `root` (`sudo su`).
+
+Thus, all parts about `serverusr` must be replaced by `root`.
 
 ## Raspberry Pi OS
 
@@ -13,14 +28,10 @@ This section deals with the installation and configuration of the operating syst
 Create the SD card with Raspberry Pi Imager: [Raspberry Pi OS - Raspberry Pi](https://www.raspberrypi.com/software/)
 May be installed from linux distribution of manually.
 
-<aside>
 ⚠️ This project requires a `desktop` version and not `lite`.
-</aside>
 
-<aside>
 ⚠️ Because of a dependency on a module that does not seem to compile on a 32-bit version (i2c_bus for adafruit-mpr121), it is necessary to use a 64-bit version:
 [https://downloads.raspberrypi.org/raspios_full_arm64/images/](https://downloads.raspberrypi.org/raspios_full_arm64/images/)
-</aside>
 
 ### SSH activation
 
@@ -140,8 +151,8 @@ SUBSYSTEM=="bcm2835-gpiomem", KERNEL=="gpiomem", GROUP="gpio", MODE="0660"
 sudo apt install -y unattended-upgrades
 # Installation of MagicMirror dependencies
 sudo apt install -y npm nodejs
-# Installation of tools (already present by default)
-#sudo apt install -y git make
+# Installation of tools (probably already present by default)
+sudo apt install -y git make gcc-c++
 ```
 
 ### Automatic updates
@@ -321,7 +332,7 @@ Put the following content in the file:
 
 ```properties
 [Unit]
-Description=Magic Mirror
+Description=MagicMirror²
 After=network.target
 StartLimitIntervalSec=0
 
@@ -342,7 +353,7 @@ Enable and start the service:
 ```sh
 # Starting the service
 sudo systemctl start magicmirror.service
-sudo systemctl status magicmirror.service
+systemctl status magicmirror.service
 # Enabling the service
 sudo systemctl enable magicmirror.service
 ```

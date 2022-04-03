@@ -98,7 +98,7 @@ let config = {
 			config: {
 				buttons: [
 					{
-						pin: 0,
+						pin: 4,
 						name: "power",
 						longPress: {
 							title: "Extinction",
@@ -109,22 +109,22 @@ let config = {
 						shortPress: { notification: "IT8951_ASK_FULL_REFRESH", payload: {} },
 					},
 					{
-						pin: 1,
+						pin: 3,
 						name: "page_previous",
 						shortPress: { notification: "DECREMENT_PAGE", payload: {} },
 					},
 					{
-						pin: 2,
+						pin: 5,
 						name: "page_next",
 						shortPress: { notification: "INCREMENT_PAGE", payload: {} },
 					},
 					{
-						pin: 3,
+						pin: 6,
 						name: "spotify_toggle",
 						shortPress: { notification: "SPOTIFY_TOGGLE", payload: {} }, // Play/pause
 					},
 					{
-						pin: 4,
+						pin: 10,
 						name: "spotify_next_previous",
 						shortPress: { notification: "SPOTIFY_NEXT", payload: {} },
 						longPress: {
@@ -135,19 +135,19 @@ let config = {
 						},
 					},
 					{
-						pin: 5,
+						pin: 8,
 						name: "spotify_volume_up",
 						shortPress: { notification: "SPOTIFY_VOLUME_UP", payload: {} },
 					},
 					{
-						pin: 6,
+						pin: 7,
 						name: "spotify_volume_down",
 						shortPress: { notification: "SPOTIFY_VOLUME_DOWN", payload: {} }
 					},
-					{ pin: 7, name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin: 8, name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin: 9, name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin: 10, name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:  0, name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:  1, name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:  2, name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:  9, name: "unused", shortPress: { notification: "unused", payload: {} } },
 					{ pin: 11, name: "unused", shortPress: { notification: "unused", payload: {} } },
 				]
 			}
@@ -218,7 +218,7 @@ let config = {
 		},
 		{
 			module: "calendar", // https://docs.magicmirror.builders/modules/calendar.html
-			header: "Prochains événements",
+			header: "Prochains évènements",
 			position: "top_center",
 			pages: { mainPage: "top_center", taskPage: "top_right" }, // Config for MMM-Page-Selector
 			config: {
@@ -345,7 +345,7 @@ let config = {
 				animationSpeed: configPrivateParts.animationSpeed,
 				decimalSymbol: configPrivateParts.decimalSymbol,
 				mock: configPrivateParts.mock,
-				offsetTemperature: 0,
+				offsetTemperature: 0.5,
 				i2cAddress: 0x77,
 			}
 		},
@@ -386,7 +386,7 @@ let config = {
 				type: "full",
 				height: 400,
 				width: 1300,
-				iconSize: 48, // in px or undefined to define automatically at first call
+				//iconSize: 48, // in px or undefined to define automatically at first call
 				hoursRatio: 0.5,
 				lat: configPrivateParts.home.lat,
 				lon: configPrivateParts.home.lon,

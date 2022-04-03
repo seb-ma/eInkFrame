@@ -1,8 +1,8 @@
 # Hardware part
 
-![frame](images/r-front.jpg)
-
 This project was done with KiCad. Schematic and PCB are provided in this format.
+
+![frame](images/r-front.jpg)
 
 - Schematic has a complete overview of all components needed (including sockets, holes and mounting stuff)
     - Each component is socketed
@@ -61,10 +61,12 @@ Approximate price: 430€ (in 2022)
 | Insert M3 | 153-PFLA-M3-2 | 4 | To fix PCB in frame |
 | Standoff M3 | 761-M2115-3005-SS | 4 | Length may differ according to frame height. A secure length is 23mm (pairing with inserts and screws) |
 | Screw M3 | 534-9191-3 | 4 | To fix PCB in frame |
+| Standoff M3 | 5164-SH1000-F | 2 | To support frame with correct slope (length/position may differ according to frame border size) |
+| Nut M3| 144-04M030050HN | 2| To fix standoffs |
 | Cable tie | 644-BC1M-S4-M0 | 1 | To maintain USB cable |
 | **Misc** |
-| Nut M2.5 | 144-04M025045HN | 10 | For Raspberry and IT8951 boards + 2 for mounting frame |
-| Screw M2.5 | 534-29300 | 10 | For Raspberry and IT8951 boards + 2 for mounting frame |
+| Nut M2.5 | 144-04M025045HN | 8 | For Raspberry and IT8951 board |
+| Screw M2.5 | 534-29300 | 8 | For Raspberry and IT8951 boards |
 | Nut M2 | M80-2430000B | 4 | For CJMU-680 and Adafruit MPR121 boards |
 | Screw M2 | 48SM006 | 4 | For CJMU-680 and Adafruit MPR121 boards |
 | Standoff M2 | 710-971100244 | 4 | Standoffs for CJMCU-680 and Adafruit MPR121 (pairing with nuts and screws) |
@@ -169,13 +171,15 @@ Here are some pictures from first realisation:
 
 ![pcb](images/r-pcb.jpg)
 
+![pcb detail on it8951](images/r-pcb-it8951.jpg)
+
 ![side 1](images/r-side1.jpg)
 
 ![side 2](images/r-side2.jpg)
 
-![frame](images/r-back.jpg)
+![frame (back)](images/r-back.jpg)
 
-![frame](images/r-front.jpg)
+![frame (front)](images/r-front.jpg)
 
 ## Useful references during development
 

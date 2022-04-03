@@ -28,8 +28,8 @@
   (pad "1" smd rect (at -2.5 0) (size 1.4 3.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp fd9be707-b3ae-43b1-897e-dcac42108175))
   (pad "2" smd rect (at 0 0) (size 1.4 3.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 2396d91b-84e6-4f06-9528-a7a72b4989b9))
   (pad "3" smd rect (at 2.5 0) (size 1.4 3.4) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp 692a044f-23f3-4034-bd3d-0d9839f70ab1))
-  (pad "SH" smd rect (at -5.15 6.6) (size 2.3 5.6) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp d5006b7f-8c6e-4019-8600-ede16e238028))
-  (pad "SH" smd rect (at 5.15 6.6) (size 2.3 5.6) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp e2c964f0-ce92-433d-9cb2-b6bc8e78ff43))
+  (pad "SH1" smd rect (at -5.15 6.6) (size 2.3 5.6) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp d5006b7f-8c6e-4019-8600-ede16e238028))
+  (pad "SH2" smd rect (at 5.15 6.6) (size 2.3 5.6) (layers "F.Cu" "F.Paste" "F.Mask") (tstamp e2c964f0-ce92-433d-9cb2-b6bc8e78ff43))
   (model "${KIPRJMOD}/lib/vendors/pxc_1814647_00_PTSM-0-5-3-2-5-H-SMD-WH-R44_3D.stp"
     (offset (xyz -4 -10.28 0))
     (scale (xyz 1 1 1))

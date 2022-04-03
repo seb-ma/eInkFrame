@@ -1,24 +1,40 @@
 # Weather station e-ink frame
 
-This is a project (hardware and software parts) designed to have a full Weather station (and many more features) displayed on a e-ink screen put in a photo frame.
+This is a project (hardware and software parts) designed to have a full Weather station (and many more features) displayed on a e-ink screen put in a photo frame with tactile buttons.
 
 It is done with a Raspberry Pi, a 7.8" e-ink screen, a capacitive touch sensor, a temperature/humidity/pressure/gas sensor and needs a internet connection.
 
+![final](images/r-final.jpg)
 
 ## Status
 
-<aside>
-⚠️ This is currently a Work In Progress Project ⚠️
+This project is fully functional.
 
-Most elements are functional (hardware is cleaned, software guide is ok BUT access to /dev/mem (needed for e-ink - rpio) does not work thru npm call at this stage - It works only with user `root` (`sudo su`) - (not even `sudo npm` works).
-</aside>
+Some improvements can be done (see [MagicMirror² Installation](software.md#Disclaimer)) and more features may be added in the future (see below).
+
+## Hardware
+
+Complete guide is in [hardware part](hardware.md).
+
+It includes:
+- Information on schematic
+- Bill Of Material
+
+## Software
+
+Complete guide is in [software part](software.md).
+
+It includes:
+- Installation and configuration of OS on Raspberry
+- Installation and configuration of [MagicMirror²](https://magicmirror.builders/) and all the modules
 
 ## Features
 
-At this stage, only the ticked features are available (the other features may never be done).
+At this stage, all the ticked features are available (the other features may never be done).
 It can also be customized by adding new modules (see [MagicMirror² Installation](software.md#MagicMirror²)).
 
-Basic:
+### Basic
+
 - [X] Current day and time
 - [X] sunrise/sunset
 - [X] moonrise/moonset
@@ -26,7 +42,8 @@ Basic:
 - [X] Moon phase
 - [X] Saint of the day
 
-Weather/outdoor:
+### Weather/outdoor
+
 - [X] Indoor sensors:
     - [X] temperature
     - [X] humidity
@@ -57,42 +74,31 @@ Weather/outdoor:
 - [ ] Maps of winds, rain, lightning
 - [ ] Historic graph of indoor sensor measures
 
-Calendar and tasks:
+### Calendar and tasks
+
 - [X] Upcoming events in family calendar
 - [X] Upcoming birthdays
 - [X] Tasks (from Trello)
 
-Travels:
+### Travels
+
 - [X] Next upcoming used bus lines
     - [X] with alerts on this lines
 - [X] Travel time to work
 - [ ] Map of traffic
 
-Entertainment:
+### Entertainment
+
 - [X] Headlines of news
 - [X] Current Spotify music (watch multiple accounts)
     - [X] with buttons for Spotify control (volume, next/previous, start/stop)
 - [ ] Game of life
 
-Display:
+### Display
+
 - [X] Different pages that can be accessed with buttons
 
-Advanced features (not yet planned):
+### Advanced features (not yet planned)
+
 - [ ] Jeedom interaction
 - [ ] Communication with home sensors (indoor and outdoor)
-
-## Hardware
-
-Complete guide is in [hardware part](hardware.md).
-
-It includes:
-- Information on schematic
-- Bill Of Material
-
-## Software
-
-Complete guide is in [software part](software.md).
-
-It includes:
-- Installation and configuration of OS on Raspberry
-- Installation and configuration of [MagicMirror²](https://magicmirror.builders/) and all the modules
