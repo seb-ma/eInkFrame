@@ -1,5 +1,5 @@
 diff --git a/modules/default/clock/clock.js b/modules/default/clock/clock.js
-index 52cdb7e0..425646b3 100644
+index 7c9310f0..b059babb 100644
 --- a/modules/default/clock/clock.js
 +++ b/modules/default/clock/clock.js
 @@ -88,6 +88,30 @@ Module.register("clock", {
@@ -58,15 +58,15 @@ index 52cdb7e0..425646b3 100644
  			sunWrapper.innerHTML =
  				'<span class="' +
  				(isVisible ? "bright" : "") +
--				'"><i class="fa fa-sun-o" aria-hidden="true"></i> ' +
+-				'"><i class="fas fa-sun" aria-hidden="true"></i> ' +
 +				'"><i class="wi weathericon wi-day-sunny" aria-hidden="true"></i> ' +
  				untilNextEventString +
  				"</span>" +
--				'<span><i class="fa fa-arrow-up" aria-hidden="true"></i> ' +
+-				'<span><i class="fas fa-arrow-up" aria-hidden="true"></i> ' +
 +				'<span><i class="wi weathericon wi-sunrise" aria-hidden="true"></i> ' +
  				formatTime(this.config, sunTimes.sunrise) +
  				"</span>" +
--				'<span><i class="fa fa-arrow-down" aria-hidden="true"></i> ' +
+-				'<span><i class="fas fa-arrow-down" aria-hidden="true"></i> ' +
 +				'<span><i class="wi weathericon wi-sunset" aria-hidden="true"></i> ' +
  				formatTime(this.config, sunTimes.sunset) +
  				"</span>";
@@ -80,21 +80,21 @@ index 52cdb7e0..425646b3 100644
  			moonWrapper.innerHTML =
  				'<span class="' +
  				(isVisible ? "bright" : "") +
--				'"><i class="fa fa-moon-o" aria-hidden="true"></i> ' +
+-				'"><i class="fas fa-moon" aria-hidden="true"></i> ' +
 +				`"><i class="wi weathericon wi-${moonIcon} aria-hidden="true"></i> ` +
  				illuminatedFractionString +
  				"</span>" +
--				'<span><i class="fa fa-arrow-up" aria-hidden="true"></i> ' +
+-				'<span><i class="fas fa-arrow-up" aria-hidden="true"></i> ' +
 +				'<span><i class="wi weathericon wi-moonrise" aria-hidden="true"></i> ' +
  				(moonRise ? formatTime(this.config, moonRise) : "...") +
  				"</span>" +
--				'<span><i class="fa fa-arrow-down" aria-hidden="true"></i> ' +
+-				'<span><i class="fas fa-arrow-down" aria-hidden="true"></i> ' +
 +				'<span><i class="wi weathericon wi-moonset" aria-hidden="true"></i> ' +
  				(moonSet ? formatTime(this.config, moonSet) : "...") +
  				"</span>";
  			digitalWrapper.appendChild(moonWrapper);
 diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
-index 40746e82..75b8e27b 100755
+index bfeb0b8f..1f24ac19 100755
 --- a/modules/default/weather/current.njk
 +++ b/modules/default/weather/current.njk
 @@ -1,15 +1,20 @@
@@ -122,7 +122,7 @@ index 40746e82..75b8e27b 100755
                  {% endif %}
                  {% if config.showWindDirection %}
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
-index c1258d3c..eaca5fc3 100755
+index b0f5eedf..bb7f8ca8 100755
 --- a/modules/default/weather/providers/openweathermap.js
 +++ b/modules/default/weather/providers/openweathermap.js
 @@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
@@ -164,16 +164,16 @@ index c1258d3c..eaca5fc3 100755
  	/**
  	 * Overrides method for setting config to check if endpoint is correct for hourly
  	 *
-@@ -135,7 +158,7 @@ WeatherProvider.register("openweathermap", {
- 			currentWeather.windSpeed = currentWeatherData.wind.speed;
- 		}
+@@ -130,7 +153,7 @@ WeatherProvider.register("openweathermap", {
+ 		currentWeather.feelsLikeTemp = currentWeatherData.main.feels_like;
+ 		currentWeather.windSpeed = currentWeatherData.wind.speed;
  		currentWeather.windDirection = currentWeatherData.wind.deg;
 -		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.weather[0].icon);
 +		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.weather[0].icon, currentWeatherData.weather[0].id);
  		currentWeather.sunrise = moment(currentWeatherData.sys.sunrise, "X");
  		currentWeather.sunset = moment(currentWeatherData.sys.sunset, "X");
  
-@@ -208,11 +231,11 @@ WeatherProvider.register("openweathermap", {
+@@ -203,11 +226,11 @@ WeatherProvider.register("openweathermap", {
  				weather.date = moment(forecast.dt, "X");
  
  				// If the first value of today is later than 17:00, we have an icon at least!
@@ -187,7 +187,7 @@ index c1258d3c..eaca5fc3 100755
  			}
  
  			// the same day as before
-@@ -262,7 +285,7 @@ WeatherProvider.register("openweathermap", {
+@@ -257,7 +280,7 @@ WeatherProvider.register("openweathermap", {
  			weather.date = moment(forecast.dt, "X");
  			weather.minTemperature = forecast.temp.min;
  			weather.maxTemperature = forecast.temp.max;
@@ -196,7 +196,7 @@ index c1258d3c..eaca5fc3 100755
  			weather.rain = 0;
  			weather.snow = 0;
  
-@@ -311,7 +334,7 @@ WeatherProvider.register("openweathermap", {
+@@ -306,7 +329,7 @@ WeatherProvider.register("openweathermap", {
  			current.sunrise = moment(data.current.sunrise, "X").utcOffset(data.timezone_offset / 60);
  			current.sunset = moment(data.current.sunset, "X").utcOffset(data.timezone_offset / 60);
  			current.temperature = data.current.temp;
@@ -205,7 +205,7 @@ index c1258d3c..eaca5fc3 100755
  			current.humidity = data.current.humidity;
  			if (data.current.hasOwnProperty("rain") && !isNaN(data.current["rain"]["1h"])) {
  				if (this.config.units === "imperial") {
-@@ -348,7 +371,7 @@ WeatherProvider.register("openweathermap", {
+@@ -343,7 +366,7 @@ WeatherProvider.register("openweathermap", {
  				weather.humidity = hour.humidity;
  				weather.windSpeed = hour.wind_speed;
  				weather.windDirection = hour.wind_deg;
@@ -214,7 +214,7 @@ index c1258d3c..eaca5fc3 100755
  				precip = false;
  				if (hour.hasOwnProperty("rain") && !isNaN(hour.rain["1h"])) {
  					if (this.config.units === "imperial") {
-@@ -379,7 +402,17 @@ WeatherProvider.register("openweathermap", {
+@@ -374,7 +397,17 @@ WeatherProvider.register("openweathermap", {
  		const days = [];
  		if (data.hasOwnProperty("daily")) {
  			for (const day of data.daily) {
@@ -233,7 +233,7 @@ index c1258d3c..eaca5fc3 100755
  					weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
  					weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
  					weather.minTemperature = day.temp.min;
-@@ -387,7 +420,7 @@ WeatherProvider.register("openweathermap", {
+@@ -382,7 +415,7 @@ WeatherProvider.register("openweathermap", {
  					weather.humidity = day.humidity;
  					weather.windSpeed = day.wind_speed;
  					weather.windDirection = day.wind_deg;
@@ -242,7 +242,7 @@ index c1258d3c..eaca5fc3 100755
  					precip = false;
  					if (!isNaN(day.rain)) {
  						if (this.config.units === "imperial") {
-@@ -395,6 +428,7 @@ WeatherProvider.register("openweathermap", {
+@@ -390,6 +423,7 @@ WeatherProvider.register("openweathermap", {
  						} else {
  							weather.rain = day.rain;
  						}
@@ -250,7 +250,7 @@ index c1258d3c..eaca5fc3 100755
  						precip = true;
  					}
  					if (!isNaN(day.snow)) {
-@@ -403,6 +437,7 @@ WeatherProvider.register("openweathermap", {
+@@ -398,6 +432,7 @@ WeatherProvider.register("openweathermap", {
  						} else {
  							weather.snow = day.snow;
  						}
@@ -258,7 +258,7 @@ index c1258d3c..eaca5fc3 100755
  						precip = true;
  					}
  					if (precip) {
-@@ -413,6 +448,7 @@ WeatherProvider.register("openweathermap", {
+@@ -408,6 +443,7 @@ WeatherProvider.register("openweathermap", {
  					weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
  				}
  			}
@@ -266,7 +266,7 @@ index c1258d3c..eaca5fc3 100755
  
  		return { current: current, hours: hours, days: days };
  	},
-@@ -445,6 +481,98 @@ WeatherProvider.register("openweathermap", {
+@@ -440,6 +476,98 @@ WeatherProvider.register("openweathermap", {
  		return weatherTypes.hasOwnProperty(weatherType) ? weatherTypes[weatherType] : null;
  	},
  

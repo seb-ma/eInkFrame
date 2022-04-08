@@ -11,6 +11,8 @@ const configPrivateParts = {
 	"mock": false,
 	"it8951_vcom": "1480",
 
+	"buttons_order": [3, 4, 5, 0, 1, 2, 9, 10, 11, 6, 7, 8],
+
 	"home": { "lat": 0.000000, "lon": 0.000000 },
 	"work": { "lat": 0.000000, "lon": 0.000000 },
 
@@ -94,11 +96,60 @@ let config = {
 			}
 		},
 		{
-			module: 'MMM-MPR121', // https://github.com/PatriceG/MMM-MPR121
+			module: "MMM-MPR121", // https://github.com/PatriceG/MMM-MPR121
+			classes: "eink-4levels", // For MMM-IT8951
 			config: {
 				buttons: [
+					// Left buttons
+					{ pin:  configPrivateParts.buttons_order[0], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:  configPrivateParts.buttons_order[1], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:  configPrivateParts.buttons_order[2], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					// Up buttons
 					{
-						pin: 4,
+						pin: configPrivateParts.buttons_order[3],
+						name: "page_main",
+						shortPress: { notification: "PAGE_SELECT", payload: "mainPage" }, // MMM-Page-Selector
+					},
+					{
+						pin: configPrivateParts.buttons_order[4],
+						name: "page_task",
+						shortPress: { notification: "PAGE_SELECT", payload: "taskPage" }, // MMM-Page-Selector
+					},
+					{
+						pin: configPrivateParts.buttons_order[5],
+						name: "page_weather",
+						shortPress: { notification: "PAGE_SELECT", payload: "weatherPage" }, // MMM-Page-Selector
+					},
+					{
+						pin: configPrivateParts.buttons_order[6],
+						name: "spotify_toggle",
+						shortPress: { notification: "SPOTIFY_TOGGLE", payload: {} }, // MMM-Spotify (Play/pause)
+					},
+					{
+						pin: configPrivateParts.buttons_order[7],
+						name: "spotify_next_previous",
+						shortPress: { notification: "SPOTIFY_NEXT", payload: {} }, // MMM-Spotify
+						longPress: {
+							title: "Piste précédente",
+							message: "Garder appuyé 3 secondes pour revenir à la piste précédente",
+							imageFA: "backward-step",
+							notification: "SPOTIFY_PREVIOUS", // MMM-Spotify
+						},
+					},
+					{ pin:  configPrivateParts.buttons_order[8], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					// Right buttons
+					{
+						pin: configPrivateParts.buttons_order[9],
+						name: "spotify_volume_up",
+						shortPress: { notification: "SPOTIFY_VOLUME_UP", payload: {} }, // MMM-Spotify
+					},
+					{
+						pin: configPrivateParts.buttons_order[10],
+						name: "spotify_volume_down",
+						shortPress: { notification: "SPOTIFY_VOLUME_DOWN", payload: {} } // MMM-Spotify
+					},
+					{
+						pin: configPrivateParts.buttons_order[11],
 						name: "power",
 						longPress: {
 							title: "Extinction",
@@ -106,54 +157,14 @@ let config = {
 							imageFA: "power-off",
 							notification: "ACTION_SHUTDOWN", // MMM-NotifCustomActions
 						},
-						shortPress: { notification: "IT8951_ASK_FULL_REFRESH", payload: {} },
+						shortPress: { notification: "IT8951_ASK_FULL_REFRESH", payload: {} }, // MMM-IT8551
 					},
-					{
-						pin: 3,
-						name: "page_previous",
-						shortPress: { notification: "DECREMENT_PAGE", payload: {} },
-					},
-					{
-						pin: 5,
-						name: "page_next",
-						shortPress: { notification: "INCREMENT_PAGE", payload: {} },
-					},
-					{
-						pin: 6,
-						name: "spotify_toggle",
-						shortPress: { notification: "SPOTIFY_TOGGLE", payload: {} }, // Play/pause
-					},
-					{
-						pin: 10,
-						name: "spotify_next_previous",
-						shortPress: { notification: "SPOTIFY_NEXT", payload: {} },
-						longPress: {
-							title: "Piste précédente",
-							message: "Garder appuyé 3 secondes pour revenir à la piste précédente",
-							imageFA: "backward-step",
-							notification: "SPOTIFY_PREVIOUS",
-						},
-					},
-					{
-						pin: 8,
-						name: "spotify_volume_up",
-						shortPress: { notification: "SPOTIFY_VOLUME_UP", payload: {} },
-					},
-					{
-						pin: 7,
-						name: "spotify_volume_down",
-						shortPress: { notification: "SPOTIFY_VOLUME_DOWN", payload: {} }
-					},
-					{ pin:  0, name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin:  1, name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin:  2, name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin:  9, name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin: 11, name: "unused", shortPress: { notification: "unused", payload: {} } },
 				]
 			}
 		},
 		{
 			module: "MMM-Page-Selector", // https://github.com/Veldrovive/MMM-Page-Selector
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_bar",
 			hiddenOnStartup: true,
 			config: {
@@ -166,11 +177,13 @@ let config = {
 		},
 		{
 			module: "updatenotification", // https://docs.magicmirror.builders/modules/updatenotification.html
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_bar",
 			pages: { mainPage: "top_bar", musicPage: "top_bar" }, // Config for MMM-Page-Selector
 		},
 		{
 			module: "clock", // https://docs.magicmirror.builders/modules/clock.html
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_left",
 			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
 			config: {
@@ -183,13 +196,30 @@ let config = {
 			}
 		},
 		{
-			module: 'MMM-Saint', // https://github.com/bugsounet/MMM-Saint#readme
+			module: "MMM-Saint", // https://github.com/bugsounet/MMM-Saint#readme
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_left",
 			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
 			configDeepMerge: true,
 			config: {
 				debug: false,
 				update: 60 * 60 * 1000, // 1 heure
+			}
+		},
+		{
+			module: "MMM-VigilanceMeteoFrance", // https://github.com/grenagit/MMM-VigilanceMeteoFrance
+			classes: "eink-4levels", // For MMM-IT8951
+			position: "top_left",
+			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
+			config: {
+				department: configPrivateParts.department, // Department number
+				updateInterval: 10 * 60 * 1000, // 10 minutes
+				animationSpeed: configPrivateParts.animationSpeed,
+				showNotification: false,
+				showDescription: true,
+				showRiskLegend: false,
+				hideGreenLevel: true,
+				useColorLegend: false,
 			}
 		},
 		{
@@ -207,7 +237,7 @@ let config = {
 			}
 		},
 		{
-			module: 'MMM-vCard2Calendar', // https://github.com/n-gao/MMM-vCard2Calendar#readme
+			module: "MMM-vCard2Calendar", // https://github.com/n-gao/MMM-vCard2Calendar#readme
 			config: {
 				url: configPrivateParts.vCard.url,
 				auth: {
@@ -219,11 +249,13 @@ let config = {
 		{
 			module: "calendar", // https://docs.magicmirror.builders/modules/calendar.html
 			header: "Prochains évènements",
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_center",
 			pages: { mainPage: "top_center", taskPage: "top_right" }, // Config for MMM-Page-Selector
 			config: {
 				maximumEntries: 15,
 				fetchInterval: 15 * 60 * 1000, // 15 minutes
+				fade: false,
 				animationSpeed: configPrivateParts.animationSpeed,
 				calendars: [
 					{
@@ -237,15 +269,16 @@ let config = {
 						url: "https://cache.media.education.gouv.fr/ics/Calendrier_Scolaire_Zone_B.ics",
 					},
 					{
-						symbol: 'birthday-cake',
-						url: 'http://localhost:8080/MMM-vCard2Calendar', // This url is fixed
+						symbol: "birthday-cake",
+						url: "http://localhost:8080/MMM-vCard2Calendar", // This url is fixed
 					},
 				]
 			}
 		},
 		/*{
-			module: 'MMM-FreeBox-Monitor', // https://github.com/tataille/MMM-FreeBox-Monitor#readme
-			position: 'top_center',
+			module: "MMM-FreeBox-Monitor", // https://github.com/tataille/MMM-FreeBox-Monitor#readme
+			classes: "eink-4levels", // For MMM-IT8951
+			position: "top_center",
 			pages: {mainPage: "top_center", musicPage: "top_center"}, // Config for MMM-Page-Selector
 			config: {
 				mirrorName: "CadreEink",
@@ -281,22 +314,8 @@ let config = {
 			}
 		},
 		{
-			module: "MMM-VigilanceMeteoFrance", // https://github.com/grenagit/MMM-VigilanceMeteoFrance
-			position: "top_right",
-			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
-			config: {
-				department: configPrivateParts.department, // Department number
-				updateInterval: 10 * 60 * 1000, // 10 minutes
-				animationSpeed: configPrivateParts.animationSpeed,
-				notificationDuration: 60 * 1000, // 1 minute
-				showDescription: true,
-				showRiskLegend: false,
-				hideGreenLevel: true,
-				useColorLegend: false,
-			}
-		},
-		{
 			module: "MMM-Pollen-FR", // https://github.com/lekesako/MMM-Pollen-FR#readme
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_right",
 			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			header: "Alertes pollens",
@@ -308,10 +327,11 @@ let config = {
 			}
 		},
 		{
-			module: 'MMM-Nantes-TAN', // https://github.com/normyx/MMM-Nantes-TAN#readme
-			position: 'top_right',
+			module: "MMM-Nantes-TAN", // https://github.com/normyx/MMM-Nantes-TAN#readme
+			classes: "eink-4levels", // For MMM-IT8951
+			position: "top_right",
 			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
-			header: 'TAN',
+			header: "TAN",
 			config: {
 				showSecondsToNextUpdate: false,
 				busStations: configPrivateParts.tan_busStations, // see http://open.tan.fr/ewp/arrets.json for ids
@@ -319,11 +339,12 @@ let config = {
 		},
 		{
 			module: "MMM-Traffic", // https://github.com/samlewis0602/MMM-Traffic#readme
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_right",
 			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			header: "Trajet voiture",
-			interval: 5 * 60 * 1000, // 5 minutes
 			config: {
+				interval: 5 * 60 * 1000, // 5 minutes
 				provider: "tomtom",
 				accessToken: configPrivateParts.apikey_tomtom,
 				originCoords: `${configPrivateParts.home.lat},${configPrivateParts.home.lon}`,
@@ -337,6 +358,7 @@ let config = {
 		},
 		{
 			module: "MMM-Bosch-BME680-sensor", // https://github.com/seb-ma/MMM-Bosch-BME680-sensor
+			classes: "eink-4levels", // For MMM-IT8951
 			header: "Intérieur",
 			position: "bottom_left", // Remove position to have only notifications
 			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
@@ -351,6 +373,7 @@ let config = {
 		},
 		{
 			module: "weather", // https://docs.magicmirror.builders/modules/weather.html
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "bottom_left",
 			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			header: "Extérieur",
@@ -415,6 +438,7 @@ let config = {
 		},
 		{
 			module: "newsfeed", // https://docs.magicmirror.builders/modules/newsfeed.html
+			classes: "eink-4levels", // For MMM-IT8951
 			position: "bottom_bar",
 			pages: { mainPage: "bottom_bar", musicPage: "bottom_bar" }, // Config for MMM-Page-Selector
 			config: {
@@ -440,8 +464,9 @@ let config = {
 			}
 		},
 		{
-			module: 'MMM-Trello', // https://github.com/Jopyth/MMM-Trello#readme
-			position: 'middle_center',
+			module: "MMM-Trello", // https://github.com/Jopyth/MMM-Trello#readme
+			classes: "eink-4levels", // For MMM-IT8951
+			position: "middle_center",
 			hiddenOnStartup: true,
 			pages: { taskPage: "top_left" }, // Config for MMM-Page-Selector
 			config: {

@@ -1,5 +1,40 @@
+diff --git a/node_helper.js b/node_helper.js
+index cc0f65e..c6ac71e 100644
+--- a/node_helper.js
++++ b/node_helper.js
+@@ -37,10 +37,12 @@ module.exports = NodeHelper.create({
+         }
+ 
+         self.buttons = self.config.buttons;
++        self.mapPin = [];
+ 
+         for (var i = 0; i < self.buttons.length; i++) {
+             console.log("Initialize button " + self.buttons[i].name + " on PIN " + self.buttons[i].pin);
+             self.buttons[i].pressed = undefined;
++            self.mapPin[self.buttons[i].pin] = i;
+         }
+ 
+         self.loaded = true;
+@@ -49,7 +51,7 @@ module.exports = NodeHelper.create({
+             console.log(`pin ${index} touched`);
+             this.buttons[index].pressed = new Date().getTime();
+             this.sendSocketNotification("BUTTON_DOWN", {
+-       		index: index
++       		index: self.mapPin[index]
+                 });
+ 	});
+  
+@@ -63,7 +65,7 @@ module.exports = NodeHelper.create({
+                 self.buttons[index].pressed = undefined;
+ 
+                  self.sendSocketNotification("BUTTON_UP", {
+-                    index: index,
++                    index: self.mapPin[index],
+                     duration: time
+                 });
+ 	});
 diff --git a/package.json b/package.json
-index 05a2a15..70c6cd6 100644
+index 05a2a15..372fd8d 100644
 --- a/package.json
 +++ b/package.json
 @@ -24,9 +24,11 @@
@@ -8,7 +43,7 @@ index 05a2a15..70c6cd6 100644
    "dependencies": {
 -    "adafruit-mpr121":"latest"
 +    "gyp": "^0.5.0",
-+    "node-gyp": "^8.4.1",
++    "node-gyp": "^9.0.0",
 +    "adafruit-mpr121":"github:adafruit/node_mpr121"
    },
    "devDependencies": {

@@ -16,10 +16,6 @@ cd ./modules/MMM-Pollen-FR
 patch -p1 -i $SCRIPT_DIR/patches/MMM-Pollen-FR.patch
 cd -
 
-cd ./modules/MMM-VigilanceMeteoFrance
-patch -p1 -i $SCRIPT_DIR/patches/MMM-VigilanceMeteoFrance.patch
-cd -
-
 cd ./modules/MMM-Spotify
 patch -p1 -i $SCRIPT_DIR/patches/MMM-Spotify.patch
 cd -

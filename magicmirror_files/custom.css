@@ -30,7 +30,7 @@ body {
 }
 
 header {
-	font-weight: 400;
+	font-weight: 500;
 }
 
 
@@ -189,8 +189,15 @@ progress[value]#SPOTIFY_PROGRESS_BAR::-webkit-progress-bar {
 }
 
 
+/* MMM-VigilanceMeteoFrance
+ --------------------------- */
+.MMM-VigilanceMeteoFrance .description {
+	max-width: 500px;
+}
+
+
 /* MMM-WeatherChartD3
- -------------------- */
+ --------------------- */
 .MMM-WeatherChartD3 .night {
 	opacity: 0.1;
 }
