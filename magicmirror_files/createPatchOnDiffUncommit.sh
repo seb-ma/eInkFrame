@@ -15,7 +15,7 @@ EOF
 rm $SCRIPT_DIR/patches/*.patch
 
 # Installation directory
-pushd ../../MagicMirror/
+pushd $SCRIPT_DIR/../../MagicMirror/
 
 export fullPath=$(readlink -f .)
 # Generate patch files and add lsit to applyPatches.sh script

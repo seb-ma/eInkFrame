@@ -94,7 +94,7 @@ index 7c9310f0..b059babb 100644
  				"</span>";
  			digitalWrapper.appendChild(moonWrapper);
 diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
-index bfeb0b8f..1f24ac19 100755
+index bfeb0b8f..a0a8b089 100755
 --- a/modules/default/weather/current.njk
 +++ b/modules/default/weather/current.njk
 @@ -1,15 +1,20 @@
@@ -121,8 +121,42 @@ index bfeb0b8f..1f24ac19 100755
                      {% endif %}
                  {% endif %}
                  {% if config.showWindDirection %}
+@@ -38,11 +43,18 @@
+             {% endif %}
+         </div>
+     {% endif %}
+-    <div class="large light">
++    <div>
++        <span class="large light">
+             <span class="wi weathericon wi-{{current.weatherType}}"></span>
+             <span class="bright">
+                 {{ current.temperature | roundValue | unit("temperature") | decimalSymbol }}
+             </span>
++        </span>
++        <span class="normal light uv">
++            {% if config.showUV and current.uvi %}
++                <span class="wi wi-stars uvIcon"></span><span>{{ current.uvi | decimalSymbol }}</span>
++            {% endif %}
++        </span>
+     </div>
+     <div class="normal light indoor">
+         {% if config.showIndoorTemperature and indoor.temperature %}
+@@ -69,9 +81,11 @@
+                     {{ "FEELS" | translate({DEGREE: current.feelsLike() | roundValue | unit("temperature") | decimalSymbol }) }}
+                 </span>
+             {% endif %}
+-            {% if config.showPrecipitationAmount %}
++            {% if config.showPrecipitationAmount and current.precipitation %}
+                 <span class="dimmed">
+-                    {{ "PRECIP" | translate }} {{ current.precipitation | unit("precip") }}
++                    <span class="fas fa-umbrella"></span>
++                    <span>{{ current.precipitation | unit("precip") }}</span>
++                    <span class="small">{{ current.precipitationProba | probaValue| unit("probability") }}</span>
+                 </span>
+             {% endif %}
+         </div>
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
-index b0f5eedf..bb7f8ca8 100755
+index b0f5eedf..ffc582fa 100755
 --- a/modules/default/weather/providers/openweathermap.js
 +++ b/modules/default/weather/providers/openweathermap.js
 @@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
@@ -196,17 +230,24 @@ index b0f5eedf..bb7f8ca8 100755
  			weather.rain = 0;
  			weather.snow = 0;
  
-@@ -306,7 +329,7 @@ WeatherProvider.register("openweathermap", {
+@@ -306,8 +329,10 @@ WeatherProvider.register("openweathermap", {
  			current.sunrise = moment(data.current.sunrise, "X").utcOffset(data.timezone_offset / 60);
  			current.sunset = moment(data.current.sunset, "X").utcOffset(data.timezone_offset / 60);
  			current.temperature = data.current.temp;
 -			current.weatherType = this.convertWeatherType(data.current.weather[0].icon);
 +			current.weatherType = this.convertWeatherType(data.current.weather[0].icon, data.current.weather[0].id);
  			current.humidity = data.current.humidity;
++			current.uvi = data.current.uvi;
++			current.precipitationProba = data.hourly ? data.hourly[0].pop : undefined; // Get 1st hour as current precipitation probability
  			if (data.current.hasOwnProperty("rain") && !isNaN(data.current["rain"]["1h"])) {
  				if (this.config.units === "imperial") {
-@@ -343,7 +366,7 @@ WeatherProvider.register("openweathermap", {
+ 					current.rain = data.current["rain"]["1h"] / 25.4;
+@@ -341,9 +366,11 @@ WeatherProvider.register("openweathermap", {
+ 				weather.temperature = hour.temp;
+ 				weather.feelsLikeTemp = hour.feels_like;
  				weather.humidity = hour.humidity;
++				weather.uvi = hour.uvi;
++				weather.precipitationProba = hour.pop;
  				weather.windSpeed = hour.wind_speed;
  				weather.windDirection = hour.wind_deg;
 -				weather.weatherType = this.convertWeatherType(hour.weather[0].icon);
@@ -214,7 +255,7 @@ index b0f5eedf..bb7f8ca8 100755
  				precip = false;
  				if (hour.hasOwnProperty("rain") && !isNaN(hour.rain["1h"])) {
  					if (this.config.units === "imperial") {
-@@ -374,7 +397,17 @@ WeatherProvider.register("openweathermap", {
+@@ -374,15 +401,27 @@ WeatherProvider.register("openweathermap", {
  		const days = [];
  		if (data.hasOwnProperty("daily")) {
  			for (const day of data.daily) {
@@ -233,8 +274,10 @@ index b0f5eedf..bb7f8ca8 100755
  					weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
  					weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
  					weather.minTemperature = day.temp.min;
-@@ -382,7 +415,7 @@ WeatherProvider.register("openweathermap", {
+ 					weather.maxTemperature = day.temp.max;
  					weather.humidity = day.humidity;
++					weather.uvi = day.uvi;
++					weather.precipitationProba = day.pop;
  					weather.windSpeed = day.wind_speed;
  					weather.windDirection = day.wind_deg;
 -				weather.weatherType = this.convertWeatherType(day.weather[0].icon);
@@ -242,7 +285,7 @@ index b0f5eedf..bb7f8ca8 100755
  					precip = false;
  					if (!isNaN(day.rain)) {
  						if (this.config.units === "imperial") {
-@@ -390,6 +423,7 @@ WeatherProvider.register("openweathermap", {
+@@ -390,6 +429,7 @@ WeatherProvider.register("openweathermap", {
  						} else {
  							weather.rain = day.rain;
  						}
@@ -250,7 +293,7 @@ index b0f5eedf..bb7f8ca8 100755
  						precip = true;
  					}
  					if (!isNaN(day.snow)) {
-@@ -398,6 +432,7 @@ WeatherProvider.register("openweathermap", {
+@@ -398,6 +438,7 @@ WeatherProvider.register("openweathermap", {
  						} else {
  							weather.snow = day.snow;
  						}
@@ -258,15 +301,30 @@ index b0f5eedf..bb7f8ca8 100755
  						precip = true;
  					}
  					if (precip) {
-@@ -408,6 +443,7 @@ WeatherProvider.register("openweathermap", {
+@@ -408,8 +449,21 @@ WeatherProvider.register("openweathermap", {
  					weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
  				}
  			}
 +		}
++
++		const alerts = [];
++		if (data.hasOwnProperty("alerts")) {
++			for (const alert of data.alerts) {
++				alertDesc = {};
++				alertDesc.start = moment(alert.start, "X").utcOffset(data.timezone_offset / 60);
++				alertDesc.end = moment(alert.end, "X").utcOffset(data.timezone_offset / 60);
++				alertDesc.event = alert.event;
++				alertDesc.description = alert.description;
  
- 		return { current: current, hours: hours, days: days };
+-		return { current: current, hours: hours, days: days };
++				alerts.push(alertDesc);
++			}
++		}
++		return { current: current, hours: hours, days: days, alerts: alerts };
  	},
-@@ -440,6 +476,98 @@ WeatherProvider.register("openweathermap", {
+ 
+ 	/*
+@@ -440,6 +494,98 @@ WeatherProvider.register("openweathermap", {
  		return weatherTypes.hasOwnProperty(weatherType) ? weatherTypes[weatherType] : null;
  	},
  
@@ -365,3 +423,59 @@ index b0f5eedf..bb7f8ca8 100755
  	/* getParams(compliments)
  	 * Generates an url with api parameters based on the config.
  	 *
+@@ -451,7 +597,7 @@ WeatherProvider.register("openweathermap", {
+ 			params += "lat=" + this.config.lat;
+ 			params += "&lon=" + this.config.lon;
+ 			if (this.config.type === "current") {
+-				params += "&exclude=minutely,hourly,daily";
++				params += "&exclude=minutely,daily";
+ 			} else if (this.config.type === "hourly") {
+ 				params += "&exclude=current,minutely,daily";
+ 			} else if (this.config.type === "daily" || this.config.type === "forecast") {
+diff --git a/modules/default/weather/weather.js b/modules/default/weather/weather.js
+index 350c4f2d..e98de110 100644
+--- a/modules/default/weather/weather.js
++++ b/modules/default/weather/weather.js
+@@ -23,6 +23,7 @@ Module.register("weather", {
+ 		showPeriodUpper: false,
+ 		showWindDirection: true,
+ 		showWindDirectionAsArrow: false,
++		showUV: false,
+ 		useBeaufort: true,
+ 		lang: config.language,
+ 		showHumidity: false,
+@@ -186,6 +187,11 @@ Module.register("weather", {
+ 		return roundValue === "-0" ? 0 : roundValue;
+ 	},
+ 
++	probaValue: function (probability) {
++		const roundValue = (parseFloat(probability) * 100).toFixed(0);
++		return roundValue === "-0" ? 0 : roundValue;
++	},
++
+ 	addFilters() {
+ 		this.nunjucksEnvironment().addFilter(
+ 			"formatTime",
+@@ -236,6 +242,8 @@ Module.register("weather", {
+ 					}
+ 				} else if (type === "humidity") {
+ 					value += "%";
++				} else if (type === "probability") {
++					value += "%";
+ 				}
+ 
+ 				return value;
+@@ -249,6 +257,13 @@ Module.register("weather", {
+ 			}.bind(this)
+ 		);
+ 
++		this.nunjucksEnvironment().addFilter(
++			"probaValue",
++			function (value) {
++				return this.probaValue(value);
++			}.bind(this)
++		);
++
+ 		this.nunjucksEnvironment().addFilter(
+ 			"decimalSymbol",
+ 			function (value) {

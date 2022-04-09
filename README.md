@@ -45,30 +45,32 @@ It can also be customized by adding new modules (see [MagicMirror² Installation
 ### Weather/outdoor
 
 - [X] Indoor sensors:
-    - [X] temperature
-    - [X] humidity
-    - [X] pressure
-    - [X] air quality
+  - [X] temperature
+  - [X] humidity
+  - [X] pressure
+  - [X] air quality
 - [X] Current weather with:
-    - [X] temperature
-    - [X] feel-like temperature
-    - [X] humidity
-    - [X] pressure
-    - [X] wind
-    - [ ] air quality
-    - [ ] UVA index
+  - [X] temperature
+  - [X] feel-like temperature
+  - [X] humidity
+  - [X] pressure
+  - [X] wind
+  - [X] UV index
+  - [X] rain probability
+  - [ ] air quality
 - [X] Graph of weather forecast for next days with:
-    - [X] temperature
-    - [X] feel-like temperature
-    - [X] min/max temperature
-    - [X] rain and snow
-    - [X] weather icon
-    - [ ] humidity
-    - [ ] pressure
-    - [ ] wind
-    - [ ] air quality
-    - [ ] UVA index
-    - [ ] same curves for previous days
+  - [X] temperature
+  - [X] feel-like temperature
+  - [X] min/max temperature
+  - [X] rain and snow
+  - [X] weather icon
+  - [ ] humidity
+  - [ ] pressure
+  - [ ] wind
+  - [ ] UV index
+  - [ ] rain probability
+  - [ ] air quality
+  - [ ] same curves for previous days
 - [X] Alerts on the risk of rain, wind, ice...
 - [X] Alerts on current active allergens
 - [ ] Maps of winds, rain, lightning
@@ -83,7 +85,7 @@ It can also be customized by adding new modules (see [MagicMirror² Installation
 ### Travels
 
 - [X] Next upcoming used bus lines
-    - [X] with alerts on this lines
+  - [X] with alerts on this lines
 - [X] Travel time to work
 - [ ] Map of traffic
 
@@ -91,7 +93,7 @@ It can also be customized by adding new modules (see [MagicMirror² Installation
 
 - [X] Headlines of news
 - [X] Current Spotify music (watch multiple accounts)
-    - [X] with buttons for Spotify control (volume, next/previous, start/stop)
+  - [X] with buttons for Spotify control (volume, next/previous, start/stop)
 - [ ] Game of life
 
 ### Display
@@ -100,5 +102,5 @@ It can also be customized by adding new modules (see [MagicMirror² Installation
 
 ### Advanced features (not yet planned)
 
-- [ ] Jeedom interaction
+- [ ] [Jeedom](https://www.jeedom.com/) interaction
 - [ ] Communication with home sensors (indoor and outdoor)

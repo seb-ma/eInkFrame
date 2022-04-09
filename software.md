@@ -12,7 +12,7 @@ This document is a guide (step-by-step) to install and configure all software, d
 
 This guide works but only with the `root` user.
 
-This is due to a problem accessing /dev/mem (witch is needed for e-ink).
+This is due to a problem accessing `/dev/mem` (witch is needed for e-ink).
 It currently can't be accessed thru npm call at this stage, neither as `sudo npm` nor with sticky bit or `cap_sys_rawio` capability set.
 
 It works only with user `root` (`sudo su`).
@@ -72,21 +72,21 @@ sudo raspi-config
 ```
 
 - Disabling the graphical interface
-    - System Options
-    - Boot / Auto login
-    - Console
+  - System Options
+  - Boot / Auto login
+  - Console
 - Change timezone
-    - Location Options
-    - Change Timezone
+  - Location Options
+  - Change Timezone
 - Change keyboard layout
-    - Location Options
-    - Change Keyboard Layout
+  - Location Options
+  - Change Keyboard Layout
 - Enable SPI
-    - Interfacing options
-    - P4 SPI Enable / Disable automatic loading of SPI core module
-- Enable I2C
-    - Interfacing options
-    - P5 I2C Enable / Disable automatic loading of the I2C kernel module
+  - Interfacing options
+  - P4 SPI Enable / Disable automatic loading of SPI core module
+- Enable i²c
+  - Interfacing options
+  - P5 I2C Enable / Disable automatic loading of the I2C kernel module
 
 ### Creation and privileges of a specific user
 
@@ -116,11 +116,12 @@ serverusr ALL=NOPASSWD: /sbin/shutdown
 
 ### GPIO access
 
-From https://github.com/jperkin/node-rpio:
+Configure GPIO access (from https://github.com/jperkin/node-rpio):
 
 Disable GPIO interrupts:
 
 Edit `/boot/config.txt`:
+
 ```sh
 sudo nano /boot/config.txt
 ```
@@ -131,7 +132,7 @@ Add following line:
 dtoverlay=gpio-no-irq
 ```
 
-Enable /dev/gpiomem access:
+Enable `/dev/gpiomem` access:
 
 Create `/etc/udev/rules.d/20-gpiomem.rules`:
 ```sh

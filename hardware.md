@@ -37,7 +37,7 @@ Approximate price: 430€ (in 2022)
 | Description | Mouser ref. | Quantity | Comments |
 | --- | --- | --- | --- |
 | **UC** |
-| Raspberry Pi Zero 2 W |  | 1 | Raspberry pi Zero 2 W on Raspberry website<br/>Raspberry 4 should work too (enough space on board) |
+| Raspberry Pi Zero 2 W |  | 1 | Raspberry pi Zero 2 W on Raspberry website<br>Raspberry 4 should work too (enough space on board) |
 | Socket Raspberry | 200-SSM120FDV | 1 | 2x20-pins female socket |
 | Standoffs M2.5 | 761-M2105-2545-AL | 4 | Standoffs for Raspberry (pairing with nuts and screws) |
 | **Temperature/Humidity/Pressure/IAQ Sensor** |
@@ -49,15 +49,15 @@ Approximate price: 430€ (in 2022)
 | IT8951 ribbon | 710-687640100002 | 1 | The one provided by Waveshare is too long |
 | Standoffs M2.5 | 761-M2113-2545-AL | 4 | Standoffs for IT8951 driver (pairing with nuts and screws) |
 | **Capacitive keys** |
-| Adafruit MPR121 |  | 1 | Capacitive keys<br/>Warn: 2 revisions exist with different pins |
+| Adafruit MPR121 |  | 1 | Capacitive keys<br>Warn: 2 revisions exist with different pins |
 | Socket MPR121 contacts | 200-SSM113SSV | 1 | 7-pins female socket |
 | Socket MPR121 comm | 200-SSM107LSV | 1 | 13-pins female socket |
 | Screw Terminal 01x03 | 651-1814647 | 4 | May be optional by directly ironing wires on pads |
 | Wire 24AWG | 650-100G0111-0.25-0 | 4 | Probably less is needed (wires needed from screw terminals to frame picture turn buttons) |
 | Terminal | 571-151439 | 12 (or # of needed keys) | To fix wires on frame picture turn buttons |
-| Frame picture turn button |  | 12 (or # of needed keys) | As large as possible: used as capacitive keys<br/>May be another system like rivets through frame |
+| Frame picture turn button |  | 12 (or # of needed keys) | As large as possible: used as capacitive keys<br>May be another system like rivets through frame |
 | **Frame** |
-| Photo frame |  | 1 | Inner dim. 127.6 * 173.8<br/>(= screen size) |
+| Photo frame |  | 1 | Inner dim. 127.6 * 173.8<br>(= screen size) |
 | Insert M3 | 153-PFLA-M3-2 | 4 | To fix PCB in frame |
 | Standoff M3 | 761-M2115-3005-SS | 4 | Length may differ according to frame height. A secure length is 23mm (pairing with inserts and screws) |
 | Screw M3 | 534-9191-3 | 4 | To fix PCB in frame |

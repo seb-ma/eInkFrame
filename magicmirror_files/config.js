@@ -101,9 +101,9 @@ let config = {
 			config: {
 				buttons: [
 					// Left buttons
-					{ pin:  configPrivateParts.buttons_order[0], name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin:  configPrivateParts.buttons_order[1], name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin:  configPrivateParts.buttons_order[2], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin: configPrivateParts.buttons_order[0], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:configPrivateParts.buttons_order[1], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:configPrivateParts.buttons_order[2], name: "unused", shortPress: { notification: "unused", payload: {} } },
 					// Up buttons
 					{
 						pin: configPrivateParts.buttons_order[3],
@@ -136,7 +136,7 @@ let config = {
 							notification: "SPOTIFY_PREVIOUS", // MMM-Spotify
 						},
 					},
-					{ pin:  configPrivateParts.buttons_order[8], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin:configPrivateParts.buttons_order[8], name: "unused", shortPress: { notification: "unused", payload: {} } },
 					// Right buttons
 					{
 						pin: configPrivateParts.buttons_order[9],
@@ -363,7 +363,6 @@ let config = {
 			position: "bottom_left", // Remove position to have only notifications
 			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			config: {
-				updateInterval: 1 * 60 * 1000, // full refresh screen delay // 1 minute
 				animationSpeed: configPrivateParts.animationSpeed,
 				decimalSymbol: configPrivateParts.decimalSymbol,
 				mock: configPrivateParts.mock,
@@ -378,10 +377,12 @@ let config = {
 			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			header: "Extérieur",
 			config: {
-				updateInterval: 2 * 60 * 1000, // 2  minutes
+				updateInterval: 2 * 60 * 1000, // 2 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				decimalSymbol: configPrivateParts.decimalSymbol,
 				appendLocationNameToHeader: false,
+				showPrecipitationAmount: true,
+				showUV: true,
 				//showIndoorTemperature: true,
 				//showIndoorHumidity: true,
 
