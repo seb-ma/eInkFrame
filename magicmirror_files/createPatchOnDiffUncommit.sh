@@ -18,17 +18,17 @@ rm $SCRIPT_DIR/patches/*.patch
 pushd $SCRIPT_DIR/../../MagicMirror/
 
 export fullPath=$(readlink -f .)
-# Generate patch files and add lsit to applyPatches.sh script
+# Generate patch files with stagged files and add list to applyPatches.sh script
 find . -name .git -execdir sh -c '
 	for dirN do
 		cd $dirN/..
 		fname=${PWD##*/}.patch
-		git diff --ignore-space-change ":(exclude)package-lock.json" ":(exclude).gitignore" > $SCRIPT_DIR/patches/$fname
+		git diff --staged --ignore-space-change ":(exclude)package-lock.json" ":(exclude).gitignore" ":(exclude)node_modules" > $SCRIPT_DIR/patches/$fname
 
 		if [ -s $SCRIPT_DIR/patches/$fname ]
 		then
 			echo cd ".${PWD#"$fullPath"}" >> $SCRIPT_DIR/applyPatches.sh
-			echo "patch -p1 -i \$SCRIPT_DIR/patches/$fname" >> $SCRIPT_DIR/applyPatches.sh
+			echo "git apply \$SCRIPT_DIR/patches/$fname" >> $SCRIPT_DIR/applyPatches.sh
 			echo "cd -" >> $SCRIPT_DIR/applyPatches.sh
 			echo "" >> $SCRIPT_DIR/applyPatches.sh
 		else

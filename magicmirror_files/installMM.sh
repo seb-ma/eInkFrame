@@ -81,6 +81,8 @@ git clone https://github.com/seb-ma/MMM-IT8951
 git clone https://github.com/seb-ma/MMM-NotifCustomActions
 ### Weather charts
 git clone https://github.com/seb-ma/MMM-WeatherChartD3
+### Unique weather provider
+git clone https://github.com/seb-ma/mmm-weatherproviderunique
 
 ## Default installed modules (some of them)
 ##

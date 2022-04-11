@@ -1,8 +1,8 @@
 /* Magic Mirror Config
-*
-* By Sébastien Mazzon
-* MIT License
-*/
+ *
+ * By Sébastien Mazzon
+ * MIT License
+ */
 
 const configPrivateParts = {
 	"decimalSymbol": ",",
@@ -43,28 +43,26 @@ const configPrivateParts = {
 };
 
 let config = {
-	serverOnly: true,	// true/false/"local"
-						// local for armv6l processors, default - starts serveronly and then starts chrome browser
-						// false, default for all NON-armv6l devices
-						// true, force serveronly mode, because you want to.. no UI on this device
+	serverOnly: true,		// true/false/"local"
+							// local for armv6l processors, default - starts serveronly and then starts chrome browser
+							// false, default for all NON-armv6l devices
+							// true, force serveronly mode, because you want to.. no UI on this device
 	address: "localhost", 	// Address to listen on, can be:
 							// - "localhost", "127.0.0.1", "::1" to listen on loopback interface
 							// - another specific IPv4/6 to listen on a specific interface
 							// - "0.0.0.0", "::" to listen on any interface
 							// Default, when address config is left out or empty, is "localhost"
 	port: 8080,
-	basePath: "/", 	// The URL path where MagicMirror is hosted. If you are using a Reverse proxy
-					// you must set the sub path here. basePath must end with a /
+	basePath: "/", 			// The URL path where MagicMirror is hosted. If you are using a Reverse proxy
+							// you must set the sub path here. basePath must end with a /
 	useHttps: false, 		// Support HTTPS or not, default "false" will use HTTP
 	httpsPrivateKey: "", 	// HTTPS private key path, only require when useHttps is true
 	httpsCertificate: "", 	// HTTPS Certificate path, only require when useHttps is true
 	ipWhitelist: ["127.0.0.1", "::ffff:127.0.0.1", "::1",
 				  "::ffff:192.168.1.1/120", "192.168.1.1/24",
 				  "::ffff:192.168.2.1/120", "192.168.2.1/24"], 	// Set [] to allow all IP addresses
-															// or add a specific IPv4 of 192.168.1.5 :
-															// ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::ffff:192.168.1.5"],
-															// or IPv4 range of 192.168.3.0 --> 192.168.3.15 use CIDR format :
-															// ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::ffff:192.168.3.0/28"],
+																// or add a specific IPv4 of 192.168.1.5 : ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::ffff:192.168.1.5"],
+																// or IPv4 range of 192.168.3.0 --> 192.168.3.15 use CIDR format : ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::ffff:192.168.3.0/28"],
 	electronOptions: { fullscreen: true, width: 1872, height: 1404 },
 
 	logLevel: ["INFO", "LOG", "WARN", "ERROR"], // Add "DEBUG" for even more logging
@@ -88,10 +86,11 @@ let config = {
 				actions: [
 					{ notification: "ACTION_SHUTDOWN", action_node: function (sender, payload) { exec("sudo shutdown -h now"); } },
 
-					{ notification: "SPOTIFY_CONNECTED", action_module: function (sender, payload) { self.sendNotification("PAGE_SELECT", "musicPage"); } },
-					{ notification: "SPOTIFY_DISCONNECTED", action_module: function (sender, payload) { self.sendNotification("PAGE_SELECT", "mainPage"); } },
+					{ notification: "SPOTIFY_CONNECTED", action_module: function (sender, payload) { self.isSpotify = true; self.sendNotification("PAGE_SELECT", "musicPage"); } },
+					{ notification: "SPOTIFY_DISCONNECTED", action_module: function (sender, payload) { self.isSpotify = false; self.sendNotification("PAGE_SELECT", "mainPage"); } },
 
 					{ notification: "PAGE_CHANGED", action_module: function (sender, payload) { setTimeout(() => { self.sendNotification("IT8951_ASK_FULL_REFRESH"); }, 1000) } },
+					{ notification: "MAIN_PAGE_SELECT", action_module: function (sender, payload) { self.sendNotification("PAGE_SELECT", self.isSpotify ? "musicPage" : "mainPage"); } },
 				]
 			}
 		},
@@ -102,13 +101,13 @@ let config = {
 				buttons: [
 					// Left buttons
 					{ pin: configPrivateParts.buttons_order[0], name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin:configPrivateParts.buttons_order[1], name: "unused", shortPress: { notification: "unused", payload: {} } },
-					{ pin:configPrivateParts.buttons_order[2], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin: configPrivateParts.buttons_order[1], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin: configPrivateParts.buttons_order[2], name: "unused", shortPress: { notification: "unused", payload: {} } },
 					// Up buttons
 					{
 						pin: configPrivateParts.buttons_order[3],
 						name: "page_main",
-						shortPress: { notification: "PAGE_SELECT", payload: "mainPage" }, // MMM-Page-Selector
+						shortPress: { notification: "MAIN_PAGE_SELECT" }, // MMM-Page-Selector
 					},
 					{
 						pin: configPrivateParts.buttons_order[4],
@@ -123,12 +122,12 @@ let config = {
 					{
 						pin: configPrivateParts.buttons_order[6],
 						name: "spotify_toggle",
-						shortPress: { notification: "SPOTIFY_TOGGLE", payload: {} }, // MMM-Spotify (Play/pause)
+						shortPress: { notification: "SPOTIFY_TOGGLE" }, // MMM-Spotify (Play/pause)
 					},
 					{
 						pin: configPrivateParts.buttons_order[7],
 						name: "spotify_next_previous",
-						shortPress: { notification: "SPOTIFY_NEXT", payload: {} }, // MMM-Spotify
+						shortPress: { notification: "SPOTIFY_NEXT" }, // MMM-Spotify
 						longPress: {
 							title: "Piste précédente",
 							message: "Garder appuyé 3 secondes pour revenir à la piste précédente",
@@ -136,17 +135,17 @@ let config = {
 							notification: "SPOTIFY_PREVIOUS", // MMM-Spotify
 						},
 					},
-					{ pin:configPrivateParts.buttons_order[8], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{ pin: configPrivateParts.buttons_order[8], name: "unused", shortPress: { notification: "unused", payload: {} } },
 					// Right buttons
 					{
 						pin: configPrivateParts.buttons_order[9],
 						name: "spotify_volume_up",
-						shortPress: { notification: "SPOTIFY_VOLUME_UP", payload: {} }, // MMM-Spotify
+						shortPress: { notification: "SPOTIFY_VOLUME_UP" }, // MMM-Spotify
 					},
 					{
 						pin: configPrivateParts.buttons_order[10],
 						name: "spotify_volume_down",
-						shortPress: { notification: "SPOTIFY_VOLUME_DOWN", payload: {} } // MMM-Spotify
+						shortPress: { notification: "SPOTIFY_VOLUME_DOWN" } // MMM-Spotify
 					},
 					{
 						pin: configPrivateParts.buttons_order[11],
@@ -157,7 +156,7 @@ let config = {
 							imageFA: "power-off",
 							notification: "ACTION_SHUTDOWN", // MMM-NotifCustomActions
 						},
-						shortPress: { notification: "IT8951_ASK_FULL_REFRESH", payload: {} }, // MMM-IT8551
+						shortPress: { notification: "IT8951_ASK_FULL_REFRESH" }, // MMM-IT8551
 					},
 				]
 			}
@@ -203,7 +202,7 @@ let config = {
 			configDeepMerge: true,
 			config: {
 				debug: false,
-				update: 60 * 60 * 1000, // 1 heure
+				update: 60 * 60 * 1000, // 1 hour
 			}
 		},
 		{
@@ -377,8 +376,11 @@ let config = {
 			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			header: "Extérieur",
 			config: {
-				updateInterval: 2 * 60 * 1000, // 2 minutes
+				initialLoadDelay: 1 * 60 * 1000, // 1 minute
+				updateInterval: 1 * 60 * 1000, // 1 minute
 				animationSpeed: configPrivateParts.animationSpeed,
+				weatherProvider: "../../../mmm-weatherproviderunique/proxyweatherprovider",
+				weatherEndpoint: "mmm-weatherproviderunique",
 				decimalSymbol: configPrivateParts.decimalSymbol,
 				appendLocationNameToHeader: false,
 				showPrecipitationAmount: true,
@@ -391,11 +393,6 @@ let config = {
 				useKmh: true,
 				showHumidity: true,
 				showSun: false,
-				weatherProvider: "openweathermap",
-				weatherEndpoint: "/onecall",
-				lat: configPrivateParts.home.lat,
-				lon: configPrivateParts.home.lon,
-				apiKey: configPrivateParts.apikey_openweather,
 			}
 		},
 		{
@@ -404,16 +401,15 @@ let config = {
 			pages: { mainPage: "bottom_right", musicPage: "bottom_right" }, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
 			config: {
-				updateInterval: 10 * 60 * 1000, // 10 minutes
+				initialLoadDelay: 1 * 60 * 1000, // 1 minute
+				updateInterval: 5 * 60 * 1000, // 5 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
-				apiKey: configPrivateParts.apikey_openweather,
-				type: "full",
+				weatherProvider: "../../../mmm-weatherproviderunique/proxyweatherprovider",
+				weatherEndpoint: "mmm-weatherproviderunique",
 				height: 400,
 				width: 1300,
 				//iconSize: 48, // in px or undefined to define automatically at first call
 				hoursRatio: 0.5,
-				lat: configPrivateParts.home.lat,
-				lon: configPrivateParts.home.lon,
 				color: "#000",
 				fillColor: "#ccc",
 			}
@@ -425,14 +421,13 @@ let config = {
 			pages: { weatherPage: "middle_center" }, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
 			config: {
-				updateInterval: 10 * 60 * 1000, // 10 minutes
+				initialLoadDelay: 1 * 60 * 1000, // 1 minute
+				updateInterval: 5 * 60 * 1000, // 5 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
-				apiKey: configPrivateParts.apikey_openweather,
-				type: "full",
+				weatherProvider: "../../../mmm-weatherproviderunique/proxyweatherprovider",
+				weatherEndpoint: "mmm-weatherproviderunique",
 				height: 1300,
 				width: 1800,
-				lat: configPrivateParts.home.lat,
-				lon: configPrivateParts.home.lon,
 				color: "#000",
 				fillColor: "#ccc",
 			}
@@ -478,6 +473,16 @@ let config = {
 				list: configPrivateParts.trello.list,
 				wholeList: true,
 				hideCompletedItems: true,
+			}
+		},
+		{
+			// This module is not used to display the weather but only to have a unique call to weather provider for all the modules
+			module: "mmm-weatherproviderunique", // https://github.com/seb-ma/mmm-weatherproviderunique
+			hiddenOnStartup: true,
+			config: {
+				apiKey: configPrivateParts.apikey_openweather,
+				lat: configPrivateParts.home.lat,
+				lon: configPrivateParts.home.lon,
 			}
 		},
 	]

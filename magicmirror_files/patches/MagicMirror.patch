@@ -156,7 +156,7 @@ index bfeb0b8f..a0a8b089 100755
              {% endif %}
          </div>
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
-index b0f5eedf..ffc582fa 100755
+index b0f5eedf..bc210a5a 100755
 --- a/modules/default/weather/providers/openweathermap.js
 +++ b/modules/default/weather/providers/openweathermap.js
 @@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
@@ -169,7 +169,7 @@ index b0f5eedf..ffc582fa 100755
  	},
  
  	// Overwrite the fetchCurrentWeather method.
-@@ -86,6 +87,28 @@ WeatherProvider.register("openweathermap", {
+@@ -86,6 +87,56 @@ WeatherProvider.register("openweathermap", {
  			.finally(() => this.updateAvailable());
  	},
  
@@ -177,28 +177,70 @@ index b0f5eedf..ffc582fa 100755
 +	fetchWeatherAll() {
 +		if (this.config.weatherEndpoint === "/onecall") {
 +			this.fetchData(this.getUrl())
-+			.then((data) => {
-+				const weatherData = this.generateWeatherObjectsFromOnecall(data);
-+				// onecall get all the data - so fill them at once
-+				this.setCurrentWeather(weatherData.current);
-+				this.setWeatherHourly(weatherData.hours);
-+				this.setWeatherForecast(weatherData.days);		
++				.then((data) => {
++					const weatherData = this.generateWeatherObjectsFromOnecall(data);
++					// onecall get all the data - so fill them at once
++					this.setCurrentWeather(weatherData.current);
++					this.setWeatherHourly(weatherData.hours);
++					this.setWeatherForecast(weatherData.days);
 +
-+				this.setFetchedLocation(`${data.timezone}`);
-+			})
-+			.catch(function (request) {
-+				Log.error("Could not load data ... ", request);
-+			})
-+			.finally(() => this.updateAvailable());
++					this.setFetchedLocation(`${data.timezone}`);
++				})
++				.catch(function (request) {
++					Log.error("Could not load data ... ", request);
++				})
++				.finally(() => this.updateAvailable());
 +		} else {
 +			Log.error("Must be called with weatherEndpoint /onecall");
 +		}
 +	},
 +
++	// Retrieve current pollution
++	fetchCurrentPollution() {
++		this.fetchData(this.getUrlPollution(""))
++			.then((data) => {
++				this.setCurrentPollution(this.fetchPollutionApi(data)[0]);
++			})
++			.catch(function (request) {
++				Log.error("Could not load data ... ", request);
++			})
++			.finally(() => {
++				this.updateAvailable();
++			})
++	},
++
++	// Retrieve pollution forecast
++	fetchPollutionForecast() {
++		this.fetchData(this.getUrlPollution("/forecast"))
++			.then((data) => {
++				this.setCurrentPollution(this.fetchPollutionApi(data)[0]);
++			})
++			.catch(function (request) {
++				Log.error("Could not load data ... ", request);
++			})
++			.finally(() => {
++				this.updateAvailable();
++			})
++	},
++
  	/**
  	 * Overrides method for setting config to check if endpoint is correct for hourly
  	 *
-@@ -130,7 +153,7 @@ WeatherProvider.register("openweathermap", {
+@@ -119,6 +170,13 @@ WeatherProvider.register("openweathermap", {
+ 		return this.config.apiBase + this.config.apiVersion + this.config.weatherEndpoint + this.getParams();
+ 	},
+ 
++	/*
++	 * Gets the complete url for the pollution request
++	 */
++	getUrlPollution(weatherEndpoint) {
++		return this.config.apiBase + this.config.apiVersion + "/air_pollution" + weatherEndpoint + this.getParams();
++	},
++
+ 	/*
+ 	 * Generate a WeatherObject based on currentWeatherInformation
+ 	 */
+@@ -130,7 +188,7 @@ WeatherProvider.register("openweathermap", {
  		currentWeather.feelsLikeTemp = currentWeatherData.main.feels_like;
  		currentWeather.windSpeed = currentWeatherData.wind.speed;
  		currentWeather.windDirection = currentWeatherData.wind.deg;
@@ -207,7 +249,7 @@ index b0f5eedf..ffc582fa 100755
  		currentWeather.sunrise = moment(currentWeatherData.sys.sunrise, "X");
  		currentWeather.sunset = moment(currentWeatherData.sys.sunset, "X");
  
-@@ -203,11 +226,11 @@ WeatherProvider.register("openweathermap", {
+@@ -203,11 +261,11 @@ WeatherProvider.register("openweathermap", {
  				weather.date = moment(forecast.dt, "X");
  
  				// If the first value of today is later than 17:00, we have an icon at least!
@@ -221,7 +263,7 @@ index b0f5eedf..ffc582fa 100755
  			}
  
  			// the same day as before
-@@ -257,7 +280,7 @@ WeatherProvider.register("openweathermap", {
+@@ -257,7 +315,7 @@ WeatherProvider.register("openweathermap", {
  			weather.date = moment(forecast.dt, "X");
  			weather.minTemperature = forecast.temp.min;
  			weather.maxTemperature = forecast.temp.max;
@@ -230,7 +272,7 @@ index b0f5eedf..ffc582fa 100755
  			weather.rain = 0;
  			weather.snow = 0;
  
-@@ -306,8 +329,10 @@ WeatherProvider.register("openweathermap", {
+@@ -306,8 +364,10 @@ WeatherProvider.register("openweathermap", {
  			current.sunrise = moment(data.current.sunrise, "X").utcOffset(data.timezone_offset / 60);
  			current.sunset = moment(data.current.sunset, "X").utcOffset(data.timezone_offset / 60);
  			current.temperature = data.current.temp;
@@ -242,7 +284,7 @@ index b0f5eedf..ffc582fa 100755
  			if (data.current.hasOwnProperty("rain") && !isNaN(data.current["rain"]["1h"])) {
  				if (this.config.units === "imperial") {
  					current.rain = data.current["rain"]["1h"] / 25.4;
-@@ -341,9 +366,11 @@ WeatherProvider.register("openweathermap", {
+@@ -341,9 +401,11 @@ WeatherProvider.register("openweathermap", {
  				weather.temperature = hour.temp;
  				weather.feelsLikeTemp = hour.feels_like;
  				weather.humidity = hour.humidity;
@@ -255,13 +297,14 @@ index b0f5eedf..ffc582fa 100755
  				precip = false;
  				if (hour.hasOwnProperty("rain") && !isNaN(hour.rain["1h"])) {
  					if (this.config.units === "imperial") {
-@@ -374,15 +401,27 @@ WeatherProvider.register("openweathermap", {
+@@ -374,15 +436,28 @@ WeatherProvider.register("openweathermap", {
  		const days = [];
  		if (data.hasOwnProperty("daily")) {
  			for (const day of data.daily) {
 -				weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60);
 +				let offset = [12];
-+				let sections = [day.temp.day]
++				let sections = [day.temp.day];
++				let sections_feelsLike = [day.feels_like.day];
 +				if (this.config.expandDaySections) {
 +					offset = [6, 12, 18, 21]; // 6 hours between each section
 +					sections = [day.temp.morn, day.temp.day, day.temp.eve, day.temp.night];
@@ -285,7 +328,7 @@ index b0f5eedf..ffc582fa 100755
  					precip = false;
  					if (!isNaN(day.rain)) {
  						if (this.config.units === "imperial") {
-@@ -390,6 +429,7 @@ WeatherProvider.register("openweathermap", {
+@@ -390,6 +465,7 @@ WeatherProvider.register("openweathermap", {
  						} else {
  							weather.rain = day.rain;
  						}
@@ -293,7 +336,7 @@ index b0f5eedf..ffc582fa 100755
  						precip = true;
  					}
  					if (!isNaN(day.snow)) {
-@@ -398,6 +438,7 @@ WeatherProvider.register("openweathermap", {
+@@ -398,6 +474,7 @@ WeatherProvider.register("openweathermap", {
  						} else {
  							weather.snow = day.snow;
  						}
@@ -301,12 +344,13 @@ index b0f5eedf..ffc582fa 100755
  						precip = true;
  					}
  					if (precip) {
-@@ -408,8 +449,21 @@ WeatherProvider.register("openweathermap", {
+@@ -408,8 +485,40 @@ WeatherProvider.register("openweathermap", {
  					weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
  				}
  			}
 +		}
-+
+ 
+-		return { current: current, hours: hours, days: days };
 +		const alerts = [];
 +		if (data.hasOwnProperty("alerts")) {
 +			for (const alert of data.alerts) {
@@ -315,125 +359,134 @@ index b0f5eedf..ffc582fa 100755
 +				alertDesc.end = moment(alert.end, "X").utcOffset(data.timezone_offset / 60);
 +				alertDesc.event = alert.event;
 +				alertDesc.description = alert.description;
- 
--		return { current: current, hours: hours, days: days };
++
 +				alerts.push(alertDesc);
 +			}
 +		}
 +		return { current: current, hours: hours, days: days, alerts: alerts };
++	},
++
++	/*
++	 * fetch pollutions information
++	 */
++	fetchPollutionApi(pollutions) {
++		// initial variable declaration
++		const results = [];
++
++		for (const pollution of pollutions.list) {
++			const result = { date: null, aqi: null };
++
++			result.date = moment(pollution.dt, "X");
++			result.aqi = pollution.main.aqi;
++
++			results.push(result);
++		}
++
++		return results;
  	},
  
  	/*
-@@ -440,6 +494,98 @@ WeatherProvider.register("openweathermap", {
+@@ -440,6 +549,98 @@ WeatherProvider.register("openweathermap", {
  		return weatherTypes.hasOwnProperty(weatherType) ? weatherTypes[weatherType] : null;
  	},
  
-+/*	convertWeatherType(weatherIcon, weatherId) {
-+		const weatherTypes = {
-+			// "11d": "thunderstorm",
-+			// "11n": "night-thunderstorm",
-+			"200": ["day-storm-showers", "night-alt-storm-showers"],
-+			"201": ["day-thunderstorm", "night-alt-thunderstorm"],
-+			"202": ["thunderstorm", "thunderstorm"],
-+			"210": ["day-storm-showers", "night-alt-storm-showers"],
-+			"211": ["day-thunderstorm", "night-alt-thunderstorm"],
-+			"212": ["thunderstorm", "thunderstorm"],
-+			"221": ["thunderstorm", "thunderstorm"],
-+			"230": ["day-storm-showers", "night-alt-storm-showers"],
-+			"231": ["day-thunderstorm", "night-alt-thunderstorm"],
-+			"232": ["thunderstorm", "thunderstorm"],
-+
-+			// "09d": "showers",
-+			// "09n": "night-showers",
-+			"300": ["showers", "showers"],
-+			"301": ["rain-mix", "rain-mix"],
-+			"302": ["rain", "rain"],
-+			"310": ["showers", "showers"],
-+			"311": ["rain-mix", "rain-mix"],
-+			"312": ["rain", "rain"],
-+			"313": ["showers", "showers"],
-+			"314": ["rain-mix", "rain-mix"],
-+			"321": ["rain", "rain"],
-+
-+			// "10d": "rain",
-+			// "10n": "night-rain",
-+			"500": ["day-showers", "night-alt-showers"],
-+			"501": ["day-rain-mix", "night-alt-rain-mix"],
-+			"502": ["day-rain", "night-alt-rain"],
-+			"503": ["rain", "rain"],
-+			"504": ["rain", "rain"],
-+			// "13d": "snow",
-+			// "13n": "night-snow",
-+			"511": ["day-snow", "night-alt-snow"],
-+			// "09d": "showers",
-+			// "09n": "night-showers",
-+			"520": ["day-showers", "night-alt-showers"],
-+			"521": ["day-rain-mix", "night-alt-rain-mix"],
-+			"522": ["rain", "rain"],
-+			"531": ["rain", "rain"],
-+
-+			// "13d": "snow",
-+			// "13n": "night-snow",
-+			"600": ["day-snow", "night-alt-snow"],
-+			"601": ["day-snow", "night-alt-snow"],
-+			"602": ["snow", "snow"],
-+			"611": ["day-sleet", "night-alt-sleet"],
-+			"612": ["day-sleet", "night-alt-sleet"],
-+			"613": ["day-sleet", "night-alt-sleet"],
-+			"615": ["day-snow", "night-alt-snow"],
-+			"616": ["day-snow", "night-alt-snow"],
-+			"620": ["day-snow", "night-alt-snow"],
-+			"621": ["day-snow", "night-alt-snow"],
-+			"622": ["snow", "wi-day-snow"],
-+
-+			// "50d": "fog",
-+			// "50n": "night-alt-cloudy-windy"
-+			"701": ["day-fog", "night-fog"],
-+			"711": ["smoke", "smoke"],
-+			"721": ["day-haze", "night-fog"],
-+			"731": ["sandstorm", "sandstorm"],
-+			"741": ["day-fog", "night-fog"], // or neutral "fog"
-+			"751": ["sandstorm", "sandstorm"],
-+			"761": ["dust", "dust"],
-+			"762": ["volcan", "volcan"],
-+			"771": ["", ""],
-+			"781": ["tornado", "tornado"],
-+
-+			// "01d": "day-sunny",
-+			// "01n": "night-clear",
-+			"800": ["day-sunny", "night-clear"],
-+
-+			// "02d": "day-cloudy",
-+			// "02n": "night-cloudy",
-+			"801": ["day-cloudy-high", "night-cloudy-high"],
-+			// "03d": "cloudy",
-+			// "03n": "night-cloudy",
-+			"802": ["day-cloudy", "night-cloudy"],
-+			// "04d": "cloudy-windy",
-+			// "04n": "night-cloudy",
-+			"803": ["cloud", "cloud"],
-+			"804": ["cloudy", "cloudy"],
-+		};
-+
-+		const idxDay = weatherIcon.match(/n$/) ? 1 : 0;
-+		return weatherTypes.hasOwnProperty(weatherId) ? weatherTypes[weatherId][idxDay] : null;
-+	},
-+*/
++	/*	convertWeatherType(weatherIcon, weatherId) {
++			const weatherTypes = {
++				// "11d": "thunderstorm",
++				// "11n": "night-thunderstorm",
++				"200": ["day-storm-showers", "night-alt-storm-showers"],
++				"201": ["day-thunderstorm", "night-alt-thunderstorm"],
++				"202": ["thunderstorm", "thunderstorm"],
++				"210": ["day-storm-showers", "night-alt-storm-showers"],
++				"211": ["day-thunderstorm", "night-alt-thunderstorm"],
++				"212": ["thunderstorm", "thunderstorm"],
++				"221": ["thunderstorm", "thunderstorm"],
++				"230": ["day-storm-showers", "night-alt-storm-showers"],
++				"231": ["day-thunderstorm", "night-alt-thunderstorm"],
++				"232": ["thunderstorm", "thunderstorm"],
++	
++				// "09d": "showers",
++				// "09n": "night-showers",
++				"300": ["showers", "showers"],
++				"301": ["rain-mix", "rain-mix"],
++				"302": ["rain", "rain"],
++				"310": ["showers", "showers"],
++				"311": ["rain-mix", "rain-mix"],
++				"312": ["rain", "rain"],
++				"313": ["showers", "showers"],
++				"314": ["rain-mix", "rain-mix"],
++				"321": ["rain", "rain"],
++	
++				// "10d": "rain",
++				// "10n": "night-rain",
++				"500": ["day-showers", "night-alt-showers"],
++				"501": ["day-rain-mix", "night-alt-rain-mix"],
++				"502": ["day-rain", "night-alt-rain"],
++				"503": ["rain", "rain"],
++				"504": ["rain", "rain"],
++				// "13d": "snow",
++				// "13n": "night-snow",
++				"511": ["day-snow", "night-alt-snow"],
++				// "09d": "showers",
++				// "09n": "night-showers",
++				"520": ["day-showers", "night-alt-showers"],
++				"521": ["day-rain-mix", "night-alt-rain-mix"],
++				"522": ["rain", "rain"],
++				"531": ["rain", "rain"],
++	
++				// "13d": "snow",
++				// "13n": "night-snow",
++				"600": ["day-snow", "night-alt-snow"],
++				"601": ["day-snow", "night-alt-snow"],
++				"602": ["snow", "snow"],
++				"611": ["day-sleet", "night-alt-sleet"],
++				"612": ["day-sleet", "night-alt-sleet"],
++				"613": ["day-sleet", "night-alt-sleet"],
++				"615": ["day-snow", "night-alt-snow"],
++				"616": ["day-snow", "night-alt-snow"],
++				"620": ["day-snow", "night-alt-snow"],
++				"621": ["day-snow", "night-alt-snow"],
++				"622": ["snow", "wi-day-snow"],
++	
++				// "50d": "fog",
++				// "50n": "night-alt-cloudy-windy"
++				"701": ["day-fog", "night-fog"],
++				"711": ["smoke", "smoke"],
++				"721": ["day-haze", "night-fog"],
++				"731": ["sandstorm", "sandstorm"],
++				"741": ["day-fog", "night-fog"], // or neutral "fog"
++				"751": ["sandstorm", "sandstorm"],
++				"761": ["dust", "dust"],
++				"762": ["volcan", "volcan"],
++				"771": ["", ""],
++				"781": ["tornado", "tornado"],
++	
++				// "01d": "day-sunny",
++				// "01n": "night-clear",
++				"800": ["day-sunny", "night-clear"],
++	
++				// "02d": "day-cloudy",
++				// "02n": "night-cloudy",
++				"801": ["day-cloudy-high", "night-cloudy-high"],
++				// "03d": "cloudy",
++				// "03n": "night-cloudy",
++				"802": ["day-cloudy", "night-cloudy"],
++				// "04d": "cloudy-windy",
++				// "04n": "night-cloudy",
++				"803": ["cloud", "cloud"],
++				"804": ["cloudy", "cloudy"],
++			};
++	
++			const idxDay = weatherIcon.match(/n$/) ? 1 : 0;
++			return weatherTypes.hasOwnProperty(weatherId) ? weatherTypes[weatherId][idxDay] : null;
++		},
++	*/
 +
  	/* getParams(compliments)
  	 * Generates an url with api parameters based on the config.
  	 *
-@@ -451,7 +597,7 @@ WeatherProvider.register("openweathermap", {
- 			params += "lat=" + this.config.lat;
- 			params += "&lon=" + this.config.lon;
- 			if (this.config.type === "current") {
--				params += "&exclude=minutely,hourly,daily";
-+				params += "&exclude=minutely,daily";
- 			} else if (this.config.type === "hourly") {
- 				params += "&exclude=current,minutely,daily";
- 			} else if (this.config.type === "daily" || this.config.type === "forecast") {
 diff --git a/modules/default/weather/weather.js b/modules/default/weather/weather.js
-index 350c4f2d..e98de110 100644
+index 350c4f2d..67bb33a9 100644
 --- a/modules/default/weather/weather.js
 +++ b/modules/default/weather/weather.js
 @@ -23,6 +23,7 @@ Module.register("weather", {
@@ -444,6 +497,15 @@ index 350c4f2d..e98de110 100644
  		useBeaufort: true,
  		lang: config.language,
  		showHumidity: false,
+@@ -175,7 +176,7 @@ Module.register("weather", {
+ 					this.weatherProvider.fetchWeatherForecast();
+ 					break;
+ 				default:
+-					Log.error(`Invalid type ${this.config.type} configured (must be one of 'current', 'hourly', 'daily' or 'forecast')`);
++					Log.error(`Invalid type ${this.config.type} configured (must be one of 'current', 'hourly', 'daily', 'forecast' or 'full')`);
+ 			}
+ 		}, nextLoad);
+ 	},
 @@ -186,6 +187,11 @@ Module.register("weather", {
  		return roundValue === "-0" ? 0 : roundValue;
  	},
@@ -479,3 +541,41 @@ index 350c4f2d..e98de110 100644
  		this.nunjucksEnvironment().addFilter(
  			"decimalSymbol",
  			function (value) {
+diff --git a/modules/default/weather/weatherprovider.js b/modules/default/weather/weatherprovider.js
+index d24623b8..5d582064 100644
+--- a/modules/default/weather/weatherprovider.js
++++ b/modules/default/weather/weatherprovider.js
+@@ -84,6 +84,16 @@ const WeatherProvider = Class.extend({
+ 		return this.fetchedLocationName || "";
+ 	},
+ 
++	// This returns a Pollution object for the current pollution.
++	currentPollution: function () {
++		return this.currentPollutionObject;
++	},
++
++	// This returns an array of Pollution objects for the Pollution forecast.
++	pollutionForecast: function () {
++		return this.pollutionForecastArray;
++	},
++
+ 	// Set the currentWeather and notify the delegate that new information is available.
+ 	setCurrentWeather: function (currentWeatherObject) {
+ 		// We should check here if we are passing a WeatherDay
+@@ -106,6 +116,16 @@ const WeatherProvider = Class.extend({
+ 		this.fetchedLocationName = name;
+ 	},
+ 
++	// Set the currentPollution and notify the delegate that new information is available.
++	setCurrentPollution: function (currentPollutionObject) {
++		this.currentPollutionObject = currentPollutionObject;
++	},
++
++	// Set the pollutionForecastArray and notify the delegate that new information is available.
++	setPollutionForecast: function (pollutionForecastArray) {
++		this.pollutionForecastArray = pollutionForecastArray;
++	},
++
+ 	// Notify the delegate that new weather is available.
+ 	updateAvailable: function () {
+ 		this.delegate.updateAvailable(this);
