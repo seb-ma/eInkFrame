@@ -121,26 +121,28 @@ index bfeb0b8f..a0a8b089 100755
                      {% endif %}
                  {% endif %}
                  {% if config.showWindDirection %}
-@@ -38,11 +43,18 @@
+@@ -38,10 +43,17 @@
              {% endif %}
          </div>
      {% endif %}
 -    <div class="large light">
+-        <span class="wi weathericon wi-{{current.weatherType}}"></span>
+-        <span class="bright">
+-            {{ current.temperature | roundValue | unit("temperature") | decimalSymbol }}
 +    <div>
 +        <span class="large light">
-             <span class="wi weathericon wi-{{current.weatherType}}"></span>
-             <span class="bright">
-                 {{ current.temperature | roundValue | unit("temperature") | decimalSymbol }}
-             </span>
++            <span class="wi weathericon wi-{{current.weatherType}}"></span>
++            <span class="bright">
++                {{ current.temperature | roundValue | unit("temperature") | decimalSymbol }}
++            </span>
 +        </span>
 +        <span class="normal light uv">
 +            {% if config.showUV and current.uvi %}
 +                <span class="wi wi-stars uvIcon"></span><span>{{ current.uvi | decimalSymbol }}</span>
 +            {% endif %}
-+        </span>
+         </span>
      </div>
      <div class="normal light indoor">
-         {% if config.showIndoorTemperature and indoor.temperature %}
 @@ -69,9 +81,11 @@
                      {{ "FEELS" | translate({DEGREE: current.feelsLike() | roundValue | unit("temperature") | decimalSymbol }) }}
                  </span>
@@ -297,11 +299,27 @@ index b0f5eedf..bc210a5a 100755
  				precip = false;
  				if (hour.hasOwnProperty("rain") && !isNaN(hour.rain["1h"])) {
  					if (this.config.units === "imperial") {
-@@ -374,15 +436,28 @@ WeatherProvider.register("openweathermap", {
+@@ -374,42 +436,89 @@ WeatherProvider.register("openweathermap", {
  		const days = [];
  		if (data.hasOwnProperty("daily")) {
  			for (const day of data.daily) {
 -				weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60);
+-				weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
+-				weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
+-				weather.minTemperature = day.temp.min;
+-				weather.maxTemperature = day.temp.max;
+-				weather.humidity = day.humidity;
+-				weather.windSpeed = day.wind_speed;
+-				weather.windDirection = day.wind_deg;
+-				weather.weatherType = this.convertWeatherType(day.weather[0].icon);
+-				precip = false;
+-				if (!isNaN(day.rain)) {
+-					if (this.config.units === "imperial") {
+-						weather.rain = day.rain / 25.4;
+-					} else {
+-						weather.rain = day.rain;
+-					}
+-					precip = true;
 +				let offset = [12];
 +				let sections = [day.temp.day];
 +				let sections_feelsLike = [day.feels_like.day];
@@ -309,48 +327,61 @@ index b0f5eedf..bc210a5a 100755
 +					offset = [6, 12, 18, 21]; // 6 hours between each section
 +					sections = [day.temp.morn, day.temp.day, day.temp.eve, day.temp.night];
 +					sections_feelsLike = [day.feels_like.morn, day.feels_like.day, day.feels_like.eve, day.feels_like.night];
-+				}
+ 				}
+-				if (!isNaN(day.snow)) {
+-					if (this.config.units === "imperial") {
+-						weather.snow = day.snow / 25.4;
+-					} else {
+-						weather.snow = day.snow;
 +				for (i = 0; i < sections.length; i++) {
 +					weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60).startOf('day').add(offset[i], 'hours');
 +					weather.temperature = sections[i];
 +					weather.feelsLikeTemp = sections_feelsLike[i];
- 					weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
- 					weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
- 					weather.minTemperature = day.temp.min;
- 					weather.maxTemperature = day.temp.max;
- 					weather.humidity = day.humidity;
++					weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
++					weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
++					weather.minTemperature = day.temp.min;
++					weather.maxTemperature = day.temp.max;
++					weather.humidity = day.humidity;
 +					weather.uvi = day.uvi;
 +					weather.precipitationProba = day.pop;
- 					weather.windSpeed = day.wind_speed;
- 					weather.windDirection = day.wind_deg;
--				weather.weatherType = this.convertWeatherType(day.weather[0].icon);
++					weather.windSpeed = day.wind_speed;
++					weather.windDirection = day.wind_deg;
 +					weather.weatherType = this.convertWeatherType(day.weather[0].icon, day.weather[0].id);
- 					precip = false;
- 					if (!isNaN(day.rain)) {
- 						if (this.config.units === "imperial") {
-@@ -390,6 +465,7 @@ WeatherProvider.register("openweathermap", {
- 						} else {
- 							weather.rain = day.rain;
- 						}
++					precip = false;
++					if (!isNaN(day.rain)) {
++						if (this.config.units === "imperial") {
++							weather.rain = day.rain / 25.4;
++						} else {
++							weather.rain = day.rain;
++						}
 +						weather.rain /= sections.length;
- 						precip = true;
++						precip = true;
  					}
- 					if (!isNaN(day.snow)) {
-@@ -398,6 +474,7 @@ WeatherProvider.register("openweathermap", {
- 						} else {
- 							weather.snow = day.snow;
- 						}
+-					precip = true;
+-				}
+-				if (precip) {
+-					weather.precipitation = weather.rain + weather.snow;
++					if (!isNaN(day.snow)) {
++						if (this.config.units === "imperial") {
++							weather.snow = day.snow / 25.4;
++						} else {
++							weather.snow = day.snow;
++						}
 +						weather.snow /= sections.length;
- 						precip = true;
- 					}
- 					if (precip) {
-@@ -408,8 +485,40 @@ WeatherProvider.register("openweathermap", {
- 					weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
++						precip = true;
++					}
++					if (precip) {
++						weather.precipitation = weather.rain + weather.snow;
++					}
++
++					days.push(weather);
++					weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
  				}
- 			}
++			}
 +		}
  
--		return { current: current, hours: hours, days: days };
+-				days.push(weather);
+-				weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
 +		const alerts = [];
 +		if (data.hasOwnProperty("alerts")) {
 +			for (const alert of data.alerts) {
@@ -361,8 +392,8 @@ index b0f5eedf..bc210a5a 100755
 +				alertDesc.description = alert.description;
 +
 +				alerts.push(alertDesc);
-+			}
-+		}
+ 			}
+ 		}
 +		return { current: current, hours: hours, days: days, alerts: alerts };
 +	},
 +
@@ -381,7 +412,8 @@ index b0f5eedf..bc210a5a 100755
 +
 +			results.push(result);
 +		}
-+
+ 
+-		return { current: current, hours: hours, days: days };
 +		return results;
  	},
  

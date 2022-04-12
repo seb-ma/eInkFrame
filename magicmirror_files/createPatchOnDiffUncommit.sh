@@ -23,12 +23,13 @@ find . -name .git -execdir sh -c '
 	for dirN do
 		cd $dirN/..
 		fname=${PWD##*/}.patch
-		git diff --staged --ignore-space-change ":(exclude)package-lock.json" ":(exclude).gitignore" ":(exclude)node_modules" > $SCRIPT_DIR/patches/$fname
+		git diff --staged ":(exclude)package-lock.json" ":(exclude).gitignore" ":(exclude)node_modules" > $SCRIPT_DIR/patches/$fname
 
 		if [ -s $SCRIPT_DIR/patches/$fname ]
 		then
 			echo cd ".${PWD#"$fullPath"}" >> $SCRIPT_DIR/applyPatches.sh
-			echo "git apply \$SCRIPT_DIR/patches/$fname" >> $SCRIPT_DIR/applyPatches.sh
+			echo "echo Applying patch $fname" >> $SCRIPT_DIR/applyPatches.sh
+			echo "git apply --ignore-whitespace --whitespace=nowarn \$SCRIPT_DIR/patches/$fname" >> $SCRIPT_DIR/applyPatches.sh
 			echo "cd -" >> $SCRIPT_DIR/applyPatches.sh
 			echo "" >> $SCRIPT_DIR/applyPatches.sh
 		else

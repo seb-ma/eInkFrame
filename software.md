@@ -234,6 +234,32 @@ tmpfs /var/tmp tmpfs defaults,noatime,nosuid,nodev,noexec,size=10M 0 0
 tmpfs /var/log tmpfs defaults,noatime,nosuid,nodev,noexec,mode=0755,size=10M 0 0
 ```
 
+### Limit log files size
+
+To limit size of logs to `1M`, edit the `/etc/rsyslog.conf` file:
+
+```sh
+sudo nano /etc/rsyslog.conf
+```
+
+Replace the following lines:
+
+```sh
+*.*;auth,authpriv.none         -/var/log/syslog
+daemon.*                       -/var/log/daemon.log
+```
+
+by:
+
+```sh
+$outchannel mysyslog,/var/log/syslog,1048576
+$outchannel mydaemon,/var/log/daemon.log,1048576
+*.*;auth,authpriv.none          :omfile:$mysyslog
+daemon.*                        :omfile:$daemonlog
+```
+
+### Set hostname
+
 Change hostname to `einkframe`
 
 ```sh

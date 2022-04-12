@@ -18,8 +18,9 @@ index cdbc859..6bc2d77 100644
  					self.getConnectionStatus();
  					setInterval(function() {self.getCalls();self.getDownloads();self.getConnectionStatus();	}, (this.config.requestRefresh) * 1000);
  				}
+-
 +			}
- 			
++			
 +			if (payload.type !== "connection") {
 +				self.updateDom();
  			}

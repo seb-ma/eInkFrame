@@ -16,10 +16,11 @@ index 1b6dc02..3e6e633 100644
  
    updateCommute: function () {
      let mode = this.config.mode == 'driving' ? 'driving-traffic' : this.config.mode;
+-    this.url = encodeURI(`https://api.mapbox.com/directions/v5/mapbox/${mode}/${this.config.originCoords};${this.config.destinationCoords}?access_token=${this.config.accessToken}`);
 +    if (this.config.provider == "tomtom") {
 +      this.url = encodeURI(`https://api.tomtom.com/routing/1/calculateRoute/${this.config.originCoords}:${this.config.destinationCoords}/json?maxAlternatives=0&language=fr-FR&computeBestOrder=false&routeRepresentation=polyline&computeTravelTimeFor=all&sectionType=travelMode&callback=callback&departAt=now&routeType=fastest&traffic=true&avoid=unpavedRoads&travelMode=car&vehicleMaxSpeed=0&vehicleWeight=0&vehicleAxleWeight=0&vehicleLength=0&vehicleWidth=0&vehicleHeight=0&vehicleCommercial=false&vehicleEngineType=combustion&key=${this.config.accessToken}`);
 +    } else {
-       this.url = encodeURI(`https://api.mapbox.com/directions/v5/mapbox/${mode}/${this.config.originCoords};${this.config.destinationCoords}?access_token=${this.config.accessToken}`);
++      this.url = encodeURI(`https://api.mapbox.com/directions/v5/mapbox/${mode}/${this.config.originCoords};${this.config.destinationCoords}?access_token=${this.config.accessToken}`);
 +    }
  
      // only run getDom once at the start of a hidden period to remove the module from the screen, then just wait until time to unhide to run again
@@ -51,12 +52,13 @@ index 1b6dc02..3e6e633 100644
      fetch(api_url)
        .then(self.checkStatus)
        .then(json => {
+-        self.duration = Math.round(json.routes[0].duration / 60);
 +		self.trafficDelay = "—"
 +        if (this.config.provider == "tomtom") {
 +          self.duration = Math.round(json.routes[0].summary.travelTimeInSeconds / 60);
 +          self.trafficDelay = Math.round(json.routes[0].summary.trafficDelayInSeconds / 60);
 +        } else {
-           self.duration = Math.round(json.routes[0].duration / 60);
++          self.duration = Math.round(json.routes[0].duration / 60);
 +        }
 +
          self.errorMessage = self.errorDescription = undefined;
@@ -83,12 +85,14 @@ index 034ecbc..0f9846a 100644
  | `language`   | Define the commute time language.                 | string  | `config.language`       | Any language string  |
  | `interval`   | How often the traffic is updated in milliseconds. | integer | `300000`<br>(5 minutes) |                      |
  | `showSymbol` | Whether to show the car symbol or not.            | boolean | true                    |                      |
-@@ -98,8 +99,9 @@ in firstLine/secondLine._
+@@ -97,9 +98,10 @@ in firstLine/secondLine._
+ 
  #### Tokens
  
- | Token            | Value                                            |
+-| Token        | Value                                         |
 -| ------------ | --------------------------------------------- |
 -| `{duration}` | The driving time returned from the mapbox API |
++| Token            | Value                                            |
 +| ---------------- | ------------------------------------------------ |
 +| `{duration}`     | The driving time  returned from the provider API |
 +| `{trafficDelay}` | The driving delay returned from the provider API (only with tomtom) |

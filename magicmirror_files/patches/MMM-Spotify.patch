@@ -53,12 +53,13 @@ index 7eea776..71fbb6d 100644
      // This breaks multi module instances, but saves performance and power consumption, so we reduce heat
      if (!this.suspended) {
        this.timer = setTimeout(() => {
+-        this.updatePulse()
 +        if (idle && this.countAccount > 1) {
 +          // Try next account at next timeout of idle state interval
 +          this.currentAccountNo = (this.currentAccountNo + 1) % this.countAccount;
 +          this.account(this.currentAccountNo);
 +        } else {
-           this.updatePulse()
++          this.updatePulse()
 +        }
        }, idle ? this.config.idleInterval : this.config.updateInterval)
      }
