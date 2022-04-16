@@ -94,7 +94,7 @@ index 7c9310f0..b059babb 100644
  				"</span>";
  			digitalWrapper.appendChild(moonWrapper);
 diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
-index bfeb0b8f..a0a8b089 100755
+index bfeb0b8f..a0dd397a 100755
 --- a/modules/default/weather/current.njk
 +++ b/modules/default/weather/current.njk
 @@ -1,15 +1,20 @@
@@ -138,12 +138,12 @@ index bfeb0b8f..a0a8b089 100755
 +        </span>
 +        <span class="normal light uv">
 +            {% if config.showUV and current.uvi %}
-+                <span class="wi wi-stars uvIcon"></span><span>{{ current.uvi | decimalSymbol }}</span>
++                <span class="wi wi-stars uvIcon"></span><span>{{ current.uvi | round | decimalSymbol }}</span>
 +            {% endif %}
          </span>
      </div>
      <div class="normal light indoor">
-@@ -69,9 +81,11 @@
+@@ -69,13 +81,22 @@
                      {{ "FEELS" | translate({DEGREE: current.feelsLike() | roundValue | unit("temperature") | decimalSymbol }) }}
                  </span>
              {% endif %}
@@ -157,6 +157,17 @@ index bfeb0b8f..a0a8b089 100755
                  </span>
              {% endif %}
          </div>
+     {% endif %}
++    {% if config.showAQI and currentPollution %}
++        <div class="normal medium pollution">
++            <span class="icon fas fa-viruses"></span>
++            {% set aqiLabel = "AQI_" + currentPollution.aqi %}
++            <span>{{ aqiLabel | translate }}</span>
++        </div>
++    {% endif %}
+ {% else %}
+     <div class="dimmed light small">
+         {{ "LOADING" | translate }}
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
 index b0f5eedf..bc210a5a 100755
 --- a/modules/default/weather/providers/openweathermap.js
@@ -518,10 +529,10 @@ index b0f5eedf..bc210a5a 100755
  	 * Generates an url with api parameters based on the config.
  	 *
 diff --git a/modules/default/weather/weather.js b/modules/default/weather/weather.js
-index 350c4f2d..67bb33a9 100644
+index 350c4f2d..0a6ae760 100644
 --- a/modules/default/weather/weather.js
 +++ b/modules/default/weather/weather.js
-@@ -23,6 +23,7 @@ Module.register("weather", {
+@@ -23,10 +23,12 @@ Module.register("weather", {
  		showPeriodUpper: false,
  		showWindDirection: true,
  		showWindDirectionAsArrow: false,
@@ -529,7 +540,80 @@ index 350c4f2d..67bb33a9 100644
  		useBeaufort: true,
  		lang: config.language,
  		showHumidity: false,
-@@ -175,7 +176,7 @@ Module.register("weather", {
+ 		showSun: true,
++		showAQI: false,
+ 		degreeLabel: false,
+ 		decimalSymbol: ".",
+ 		showIndoorTemperature: false,
+@@ -53,6 +55,8 @@ Module.register("weather", {
+ 	// Can be used by the provider to display location of event if nothing else is specified
+ 	firstEvent: null,
+ 
++	nbUpdateWait: 0,
++
+ 	// Define required scripts.
+ 	getStyles: function () {
+ 		return ["font-awesome.css", "weather-icons.css", "weather.css"];
+@@ -104,10 +108,10 @@ Module.register("weather", {
+ 					}
+ 				}
+ 			}
+-		} else if (notification === "INDOOR_TEMPERATURE") {
++		} else if (notification === "INDOOR_TEMPERATURE" && this.config.showIndoorTemperature) {
+ 			this.indoorTemperature = this.roundValue(payload);
+ 			this.updateDom(300);
+-		} else if (notification === "INDOOR_HUMIDITY") {
++		} else if (notification === "INDOOR_HUMIDITY" && this.config.showIndoorHumidity) {
+ 			this.indoorHumidity = this.roundValue(payload);
+ 			this.updateDom(300);
+ 		}
+@@ -136,6 +140,7 @@ Module.register("weather", {
+ 		return {
+ 			config: this.config,
+ 			current: this.weatherProvider.currentWeather(),
++			currentPollution: (this.config.showAQI && typeof this.weatherProvider.currentPollution === "function") ? this.weatherProvider.currentPollution() : undefined,
+ 			forecast: forecast,
+ 			hourly: this.weatherProvider.weatherHourly(),
+ 			indoor: {
+@@ -147,12 +152,15 @@ Module.register("weather", {
+ 
+ 	// What to do when the weather provider has new information available?
+ 	updateAvailable: function () {
+-		Log.log("New weather information available.");
+-		this.updateDom(0);
+-		this.scheduleUpdate();
++		this.nbUpdateWait--;
++		if (this.nbUpdateWait <= 0) {
++			Log.log("New weather information available.");
++			this.updateDom(0);
++			this.scheduleUpdate();
+ 
+-		if (this.weatherProvider.currentWeather()) {
+-			this.sendNotification("CURRENTWEATHER_TYPE", { type: this.weatherProvider.currentWeather().weatherType.replace("-", "_") });
++			if (this.weatherProvider.currentWeather()) {
++				this.sendNotification("CURRENTWEATHER_TYPE", { type: this.weatherProvider.currentWeather().weatherType.replace("-", "_") });
++			}
+ 		}
+ 	},
+ 
+@@ -165,17 +173,24 @@ Module.register("weather", {
+ 		setTimeout(() => {
+ 			switch (this.config.type.toLowerCase()) {
+ 				case "current":
++					this.nbUpdateWait = 1;
++					if (this.config.showAQI && typeof this.weatherProvider.fetchCurrentPollution === "function") {
++						this.nbUpdateWait++;
++						this.weatherProvider.fetchCurrentPollution();
++					}
+ 					this.weatherProvider.fetchCurrentWeather();
+ 					break;
+ 				case "hourly":
++					this.nbUpdateWait = 1;
+ 					this.weatherProvider.fetchWeatherHourly();
+ 					break;
+ 				case "daily":
+ 				case "forecast":
++					this.nbUpdateWait = 1;
  					this.weatherProvider.fetchWeatherForecast();
  					break;
  				default:
@@ -538,19 +622,7 @@ index 350c4f2d..67bb33a9 100644
  			}
  		}, nextLoad);
  	},
-@@ -186,6 +187,11 @@ Module.register("weather", {
- 		return roundValue === "-0" ? 0 : roundValue;
- 	},
- 
-+	probaValue: function (probability) {
-+		const roundValue = (parseFloat(probability) * 100).toFixed(0);
-+		return roundValue === "-0" ? 0 : roundValue;
-+	},
-+
- 	addFilters() {
- 		this.nunjucksEnvironment().addFilter(
- 			"formatTime",
-@@ -236,6 +242,8 @@ Module.register("weather", {
+@@ -236,6 +251,8 @@ Module.register("weather", {
  					}
  				} else if (type === "humidity") {
  					value += "%";
@@ -559,20 +631,20 @@ index 350c4f2d..67bb33a9 100644
  				}
  
  				return value;
-@@ -249,6 +257,13 @@ Module.register("weather", {
+@@ -289,5 +306,13 @@ Module.register("weather", {
+ 				}
  			}.bind(this)
  		);
- 
++
 +		this.nunjucksEnvironment().addFilter(
 +			"probaValue",
 +			function (value) {
-+				return this.probaValue(value);
-+			}.bind(this)
++				const roundValue = (parseFloat(value) * 100).toFixed(0);
++				return roundValue === "-0" ? 0 : roundValue;
++			}
 +		);
-+
- 		this.nunjucksEnvironment().addFilter(
- 			"decimalSymbol",
- 			function (value) {
+ 	}
+ });
 diff --git a/modules/default/weather/weatherprovider.js b/modules/default/weather/weatherprovider.js
 index d24623b8..5d582064 100644
 --- a/modules/default/weather/weatherprovider.js
@@ -611,3 +683,37 @@ index d24623b8..5d582064 100644
  	// Notify the delegate that new weather is available.
  	updateAvailable: function () {
  		this.delegate.updateAvailable(this);
+diff --git a/translations/en.json b/translations/en.json
+index 43ba9c74..fdfff745 100644
+--- a/translations/en.json
++++ b/translations/en.json
+@@ -28,6 +28,12 @@
+ 	"FEELS": "Feels like {DEGREE}",
+ 	"PRECIP": "PoP",
+ 
++	"AQI_1": "Good",
++	"AQI_2": "Fair",
++	"AQI_3": "Moderate",
++	"AQI_4": "Poor",
++	"AQI_5": "Very poor",
++
+ 	"MODULE_CONFIG_CHANGED": "The configuration options for the {MODULE_NAME} module have changed.\nPlease check the documentation.",
+ 	"MODULE_CONFIG_ERROR": "Error in the {MODULE_NAME} module. {ERROR}",
+ 	"MODULE_ERROR_MALFORMED_URL": "Malformed url.",
+diff --git a/translations/fr.json b/translations/fr.json
+index 97cccc59..dcb149b5 100644
+--- a/translations/fr.json
++++ b/translations/fr.json
+@@ -27,6 +27,12 @@
+ 
+ 	"FEELS": "Ressenti {DEGREE}",
+ 	"PRECIP": "Probabilité de précipitations",
++	
++	"AQI_1": "Bon",
++	"AQI_2": "Correct",
++	"AQI_3": "Moyen",
++	"AQI_4": "Mauvais",
++	"AQI_5": "Très mauvais",
+ 
+ 	"MODULE_CONFIG_CHANGED": "Les options de configuration du module {MODULE_NAME} ont changé. \nVeuillez consulter la documentation.",
+ 	"MODULE_CONFIG_ERROR": "Erreur dans le module {MODULE_NAME}. {ERROR}",

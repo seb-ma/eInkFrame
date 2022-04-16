@@ -393,6 +393,7 @@ let config = {
 				useKmh: true,
 				showHumidity: true,
 				showSun: false,
+				showAQI: true,
 			}
 		},
 		{
@@ -410,6 +411,7 @@ let config = {
 				width: 1300,
 				//iconSize: 48, // in px or undefined to define automatically at first call
 				hoursRatio: 0.5,
+				showAQI: false,
 				color: "#000",
 				fillColor: "#ccc",
 			}
@@ -428,6 +430,7 @@ let config = {
 				weatherEndpoint: "mmm-weatherproviderunique",
 				height: 1300,
 				width: 1800,
+				showAQI: true,
 				color: "#000",
 				fillColor: "#ccc",
 			}

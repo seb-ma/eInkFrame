@@ -57,7 +57,7 @@ It can also be customized by adding new modules (see [MagicMirror² Installation
   - [X] wind
   - [X] UV index
   - [X] rain probability
-  - [ ] air quality
+  - [X] air quality
 - [X] Graph of weather forecast for next days with:
   - [X] temperature
   - [X] feel-like temperature
