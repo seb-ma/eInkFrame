@@ -26,15 +26,3 @@ index cdbc859..6bc2d77 100644
  			}
  		}
  		self.needRefresh = true;
-diff --git a/node_helper.js b/node_helper.js
-index c0ff8f0..fb852cd 100644
---- a/node_helper.js
-+++ b/node_helper.js
-@@ -7,6 +7,7 @@
- 
- 
- var fs = require("fs");
-+var NodeHelper = require("node_helper");
- var Freeboxapi = require("./freeboxapi.js");
- var fapi;
- 
