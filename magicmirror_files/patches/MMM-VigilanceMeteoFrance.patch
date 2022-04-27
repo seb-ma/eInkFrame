@@ -1,0 +1,45 @@
+diff --git a/MMM-VigilanceMeteoFrance.js b/MMM-VigilanceMeteoFrance.js
+index 5539eba..6dd86ff 100644
+--- a/MMM-VigilanceMeteoFrance.js
++++ b/MMM-VigilanceMeteoFrance.js
+@@ -258,7 +258,8 @@ Module.register("MMM-VigilanceMeteoFrance", {
+ 	// Request new data from vigilance.weatherfrance.com with node_helper
+ 	socketNotificationReceived: function(notification, payload) {
+ 		if (notification === "STARTED") {
+-			this.updateDom(this.config.animationSpeed);
++			// Not needed: getData will fire a notification "DATA" after
++			//this.updateDom(this.config.animationSpeed);
+ 		} else if (notification === "ERROR") {
+ 			Log.error(this.name + ": Do not access to data (" + payload + " HTTP error).");
+ 		} else if (notification === "DATA") {
+@@ -288,9 +289,9 @@ Module.register("MMM-VigilanceMeteoFrance", {
+ 		this.vigiWeatherLevel = data.level;
+ 		
+ 		if(this.config.hideGreenLevel) {
+-			if(data.level == 1) {
++			if(data.level == 1 && !this.hidden) {
+ 				this.hide();
+-			} else {
++			} else if (data.level > 1 && this.hidden) {
+ 				this.show();
+ 			}
+ 		}
+@@ -398,7 +399,8 @@ Module.register("MMM-VigilanceMeteoFrance", {
+ 		this.loaded = true;
+ 		this.lastData = data;
+ 		this.updateDom(this.config.animationSpeed);
+-		this.scheduleUpdate();
++		// Dont't call scheduleUpdate here: cause a recursion if multiple modules/browsers are connected
++		//this.scheduleUpdate();
+ 	},
+ 
+ 	// Schedule next update
+@@ -411,6 +413,8 @@ Module.register("MMM-VigilanceMeteoFrance", {
+ 		var self = this;
+ 		setTimeout(function() {
+ 			self.sendSocketNotification('CONFIG', self.config);
++			// Schedule next update
++			self.scheduleUpdate();
+ 		}, nextLoad);
+ 	},
+ 

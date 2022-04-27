@@ -19,6 +19,11 @@ echo Applying patch MMM-Pollen-FR.patch
 git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-Pollen-FR.patch
 cd -
 
+cd ./modules/MMM-VigilanceMeteoFrance
+echo Applying patch MMM-VigilanceMeteoFrance.patch
+git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-VigilanceMeteoFrance.patch
+cd -
+
 cd ./modules/MMM-Spotify
 echo Applying patch MMM-Spotify.patch
 git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-Spotify.patch

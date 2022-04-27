@@ -84,13 +84,13 @@ let config = {
 			module: "MMM-NotifCustomActions", // https://github.com/seb-ma/MMM-NotifCustomActions
 			config: {
 				actions: [
-					{ notification: "ACTION_SHUTDOWN", action_node: function (sender, payload) { exec("sudo shutdown -h now"); } },
+					{ notification: "ACTION_SHUTDOWN", action_node: function (self, sender, payload) { exec("sudo shutdown -h now"); } },
 
-					{ notification: "SPOTIFY_CONNECTED", action_module: function (sender, payload) { self.isSpotify = true; self.sendNotification("PAGE_SELECT", "musicPage"); } },
-					{ notification: "SPOTIFY_DISCONNECTED", action_module: function (sender, payload) { self.isSpotify = false; self.sendNotification("PAGE_SELECT", "mainPage"); } },
+					{ notification: "SPOTIFY_CONNECTED", action_client: function (self, sender, payload) { self.isSpotify = true; self.sendNotification("PAGE_SELECT", "musicPage"); } },
+					{ notification: "SPOTIFY_DISCONNECTED", action_client: function (self, sender, payload) { self.isSpotify = false; self.sendNotification("PAGE_SELECT", "mainPage"); } },
 
-					{ notification: "PAGE_CHANGED", action_module: function (sender, payload) { setTimeout(() => { self.sendNotification("IT8951_ASK_FULL_REFRESH"); }, 1000) } },
-					{ notification: "MAIN_PAGE_SELECT", action_module: function (sender, payload) { self.sendNotification("PAGE_SELECT", self.isSpotify ? "musicPage" : "mainPage"); } },
+					{ notification: "PAGE_CHANGED", action_client: function (self, sender, payload) { setTimeout(() => { self.sendNotification("IT8951_ASK_FULL_REFRESH"); }, 1000) } },
+					{ notification: "MAIN_PAGE_SELECT", action_client: function (self, sender, payload) { self.sendNotification("PAGE_SELECT", self.isSpotify ? "musicPage" : "mainPage"); } },
 				]
 			}
 		},
@@ -268,6 +268,11 @@ let config = {
 						url: "https://cache.media.education.gouv.fr/ics/Calendrier_Scolaire_Zone_B.ics",
 					},
 					{
+						symbol: "tree-palm",
+						displaySymbol: true,
+						url: "https://etalab.github.io/jours-feries-france-data/ics/jours_feries_metropole.ics",
+					},
+					{
 						symbol: "birthday-cake",
 						url: "http://localhost:8080/MMM-vCard2Calendar", // This url is fixed
 					},
@@ -376,7 +381,7 @@ let config = {
 			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			header: "Extérieur",
 			config: {
-				initialLoadDelay: 1 * 60 * 1000, // 1 minute
+				initialLoadDelay: 30 * 1000, // 30 seconds
 				updateInterval: 1 * 60 * 1000, // 1 minute
 				animationSpeed: configPrivateParts.animationSpeed,
 				weatherProvider: "../../../mmm-weatherproviderunique/proxyweatherprovider",
@@ -397,19 +402,28 @@ let config = {
 			}
 		},
 		{
+			// This module is not used to display the weather but only to have a unique call to weather provider for all the modules
+			module: "mmm-weatherproviderunique", // https://github.com/seb-ma/mmm-weatherproviderunique
+			hiddenOnStartup: true,
+			config: {
+				apiKey: configPrivateParts.apikey_openweather,
+				lat: configPrivateParts.home.lat,
+				lon: configPrivateParts.home.lon,
+			}
+		},
+		{
 			module: "MMM-WeatherChartD3", // https://github.com/seb-ma/MMM-WeatherChartD3
 			position: "bottom_right",
 			pages: { mainPage: "bottom_right", musicPage: "bottom_right" }, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
 			config: {
-				initialLoadDelay: 1 * 60 * 1000, // 1 minute
+				initialLoadDelay: 30 * 1000, // 30 seconds
 				updateInterval: 5 * 60 * 1000, // 5 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				weatherProvider: "../../../mmm-weatherproviderunique/proxyweatherprovider",
 				weatherEndpoint: "mmm-weatherproviderunique",
 				height: 400,
 				width: 1300,
-				//iconSize: 48, // in px or undefined to define automatically at first call
 				hoursRatio: 0.5,
 				showAQI: false,
 				color: "#000",
@@ -423,7 +437,7 @@ let config = {
 			pages: { weatherPage: "middle_center" }, // Config for MMM-Page-Selector
 			header: "Prévisions météo",
 			config: {
-				initialLoadDelay: 1 * 60 * 1000, // 1 minute
+				initialLoadDelay: 30 * 1000, // 30 seconds
 				updateInterval: 5 * 60 * 1000, // 5 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
 				weatherProvider: "../../../mmm-weatherproviderunique/proxyweatherprovider",
@@ -476,16 +490,6 @@ let config = {
 				list: configPrivateParts.trello.list,
 				wholeList: true,
 				hideCompletedItems: true,
-			}
-		},
-		{
-			// This module is not used to display the weather but only to have a unique call to weather provider for all the modules
-			module: "mmm-weatherproviderunique", // https://github.com/seb-ma/mmm-weatherproviderunique
-			hiddenOnStartup: true,
-			config: {
-				apiKey: configPrivateParts.apikey_openweather,
-				lat: configPrivateParts.home.lat,
-				lon: configPrivateParts.home.lon,
 			}
 		},
 	]

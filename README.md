@@ -102,5 +102,5 @@ It can also be customized by adding new modules (see [MagicMirror² Installation
 
 ### Advanced features (not yet planned)
 
-- [ ] [Jeedom](https://www.jeedom.com/) interaction
+- [ ] [Home Assistant](https://www.home-assistant.io/) interaction
 - [ ] Communication with home sensors (indoor and outdoor)

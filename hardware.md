@@ -203,4 +203,4 @@ Here are some pictures from first realisation:
 
 ### CJMCU-680
 
-- 3D model by [Hasanain Shuja](https://grabcad.com/hasanain.shuja-1) 
+- 3D model by [Hasanain Shuja](https://grabcad.com/hasanain.shuja-1)

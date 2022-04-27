@@ -62,8 +62,6 @@ git clone https://github.com/n-gao/MMM-vCard2Calendar
 #git clone https://github.com/MMM-CalendarExt2/MMM-CalendarExtTimeline
 ### Displaying data from FreeBox v6 server (Revolution)
 git clone https://github.com/tataille/MMM-FreeBox-Monitor
-### Displaying any JEEDOM command value
-#git clone https://github.com/prysme01/MMM-Jeedom
 ### Managing capacitive touchs with MPR121
 git clone https://github.com/PatriceG/MMM-MPR121
 ### Displaying data from Pronote
