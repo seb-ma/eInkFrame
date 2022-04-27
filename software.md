@@ -156,6 +156,18 @@ sudo apt install -y npm nodejs
 sudo apt install -y git make gcc-c++
 ```
 
+### Installation of more up-to-date nodejs package
+
+Installation of a required nodejs version using project https://github.com/nodesource/distributions.
+
+```sh
+# Execute script used to add repository
+curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash -
+sudo apt-get install -y nodejs
+# To compile and install native addons from npm you may also need to install build tools
+apt-get install -y build-essential
+```
+
 ### Automatic updates
 
 ### System update

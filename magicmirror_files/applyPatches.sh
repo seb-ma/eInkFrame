@@ -49,11 +49,6 @@ echo Applying patch MMM-Traffic.patch
 git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-Traffic.patch
 cd -
 
-cd ./modules/MMM-CalDAV
-echo Applying patch MMM-CalDAV.patch
-git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-CalDAV.patch
-cd -
-
 cd ./modules/MMM-vCard2Calendar
 echo Applying patch MMM-vCard2Calendar.patch
 git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-vCard2Calendar.patch

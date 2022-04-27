@@ -14,5 +14,9 @@ find . -name .git -print -execdir git stash \; -execdir git pull \; -execdir git
 #find . -name .git -print -execdir npm update \;
 # Specific update for MMM-MPR121
 cd MMM-MPR121/; npm install; npm rebuild i2c-bus --update-binary; cd -
+# Specific update for MMM-Bosch-BME680-sensor
+cd MMM-Bosch-BME680-sensor/; npm install; npm rebuild i2c-bus --update-binary; cd -
+# Specific case for rpio dependency in MMM-IT8951
+cd MMM-IT8951/; npm install; npm rebuild rpio --update-binary; cd -
 
 popd
