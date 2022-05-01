@@ -1,5 +1,5 @@
 diff --git a/modules/default/clock/clock.js b/modules/default/clock/clock.js
-index 7c9310f0..b059babb 100644
+index 7c9310f0..cb6c5cf3 100644
 --- a/modules/default/clock/clock.js
 +++ b/modules/default/clock/clock.js
 @@ -88,6 +88,30 @@ Module.register("clock", {
@@ -7,8 +7,8 @@ index 7c9310f0..b059babb 100644
  		moment.locale(config.language);
  	},
 +
-+	getMoonIcon: function(phase) {
-+		const intPercent = (phase * 100) .toFixed();
++	getMoonIcon: function (phase) {
++		const intPercent = (phase * 100).toFixed();
 +		if (intPercent === 0) {
 +			return "moon-alt-new";
 +		} else if (intPercent < 25) {

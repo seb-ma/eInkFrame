@@ -263,12 +263,12 @@ let config = {
 						url: "http://localhost:8080/CALDAV/familial.ics", // fourni par MMM-CalDAV
 					},
 					{
-						symbol: "island-tropical",
+						symbol: "umbrella-beach",
 						displaySymbol: true,
 						url: "https://cache.media.education.gouv.fr/ics/Calendrier_Scolaire_Zone_B.ics",
 					},
 					{
-						symbol: "tree-palm",
+						symbol: "bell-slash",
 						displaySymbol: true,
 						url: "https://etalab.github.io/jours-feries-france-data/ics/jours_feries_metropole.ics",
 					},
