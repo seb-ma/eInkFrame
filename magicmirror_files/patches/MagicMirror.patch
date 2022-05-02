@@ -1,3 +1,16 @@
+diff --git a/js/module.js b/js/module.js
+index 6d154529..eb3163eb 100644
+--- a/js/module.js
++++ b/js/module.js
+@@ -166,7 +166,7 @@ const Module = Class.extend({
+ 			return this._nunjucksEnvironment;
+ 		}
+ 
+-		this._nunjucksEnvironment = new nunjucks.Environment(new nunjucks.WebLoader(this.file(""), { async: true }), {
++		this._nunjucksEnvironment = new nunjucks.Environment(new nunjucks.WebLoader(this.file(""), { async: true, useCache: true }), {
+ 			trimBlocks: true,
+ 			lstripBlocks: true
+ 		});
 diff --git a/modules/default/clock/clock.js b/modules/default/clock/clock.js
 index 7c9310f0..cb6c5cf3 100644
 --- a/modules/default/clock/clock.js
