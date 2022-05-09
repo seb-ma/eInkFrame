@@ -1,12 +1,13 @@
 diff --git a/js/module.js b/js/module.js
-index 6d154529..eb3163eb 100644
+index 6d154529..5b076d79 100644
 --- a/js/module.js
 +++ b/js/module.js
-@@ -166,7 +166,7 @@ const Module = Class.extend({
+@@ -166,7 +166,8 @@ const Module = Class.extend({
  			return this._nunjucksEnvironment;
  		}
  
 -		this._nunjucksEnvironment = new nunjucks.Environment(new nunjucks.WebLoader(this.file(""), { async: true }), {
++		// Use cache to avoid reloading nunjucks file at each rendering
 +		this._nunjucksEnvironment = new nunjucks.Environment(new nunjucks.WebLoader(this.file(""), { async: true, useCache: true }), {
  			trimBlocks: true,
  			lstripBlocks: true
@@ -107,7 +108,7 @@ index 7c9310f0..cb6c5cf3 100644
  				"</span>";
  			digitalWrapper.appendChild(moonWrapper);
 diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
-index bfeb0b8f..a0dd397a 100755
+index bfeb0b8f..e10c168e 100755
 --- a/modules/default/weather/current.njk
 +++ b/modules/default/weather/current.njk
 @@ -1,15 +1,20 @@
@@ -171,7 +172,7 @@ index bfeb0b8f..a0dd397a 100755
              {% endif %}
          </div>
      {% endif %}
-+    {% if config.showAQI and currentPollution %}
++    {% if currentPollution and showAqiAtLevel <= currentPollution.aqi %}
 +        <div class="normal medium pollution">
 +            <span class="icon fas fa-viruses"></span>
 +            {% set aqiLabel = "AQI_" + currentPollution.aqi %}
@@ -182,7 +183,7 @@ index bfeb0b8f..a0dd397a 100755
      <div class="dimmed light small">
          {{ "LOADING" | translate }}
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
-index b0f5eedf..bc210a5a 100755
+index b0f5eedf..6221544e 100755
 --- a/modules/default/weather/providers/openweathermap.js
 +++ b/modules/default/weather/providers/openweathermap.js
 @@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
@@ -266,8 +267,11 @@ index b0f5eedf..bc210a5a 100755
  	/*
  	 * Generate a WeatherObject based on currentWeatherInformation
  	 */
-@@ -130,7 +188,7 @@ WeatherProvider.register("openweathermap", {
+@@ -128,9 +186,10 @@ WeatherProvider.register("openweathermap", {
+ 		currentWeather.humidity = currentWeatherData.main.humidity;
+ 		currentWeather.temperature = currentWeatherData.main.temp;
  		currentWeather.feelsLikeTemp = currentWeatherData.main.feels_like;
++		currentWeather.pressure = currentWeatherData.main.pressure;
  		currentWeather.windSpeed = currentWeatherData.wind.speed;
  		currentWeather.windDirection = currentWeatherData.wind.deg;
 -		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.weather[0].icon);
@@ -275,7 +279,7 @@ index b0f5eedf..bc210a5a 100755
  		currentWeather.sunrise = moment(currentWeatherData.sys.sunrise, "X");
  		currentWeather.sunset = moment(currentWeatherData.sys.sunset, "X");
  
-@@ -203,11 +261,11 @@ WeatherProvider.register("openweathermap", {
+@@ -203,11 +262,11 @@ WeatherProvider.register("openweathermap", {
  				weather.date = moment(forecast.dt, "X");
  
  				// If the first value of today is later than 17:00, we have an icon at least!
@@ -289,7 +293,7 @@ index b0f5eedf..bc210a5a 100755
  			}
  
  			// the same day as before
-@@ -257,7 +315,7 @@ WeatherProvider.register("openweathermap", {
+@@ -257,7 +316,7 @@ WeatherProvider.register("openweathermap", {
  			weather.date = moment(forecast.dt, "X");
  			weather.minTemperature = forecast.temp.min;
  			weather.maxTemperature = forecast.temp.max;
@@ -298,114 +302,74 @@ index b0f5eedf..bc210a5a 100755
  			weather.rain = 0;
  			weather.snow = 0;
  
-@@ -306,8 +364,10 @@ WeatherProvider.register("openweathermap", {
+@@ -306,7 +365,10 @@ WeatherProvider.register("openweathermap", {
  			current.sunrise = moment(data.current.sunrise, "X").utcOffset(data.timezone_offset / 60);
  			current.sunset = moment(data.current.sunset, "X").utcOffset(data.timezone_offset / 60);
  			current.temperature = data.current.temp;
 -			current.weatherType = this.convertWeatherType(data.current.weather[0].icon);
 +			current.weatherType = this.convertWeatherType(data.current.weather[0].icon, data.current.weather[0].id);
- 			current.humidity = data.current.humidity;
 +			current.uvi = data.current.uvi;
 +			current.precipitationProba = data.hourly ? data.hourly[0].pop : undefined; // Get 1st hour as current precipitation probability
++			current.pressure = data.current.pressure;
+ 			current.humidity = data.current.humidity;
  			if (data.current.hasOwnProperty("rain") && !isNaN(data.current["rain"]["1h"])) {
  				if (this.config.units === "imperial") {
- 					current.rain = data.current["rain"]["1h"] / 25.4;
-@@ -341,9 +401,11 @@ WeatherProvider.register("openweathermap", {
- 				weather.temperature = hour.temp;
- 				weather.feelsLikeTemp = hour.feels_like;
+@@ -343,7 +405,10 @@ WeatherProvider.register("openweathermap", {
  				weather.humidity = hour.humidity;
-+				weather.uvi = hour.uvi;
-+				weather.precipitationProba = hour.pop;
  				weather.windSpeed = hour.wind_speed;
  				weather.windDirection = hour.wind_deg;
 -				weather.weatherType = this.convertWeatherType(hour.weather[0].icon);
 +				weather.weatherType = this.convertWeatherType(hour.weather[0].icon, hour.weather[0].id);
++				weather.uvi = hour.uvi;
++				weather.precipitationProba = hour.pop;
++				weather.pressure = hour.pressure;
  				precip = false;
  				if (hour.hasOwnProperty("rain") && !isNaN(hour.rain["1h"])) {
  					if (this.config.units === "imperial") {
-@@ -374,42 +436,89 @@ WeatherProvider.register("openweathermap", {
- 		const days = [];
+@@ -375,6 +440,13 @@ WeatherProvider.register("openweathermap", {
  		if (data.hasOwnProperty("daily")) {
  			for (const day of data.daily) {
--				weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60);
--				weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
--				weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
--				weather.minTemperature = day.temp.min;
--				weather.maxTemperature = day.temp.max;
--				weather.humidity = day.humidity;
--				weather.windSpeed = day.wind_speed;
--				weather.windDirection = day.wind_deg;
+ 				weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60);
++				if (!this.config.expandDaySections) {
++					weather.temperature = day.temp.day;
++					weather.feelsLikeTemp = day.feels_like.day;
++				}
++				weather.uvi = day.uvi;
++				weather.precipitationProba = day.pop;
++				weather.pressure = day.pressure;
+ 				weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
+ 				weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
+ 				weather.minTemperature = day.temp.min;
+@@ -382,7 +454,7 @@ WeatherProvider.register("openweathermap", {
+ 				weather.humidity = day.humidity;
+ 				weather.windSpeed = day.wind_speed;
+ 				weather.windDirection = day.wind_deg;
 -				weather.weatherType = this.convertWeatherType(day.weather[0].icon);
--				precip = false;
--				if (!isNaN(day.rain)) {
--					if (this.config.units === "imperial") {
--						weather.rain = day.rain / 25.4;
--					} else {
--						weather.rain = day.rain;
--					}
--					precip = true;
-+				let offset = [12];
-+				let sections = [day.temp.day];
-+				let sections_feelsLike = [day.feels_like.day];
-+				if (this.config.expandDaySections) {
-+					offset = [6, 12, 18, 21]; // 6 hours between each section
-+					sections = [day.temp.morn, day.temp.day, day.temp.eve, day.temp.night];
-+					sections_feelsLike = [day.feels_like.morn, day.feels_like.day, day.feels_like.eve, day.feels_like.night];
- 				}
--				if (!isNaN(day.snow)) {
--					if (this.config.units === "imperial") {
--						weather.snow = day.snow / 25.4;
--					} else {
--						weather.snow = day.snow;
-+				for (i = 0; i < sections.length; i++) {
-+					weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60).startOf('day').add(offset[i], 'hours');
-+					weather.temperature = sections[i];
-+					weather.feelsLikeTemp = sections_feelsLike[i];
-+					weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
-+					weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
-+					weather.minTemperature = day.temp.min;
-+					weather.maxTemperature = day.temp.max;
-+					weather.humidity = day.humidity;
-+					weather.uvi = day.uvi;
-+					weather.precipitationProba = day.pop;
-+					weather.windSpeed = day.wind_speed;
-+					weather.windDirection = day.wind_deg;
-+					weather.weatherType = this.convertWeatherType(day.weather[0].icon, day.weather[0].id);
-+					precip = false;
-+					if (!isNaN(day.rain)) {
-+						if (this.config.units === "imperial") {
-+							weather.rain = day.rain / 25.4;
-+						} else {
-+							weather.rain = day.rain;
-+						}
-+						weather.rain /= sections.length;
-+						precip = true;
- 					}
--					precip = true;
--				}
--				if (precip) {
--					weather.precipitation = weather.rain + weather.snow;
-+					if (!isNaN(day.snow)) {
-+						if (this.config.units === "imperial") {
-+							weather.snow = day.snow / 25.4;
-+						} else {
-+							weather.snow = day.snow;
-+						}
-+						weather.snow /= sections.length;
-+						precip = true;
-+					}
-+					if (precip) {
-+						weather.precipitation = weather.rain + weather.snow;
-+					}
-+
-+					days.push(weather);
-+					weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
- 				}
-+			}
-+		}
++				weather.weatherType = this.convertWeatherType(day.weather[0].icon, day.weather[0].id);
+ 				precip = false;
+ 				if (!isNaN(day.rain)) {
+ 					if (this.config.units === "imperial") {
+@@ -406,10 +478,54 @@ WeatherProvider.register("openweathermap", {
  
--				days.push(weather);
--				weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
+ 				days.push(weather);
+ 				weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
++				if (this.config.expandDaySections) {
++					const offset = [6, 12, 18, 0]; // 6 hours between each section
++					const sections_temp = [day.temp.morn, day.temp.day, day.temp.eve, day.temp.night];
++					const sections_feelsLike = [day.feels_like.morn, day.feels_like.day, day.feels_like.eve, day.feels_like.night];
++					for (i = 0; i < offset.length; i++) {
++						weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60).startOf('day').add(offset[i], 'hours');
++						weather.temperature = sections_temp[i];
++						weather.feelsLikeTemp = sections_feelsLike[i];
++		
++						days.push(weather);
++						weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
++					}
++				}
+ 			}
+ 		}
+ 
+-		return { current: current, hours: hours, days: days };
 +		const alerts = [];
 +		if (data.hasOwnProperty("alerts")) {
 +			for (const alert of data.alerts) {
@@ -416,8 +380,8 @@ index b0f5eedf..bc210a5a 100755
 +				alertDesc.description = alert.description;
 +
 +				alerts.push(alertDesc);
- 			}
- 		}
++			}
++		}
 +		return { current: current, hours: hours, days: days, alerts: alerts };
 +	},
 +
@@ -436,13 +400,12 @@ index b0f5eedf..bc210a5a 100755
 +
 +			results.push(result);
 +		}
- 
--		return { current: current, hours: hours, days: days };
++
 +		return results;
  	},
  
  	/*
-@@ -440,6 +549,98 @@ WeatherProvider.register("openweathermap", {
+@@ -440,6 +556,98 @@ WeatherProvider.register("openweathermap", {
  		return weatherTypes.hasOwnProperty(weatherType) ? weatherTypes[weatherType] : null;
  	},
  
@@ -542,19 +505,15 @@ index b0f5eedf..bc210a5a 100755
  	 * Generates an url with api parameters based on the config.
  	 *
 diff --git a/modules/default/weather/weather.js b/modules/default/weather/weather.js
-index 350c4f2d..0a6ae760 100644
+index 350c4f2d..cc0db5a0 100644
 --- a/modules/default/weather/weather.js
 +++ b/modules/default/weather/weather.js
-@@ -23,10 +23,12 @@ Module.register("weather", {
- 		showPeriodUpper: false,
- 		showWindDirection: true,
- 		showWindDirectionAsArrow: false,
-+		showUV: false,
- 		useBeaufort: true,
+@@ -27,6 +27,8 @@ Module.register("weather", {
  		lang: config.language,
  		showHumidity: false,
  		showSun: true,
-+		showAQI: false,
++		showUV: false,
++		showAqiAtLevel: 0,			// Show Air Quality only if AQI is worst or equals to a level (0 to always displaying, undefined to never displaying)
  		degreeLabel: false,
  		decimalSymbol: ".",
  		showIndoorTemperature: false,
@@ -584,7 +543,7 @@ index 350c4f2d..0a6ae760 100644
  		return {
  			config: this.config,
  			current: this.weatherProvider.currentWeather(),
-+			currentPollution: (this.config.showAQI && typeof this.weatherProvider.currentPollution === "function") ? this.weatherProvider.currentPollution() : undefined,
++			currentPollution: (this.config.showAQIshowAqiAtLevel && typeof this.weatherProvider.currentPollution === "function") ? this.weatherProvider.currentPollution() : undefined,
  			forecast: forecast,
  			hourly: this.weatherProvider.weatherHourly(),
  			indoor: {
@@ -614,7 +573,7 @@ index 350c4f2d..0a6ae760 100644
  			switch (this.config.type.toLowerCase()) {
  				case "current":
 +					this.nbUpdateWait = 1;
-+					if (this.config.showAQI && typeof this.weatherProvider.fetchCurrentPollution === "function") {
++					if (this.config.showAqiAtLevel && typeof this.weatherProvider.fetchCurrentPollution === "function") {
 +						this.nbUpdateWait++;
 +						this.weatherProvider.fetchCurrentPollution();
 +					}

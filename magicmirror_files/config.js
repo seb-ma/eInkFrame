@@ -75,32 +75,41 @@ let config = {
 	modules: [
 		{
 			module: "MMM-IT8951", // https://github.com/seb-ma/MMM-IT8951
+			hiddenOnStartup: true,
 			config: {
+				defaultTo4levels: true,
 				driverParam: { VCOM: configPrivateParts.it8951_vcom },
 				mock: configPrivateParts.mock,
 			}
 		},
 		{
 			module: "MMM-NotifCustomActions", // https://github.com/seb-ma/MMM-NotifCustomActions
+			hiddenOnStartup: true,
 			config: {
 				actions: [
+					{ notification: "DOM_OBJECTS_CREATED", action_client: function (self, sender, payload) { setInterval(() => { self.sendNotification("IT8951_ASK_FULL_REFRESH"); }, 10 * 60 * 1000); } },
+
 					{ notification: "ACTION_SHUTDOWN", action_node: function (self, sender, payload) { exec("sudo shutdown -h now"); } },
 
 					{ notification: "SPOTIFY_CONNECTED", action_client: function (self, sender, payload) { self.isSpotify = true; self.sendNotification("PAGE_SELECT", "musicPage"); } },
 					{ notification: "SPOTIFY_DISCONNECTED", action_client: function (self, sender, payload) { self.isSpotify = false; self.sendNotification("PAGE_SELECT", "mainPage"); } },
 
-					{ notification: "PAGE_CHANGED", action_client: function (self, sender, payload) { setTimeout(() => { self.sendNotification("IT8951_ASK_FULL_REFRESH"); }, 1000) } },
+					{ notification: "PAGE_CHANGED", action_client: function (self, sender, payload) { setTimeout(() => { self.sendNotification("IT8951_ASK_FULL_REFRESH"); }, 1000); } },
 					{ notification: "MAIN_PAGE_SELECT", action_client: function (self, sender, payload) { self.sendNotification("PAGE_SELECT", self.isSpotify ? "musicPage" : "mainPage"); } },
 				]
 			}
 		},
 		{
 			module: "MMM-MPR121", // https://github.com/PatriceG/MMM-MPR121
-			classes: "eink-4levels", // For MMM-IT8951
+			hiddenOnStartup: true,
 			config: {
 				buttons: [
 					// Left buttons
-					{ pin: configPrivateParts.buttons_order[0], name: "unused", shortPress: { notification: "unused", payload: {} } },
+					{
+						pin: configPrivateParts.buttons_order[0],
+						name: "refresh_screen",
+						shortPress: { notification: "IT8951_ASK_FULL_REFRESH" }, // MMM-IT8551
+					},
 					{ pin: configPrivateParts.buttons_order[1], name: "unused", shortPress: { notification: "unused", payload: {} } },
 					{ pin: configPrivateParts.buttons_order[2], name: "unused", shortPress: { notification: "unused", payload: {} } },
 					// Up buttons
@@ -156,14 +165,12 @@ let config = {
 							imageFA: "power-off",
 							notification: "ACTION_SHUTDOWN", // MMM-NotifCustomActions
 						},
-						shortPress: { notification: "IT8951_ASK_FULL_REFRESH" }, // MMM-IT8551
 					},
 				]
 			}
 		},
 		{
 			module: "MMM-Page-Selector", // https://github.com/Veldrovive/MMM-Page-Selector
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_bar",
 			hiddenOnStartup: true,
 			config: {
@@ -176,13 +183,11 @@ let config = {
 		},
 		{
 			module: "updatenotification", // https://docs.magicmirror.builders/modules/updatenotification.html
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_bar",
 			pages: { mainPage: "top_bar", musicPage: "top_bar" }, // Config for MMM-Page-Selector
 		},
 		{
 			module: "clock", // https://docs.magicmirror.builders/modules/clock.html
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_left",
 			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
 			config: {
@@ -196,7 +201,6 @@ let config = {
 		},
 		{
 			module: "MMM-Saint", // https://github.com/bugsounet/MMM-Saint#readme
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_left",
 			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
 			configDeepMerge: true,
@@ -207,7 +211,6 @@ let config = {
 		},
 		{
 			module: "MMM-VigilanceMeteoFrance", // https://github.com/grenagit/MMM-VigilanceMeteoFrance
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_left",
 			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
 			config: {
@@ -223,6 +226,7 @@ let config = {
 		},
 		{
 			module: "MMM-CalDAV", // https://github.com/MMRIZE/MMM-CalDAV#readme
+			hiddenOnStartup: true,
 			config: {
 				name: "familial",
 				serverUrl: configPrivateParts.caldav_config.serverUrl,
@@ -237,6 +241,7 @@ let config = {
 		},
 		{
 			module: "MMM-vCard2Calendar", // https://github.com/n-gao/MMM-vCard2Calendar#readme
+			hiddenOnStartup: true,
 			config: {
 				url: configPrivateParts.vCard.url,
 				auth: {
@@ -248,7 +253,6 @@ let config = {
 		{
 			module: "calendar", // https://docs.magicmirror.builders/modules/calendar.html
 			header: "Prochains évènements",
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_center",
 			pages: { mainPage: "top_center", taskPage: "top_right" }, // Config for MMM-Page-Selector
 			config: {
@@ -281,7 +285,6 @@ let config = {
 		},
 		/*{
 			module: "MMM-FreeBox-Monitor", // https://github.com/tataille/MMM-FreeBox-Monitor#readme
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_center",
 			pages: {mainPage: "top_center", musicPage: "top_center"}, // Config for MMM-Page-Selector
 			config: {
@@ -294,6 +297,7 @@ let config = {
 		},*/
 		{
 			module: "MMM-Spotify", // https://github.com/skuethe/MMM-Spotify#readme
+			classes: "no-eink-4levels", // For MMM-IT8951
 			position: "top_center",
 			pages: { musicPage: "top_center" }, // Config for MMM-Page-Selector
 			hiddenOnStartup: true,
@@ -319,7 +323,6 @@ let config = {
 		},
 		{
 			module: "MMM-Pollen-FR", // https://github.com/lekesako/MMM-Pollen-FR#readme
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_right",
 			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			header: "Alertes pollens",
@@ -332,7 +335,6 @@ let config = {
 		},
 		{
 			module: "MMM-Nantes-TAN", // https://github.com/normyx/MMM-Nantes-TAN#readme
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_right",
 			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			header: "TAN",
@@ -343,7 +345,6 @@ let config = {
 		},
 		{
 			module: "MMM-Traffic", // https://github.com/samlewis0602/MMM-Traffic#readme
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "top_right",
 			pages: { mainPage: "top_right", musicPage: "top_right" }, // Config for MMM-Page-Selector
 			header: "Trajet voiture",
@@ -362,21 +363,22 @@ let config = {
 		},
 		{
 			module: "MMM-Bosch-BME680-sensor", // https://github.com/seb-ma/MMM-Bosch-BME680-sensor
-			classes: "eink-4levels", // For MMM-IT8951
 			header: "Intérieur",
 			position: "bottom_left", // Remove position to have only notifications
 			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			config: {
+				updateInterval: 30 * 1000, // 30 seconds
 				animationSpeed: configPrivateParts.animationSpeed,
 				decimalSymbol: configPrivateParts.decimalSymbol,
 				mock: configPrivateParts.mock,
-				offsetTemperature: 0.5,
 				i2cAddress: 0x77,
+				offsetTemperature: 0.5,
+				gasLimitLow: 15000, 
+				gasLimitHigh: 150000,
 			}
 		},
 		{
 			module: "weather", // https://docs.magicmirror.builders/modules/weather.html
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "bottom_left",
 			pages: { mainPage: "bottom_left", musicPage: "bottom_left" }, // Config for MMM-Page-Selector
 			header: "Extérieur",
@@ -425,9 +427,19 @@ let config = {
 				height: 400,
 				width: 1300,
 				hoursRatio: 0.5,
+				showIcons: true,
+				showNights: true,
+				showTemperature: true,
+				showMinMaxTemperature: false,
+				showFeelsLikeTemp: true,
+				showPrecipitation: true,
+				showPrecipitationProba: true,
+				showSnow: true,
+				showPressure: false,
+				showHumidity: false,
+				showWind: false,
 				showAQI: false,
-				color: "#000",
-				fillColor: "#ccc",
+				showUVI: false,
 			}
 		},
 		{
@@ -444,14 +456,23 @@ let config = {
 				weatherEndpoint: "mmm-weatherproviderunique",
 				height: 1300,
 				width: 1800,
+				showIcons: true,
+				showNights: true,
+				showTemperature: true,
+				showMinMaxTemperature: false,
+				showFeelsLikeTemp: true,
+				showPrecipitation: true,
+				showPrecipitationProba: true,
+				showSnow: true,
+				showPressure: true,
+				showHumidity: true,
+				showWind: true,
 				showAQI: true,
-				color: "#000",
-				fillColor: "#ccc",
+				showUVI: true,
 			}
 		},
 		{
 			module: "newsfeed", // https://docs.magicmirror.builders/modules/newsfeed.html
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "bottom_bar",
 			pages: { mainPage: "bottom_bar", musicPage: "bottom_bar" }, // Config for MMM-Page-Selector
 			config: {
@@ -478,7 +499,6 @@ let config = {
 		},
 		{
 			module: "MMM-Trello", // https://github.com/Jopyth/MMM-Trello#readme
-			classes: "eink-4levels", // For MMM-IT8951
 			position: "middle_center",
 			hiddenOnStartup: true,
 			pages: { taskPage: "top_left" }, // Config for MMM-Page-Selector

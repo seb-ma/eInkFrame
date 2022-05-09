@@ -64,12 +64,12 @@ It can also be customized by adding new modules (see [MagicMirror² Installation
   - [X] min/max temperature
   - [X] rain and snow
   - [X] weather icon
-  - [ ] humidity
-  - [ ] pressure
-  - [ ] wind
-  - [ ] UV index
-  - [ ] rain probability
-  - [ ] air quality
+  - [X] humidity
+  - [X] pressure
+  - [X] wind
+  - [X] UV index
+  - [X] rain probability
+  - [X] air quality
   - [ ] same curves for previous days
 - [X] Alerts on the risk of rain, wind, ice...
 - [X] Alerts on current active allergens
@@ -88,6 +88,7 @@ It can also be customized by adding new modules (see [MagicMirror² Installation
   - [X] with alerts on this lines
 - [X] Travel time to work
 - [ ] Map of traffic
+- [ ] Traffic for the next event in calendar
 
 ### Entertainment
 

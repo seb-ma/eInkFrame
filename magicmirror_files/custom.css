@@ -14,8 +14,8 @@
 
 :root {
 	--color-text: black;
-	--color-text-dimmed: black; /*#333*/
-	--color-text-bright: black; /*#666*/
+	--color-text-dimmed: #666;
+	--color-text-bright: black;
 	--color-background: white;
 
 	--font-size: 30px;
@@ -23,6 +23,12 @@
 	--font-secondary: "Fira Sans Condensed";
 	font-feature-settings: "lnum";
 	font-feature-settings: "liga", "clig";
+
+	/* Gray levels for IT8951 */
+	--gray4levels-1: #fff;
+	--gray4levels-2: #aaa;
+	--gray4levels-3: #666;
+	--gray4levels-4: #000;
 }
 
 body {
@@ -176,7 +182,7 @@ header {
 }
 
 #SPOTIFY_PROGRESS_TIME {
-	display: none;	
+	display: none;
 }
 
 progress[value]#SPOTIFY_PROGRESS_BAR::-webkit-progress-value {
@@ -205,6 +211,10 @@ progress[value]#SPOTIFY_PROGRESS_BAR::-webkit-progress-bar {
 
 /* MMM-WeatherChartD3
  --------------------- */
+:root {
+	--MMM-WeatherChartD3-fillColor: var(--gray4levels-3);
+}
+
 .MMM-WeatherChartD3 .night {
-	opacity: 0.1;
+	opacity: 0.25;
 }

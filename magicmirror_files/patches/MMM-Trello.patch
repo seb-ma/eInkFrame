@@ -1,5 +1,5 @@
 diff --git a/MMM-Trello.js b/MMM-Trello.js
-index 25de6a4..adc170c 100644
+index 25de6a4..b774305 100644
 --- a/MMM-Trello.js
 +++ b/MMM-Trello.js
 @@ -24,7 +24,8 @@ Module.register("MMM-Trello", {
@@ -12,46 +12,33 @@ index 25de6a4..adc170c 100644
      },
  
      // Define start sequence.
-@@ -55,6 +56,20 @@ Module.register("MMM-Trello", {
-         this.pause = false;
+@@ -52,7 +53,6 @@ Module.register("MMM-Trello", {
+         this.requestUpdate();
+         this.scheduleUpdateRequestInterval();
+ 
+-        this.pause = false;
      },
  
-+    suspend: function() {
-+        if (this.timerRequest) {
-+            clearInterval(this.timerRequest);
-+        }
-+        if (this.timerVisual) {
-+            clearInterval(this.timerVisual);
-+        }
-+    },
-+
-+    resume: function() {
-+        this.timerVisual = this.scheduleVisualUpdateInterval();
-+        this.timerRequest = this.scheduleVisualUpdateInterval();
-+    },
-+
      /* scheduleVisualUpdateInterval()
-      * Schedule visual update.
-      */
-@@ -63,7 +78,7 @@ Module.register("MMM-Trello", {
- 
+@@ -64,7 +64,7 @@ Module.register("MMM-Trello", {
          self.updateDom(self.config.animationSpeed);
  
--        setInterval(function () {
-+        this.timerVisual = setInterval(function () {
-             if (self.pause) {
+         setInterval(function () {
+-            if (self.pause) {
++            if (self.hidden) {
                  return;
              }
-@@ -78,7 +93,7 @@ Module.register("MMM-Trello", {
-     scheduleUpdateRequestInterval: function () {
+             self.activeItem++;
+@@ -79,7 +79,7 @@ Module.register("MMM-Trello", {
          var self = this;
  
--        setInterval(function () {
-+        this.timerRequest = setInterval(function () {
-             if (self.pause) {
+         setInterval(function () {
+-            if (self.pause) {
++            if (self.hidden) {
                  return;
              }
-@@ -211,6 +226,9 @@ Module.register("MMM-Trello", {
+ 
+@@ -211,6 +211,9 @@ Module.register("MMM-Trello", {
                  }
  
                  for (var item in checklist.checkItems) {
