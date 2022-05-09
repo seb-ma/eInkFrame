@@ -183,7 +183,7 @@ index bfeb0b8f..e10c168e 100755
      <div class="dimmed light small">
          {{ "LOADING" | translate }}
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
-index b0f5eedf..6221544e 100755
+index b0f5eedf..a6b8f33a 100755
 --- a/modules/default/weather/providers/openweathermap.js
 +++ b/modules/default/weather/providers/openweathermap.js
 @@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
@@ -349,7 +349,7 @@ index b0f5eedf..6221544e 100755
  				precip = false;
  				if (!isNaN(day.rain)) {
  					if (this.config.units === "imperial") {
-@@ -406,10 +478,54 @@ WeatherProvider.register("openweathermap", {
+@@ -406,10 +478,57 @@ WeatherProvider.register("openweathermap", {
  
  				days.push(weather);
  				weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
@@ -361,6 +361,9 @@ index b0f5eedf..6221544e 100755
 +						weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60).startOf('day').add(offset[i], 'hours');
 +						weather.temperature = sections_temp[i];
 +						weather.feelsLikeTemp = sections_feelsLike[i];
++
++						// Force precipitation to undefined to distinct this pseudo weather to true data from provider
++						weather.precipitation = undefined;
 +		
 +						days.push(weather);
 +						weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
@@ -405,7 +408,7 @@ index b0f5eedf..6221544e 100755
  	},
  
  	/*
-@@ -440,6 +556,98 @@ WeatherProvider.register("openweathermap", {
+@@ -440,6 +559,98 @@ WeatherProvider.register("openweathermap", {
  		return weatherTypes.hasOwnProperty(weatherType) ? weatherTypes[weatherType] : null;
  	},
  
