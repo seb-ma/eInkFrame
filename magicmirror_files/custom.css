@@ -218,3 +218,7 @@ progress[value]#SPOTIFY_PROGRESS_BAR::-webkit-progress-bar {
 .MMM-WeatherChartD3 .night {
 	opacity: 0.25;
 }
+
+.MMM-WeatherChartD3 .axis-night {
+	opacity: 0;
+}

@@ -433,7 +433,7 @@ let config = {
 				showMinMaxTemperature: false,
 				showFeelsLikeTemp: true,
 				showPrecipitation: true,
-				showPrecipitationProba: true,
+				showPrecipitationProba: false,
 				showSnow: true,
 				showPressure: false,
 				showHumidity: false,
