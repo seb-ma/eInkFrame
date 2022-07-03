@@ -508,7 +508,7 @@ index b0f5eedf..c1033313 100755
  	 * Generates an url with api parameters based on the config.
  	 *
 diff --git a/modules/default/weather/weather.js b/modules/default/weather/weather.js
-index 350c4f2d..cc0db5a0 100644
+index 6a02d182..2331bada 100644
 --- a/modules/default/weather/weather.js
 +++ b/modules/default/weather/weather.js
 @@ -27,6 +27,8 @@ Module.register("weather", {
@@ -550,28 +550,48 @@ index 350c4f2d..cc0db5a0 100644
  			forecast: forecast,
  			hourly: this.weatherProvider.weatherHourly(),
  			indoor: {
-@@ -147,12 +152,15 @@ Module.register("weather", {
+@@ -147,22 +152,25 @@ Module.register("weather", {
  
  	// What to do when the weather provider has new information available?
  	updateAvailable: function () {
 -		Log.log("New weather information available.");
 -		this.updateDom(0);
 -		this.scheduleUpdate();
+-
+-		if (this.weatherProvider.currentWeather()) {
+-			this.sendNotification("CURRENTWEATHER_TYPE", { type: this.weatherProvider.currentWeather().weatherType.replace("-", "_") });
 +		this.nbUpdateWait--;
 +		if (this.nbUpdateWait <= 0) {
 +			Log.log("New weather information available.");
 +			this.updateDom(0);
 +			this.scheduleUpdate();
- 
--		if (this.weatherProvider.currentWeather()) {
--			this.sendNotification("CURRENTWEATHER_TYPE", { type: this.weatherProvider.currentWeather().weatherType.replace("-", "_") });
++
 +			if (this.weatherProvider.currentWeather()) {
 +				this.sendNotification("CURRENTWEATHER_TYPE", { type: this.weatherProvider.currentWeather().weatherType.replace("-", "_") });
 +			}
++	
++			const notificationPayload = {
++				currentWeather: this.weatherProvider?.currentWeatherObject?.simpleClone() ?? null,
++				forecastArray: this.weatherProvider?.weatherForecastArray?.map((ar) => ar.simpleClone()) ?? [],
++				hourlyArray: this.weatherProvider?.weatherHourlyArray?.map((ar) => ar.simpleClone()) ?? [],
++				locationName: this.weatherProvider?.fetchedLocationName,
++				providerName: this.weatherProvider.providerName
++			};
++			this.sendNotification("WEATHER_UPDATED", notificationPayload);
  		}
+-
+-		const notificationPayload = {
+-			currentWeather: this.weatherProvider?.currentWeatherObject?.simpleClone() ?? null,
+-			forecastArray: this.weatherProvider?.weatherForecastArray?.map((ar) => ar.simpleClone()) ?? [],
+-			hourlyArray: this.weatherProvider?.weatherHourlyArray?.map((ar) => ar.simpleClone()) ?? [],
+-			locationName: this.weatherProvider?.fetchedLocationName,
+-			providerName: this.weatherProvider.providerName
+-		};
+-		this.sendNotification("WEATHER_UPDATED", notificationPayload);
  	},
  
-@@ -165,17 +173,24 @@ Module.register("weather", {
+ 	scheduleUpdate: function (delay = null) {
+@@ -174,17 +182,24 @@ Module.register("weather", {
  		setTimeout(() => {
  			switch (this.config.type.toLowerCase()) {
  				case "current":
@@ -597,7 +617,7 @@ index 350c4f2d..cc0db5a0 100644
  			}
  		}, nextLoad);
  	},
-@@ -236,6 +251,8 @@ Module.register("weather", {
+@@ -245,6 +260,8 @@ Module.register("weather", {
  					}
  				} else if (type === "humidity") {
  					value += "%";
@@ -606,7 +626,7 @@ index 350c4f2d..cc0db5a0 100644
  				}
  
  				return value;
-@@ -289,5 +306,13 @@ Module.register("weather", {
+@@ -298,5 +315,13 @@ Module.register("weather", {
  				}
  			}.bind(this)
  		);
