@@ -108,7 +108,7 @@ index 7c9310f0..cb6c5cf3 100644
  				"</span>";
  			digitalWrapper.appendChild(moonWrapper);
 diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
-index bfeb0b8f..e10c168e 100755
+index bfeb0b8f..e10c168e 100644
 --- a/modules/default/weather/current.njk
 +++ b/modules/default/weather/current.njk
 @@ -1,15 +1,20 @@
@@ -183,7 +183,7 @@ index bfeb0b8f..e10c168e 100755
      <div class="dimmed light small">
          {{ "LOADING" | translate }}
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
-index b0f5eedf..c1033313 100755
+index b0f5eedf..c1033313 100644
 --- a/modules/default/weather/providers/openweathermap.js
 +++ b/modules/default/weather/providers/openweathermap.js
 @@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
@@ -679,10 +679,10 @@ index d24623b8..5d582064 100644
  	updateAvailable: function () {
  		this.delegate.updateAvailable(this);
 diff --git a/translations/en.json b/translations/en.json
-index 43ba9c74..fdfff745 100644
+index 60217b96..faf0713c 100644
 --- a/translations/en.json
 +++ b/translations/en.json
-@@ -28,6 +28,12 @@
+@@ -27,6 +27,12 @@
  	"FEELS": "Feels like {DEGREE}",
  	"PRECIP": "PoP",
  
