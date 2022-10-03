@@ -162,7 +162,7 @@ Installation of a required nodejs version using project https://github.com/nodes
 
 ```sh
 # Execute script used to add repository
-curl -fsSL https://deb.nodesource.com/setup_17.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 # To compile and install native addons from npm you may also need to install build tools
 apt-get install -y build-essential
@@ -404,6 +404,8 @@ To update MagicMirror² and all installed modules, run the commands in the scrip
 ```sh
 updateMM.sh
 ```
+
+NB: Some modules may need a `npm update` before `npm install` to resolve electron-rebuild/node-abi version detection error.
 
 ### Access to the screen from a browser
 
