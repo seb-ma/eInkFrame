@@ -34,20 +34,23 @@ index cc0f65e..c6ac71e 100644
                  });
  	});
 diff --git a/package.json b/package.json
-index 05a2a15..c21d6c5 100644
+index 05a2a15..878ee26 100644
 --- a/package.json
 +++ b/package.json
-@@ -24,9 +24,11 @@
+@@ -24,9 +24,14 @@
      "postinstall": "node_modules/.bin/electron-rebuild -e ../../node_modules/electron"
    },
    "dependencies": {
 -    "adafruit-mpr121":"latest"
 +    "gyp": "^0.5.0",
-+    "node-gyp": "^9.1.0",
++    "node-gyp": "^9.3.1",
 +    "adafruit-mpr121":"github:adafruit/node_mpr121"
    },
    "devDependencies": {
 -    "electron-rebuild": "^1.2.1"
 +    "electron-rebuild": "^3.2.9"
++  },
++  "resolutions": {
++    "nan": "^2.17.0"
    }
  }

@@ -1,7 +1,10 @@
 #!/bin/bash
 
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+
 # Installation directory
-pushd ~/MagicMirror/
+pushd $SCRIPT_DIR/../../MagicMirror/
 
 # Stash modifications, update repository and reapply modifications
 git stash && git pull && git stash pop

@@ -3,7 +3,7 @@
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 # Installation directory
-pushd ~/
+pushd $SCRIPT_DIR/../../
 
 
 # Retrieve MagicMirror²

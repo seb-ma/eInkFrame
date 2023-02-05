@@ -13,7 +13,7 @@ index 6d154529..5b076d79 100644
  			lstripBlocks: true
  		});
 diff --git a/modules/default/clock/clock.js b/modules/default/clock/clock.js
-index 7c9310f0..cb6c5cf3 100644
+index 31922a58..8fec532f 100644
 --- a/modules/default/clock/clock.js
 +++ b/modules/default/clock/clock.js
 @@ -88,6 +88,30 @@ Module.register("clock", {
@@ -108,34 +108,23 @@ index 7c9310f0..cb6c5cf3 100644
  				"</span>";
  			digitalWrapper.appendChild(moonWrapper);
 diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
-index bfeb0b8f..e10c168e 100644
+index ae542caa..573f6f33 100644
 --- a/modules/default/weather/current.njk
 +++ b/modules/default/weather/current.njk
-@@ -1,15 +1,20 @@
+@@ -1,7 +1,12 @@
  {% if current %}
      {% if not config.onlyTemp %}
          <div class="normal medium">
-+            {% if config.useBeaufort %}
++            {% if config.windUnits === "beaufort" %}
              <span class="wi wi-strong-wind dimmed"></span>
 +            {% else %}
 +            <span class="wi wi-wind-beaufort-{{ current.beaufortWindSpeed() | round }} dimmed"></span>
 +            {% endif %}
 +            <span>
              <span>
-                 {% if config.useBeaufort %}
--                    {{ current.beaufortWindSpeed() | round }}
-+                    {{ current.beaufortWindSpeed() | round }}</span>
-                 {% else %}
-                     {% if config.useKmh %}
--                        {{ current.kmhWindSpeed() | round }}
-+                        {{ current.kmhWindSpeed() | round }} </span><span class="unit">km/h</span>
-                     {% else %}
--                        {{ current.windSpeed | round }}
-+                        {{ current.windSpeed | round }} </span><span class="unit">mi/h</span>
-                     {% endif %}
-                 {% endif %}
+                 {{ current.windSpeed | unit("wind") | round }}
                  {% if config.showWindDirection %}
-@@ -38,10 +43,17 @@
+@@ -30,10 +35,17 @@
              {% endif %}
          </div>
      {% endif %}
@@ -157,7 +146,7 @@ index bfeb0b8f..e10c168e 100644
          </span>
      </div>
      <div class="normal light indoor">
-@@ -69,13 +81,22 @@
+@@ -61,13 +73,22 @@
                      {{ "FEELS" | translate({DEGREE: current.feelsLike() | roundValue | unit("temperature") | decimalSymbol }) }}
                  </span>
              {% endif %}
@@ -183,12 +172,12 @@ index bfeb0b8f..e10c168e 100644
      <div class="dimmed light small">
          {{ "LOADING" | translate }}
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
-index b0f5eedf..c1033313 100644
+index f5f786fa..d4a4ed36 100644
 --- a/modules/default/weather/providers/openweathermap.js
 +++ b/modules/default/weather/providers/openweathermap.js
 @@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
  		location: false,
- 		lat: 0, // the onecall endpoint needs lat / lon values, it doesn'T support the locationId
+ 		lat: 0, // the onecall endpoint needs lat / lon values, it doesn't support the locationId
  		lon: 0,
 -		apiKey: ""
 +		apiKey: "",
@@ -196,7 +185,7 @@ index b0f5eedf..c1033313 100644
  	},
  
  	// Overwrite the fetchCurrentWeather method.
-@@ -86,6 +87,56 @@ WeatherProvider.register("openweathermap", {
+@@ -88,6 +89,56 @@ WeatherProvider.register("openweathermap", {
  			.finally(() => this.updateAvailable());
  	},
  
@@ -253,7 +242,7 @@ index b0f5eedf..c1033313 100644
  	/**
  	 * Overrides method for setting config to check if endpoint is correct for hourly
  	 *
-@@ -119,6 +170,13 @@ WeatherProvider.register("openweathermap", {
+@@ -121,6 +172,13 @@ WeatherProvider.register("openweathermap", {
  		return this.config.apiBase + this.config.apiVersion + this.config.weatherEndpoint + this.getParams();
  	},
  
@@ -267,7 +256,7 @@ index b0f5eedf..c1033313 100644
  	/*
  	 * Generate a WeatherObject based on currentWeatherInformation
  	 */
-@@ -128,9 +186,10 @@ WeatherProvider.register("openweathermap", {
+@@ -131,9 +189,10 @@ WeatherProvider.register("openweathermap", {
  		currentWeather.humidity = currentWeatherData.main.humidity;
  		currentWeather.temperature = currentWeatherData.main.temp;
  		currentWeather.feelsLikeTemp = currentWeatherData.main.feels_like;
@@ -276,25 +265,25 @@ index b0f5eedf..c1033313 100644
  		currentWeather.windDirection = currentWeatherData.wind.deg;
 -		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.weather[0].icon);
 +		currentWeather.weatherType = this.convertWeatherType(currentWeatherData.weather[0].icon, currentWeatherData.weather[0].id);
- 		currentWeather.sunrise = moment(currentWeatherData.sys.sunrise, "X");
- 		currentWeather.sunset = moment(currentWeatherData.sys.sunset, "X");
+ 		currentWeather.sunrise = moment.unix(currentWeatherData.sys.sunrise);
+ 		currentWeather.sunset = moment.unix(currentWeatherData.sys.sunset);
  
-@@ -203,11 +262,11 @@ WeatherProvider.register("openweathermap", {
- 				weather.date = moment(forecast.dt, "X");
+@@ -204,11 +263,11 @@ WeatherProvider.register("openweathermap", {
+ 				weather.date = moment.unix(forecast.dt);
  
  				// If the first value of today is later than 17:00, we have an icon at least!
 -				weather.weatherType = this.convertWeatherType(forecast.weather[0].icon);
 +				weather.weatherType = this.convertWeatherType(forecast.weather[0].icon, forecast.weather[0].id);
  			}
  
- 			if (moment(forecast.dt, "X").format("H") >= 8 && moment(forecast.dt, "X").format("H") <= 17) {
+ 			if (moment.unix(forecast.dt).format("H") >= 8 && moment.unix(forecast.dt).format("H") <= 17) {
 -				weather.weatherType = this.convertWeatherType(forecast.weather[0].icon);
 +				weather.weatherType = this.convertWeatherType(forecast.weather[0].icon, forecast.weather[0].id);
  			}
  
  			// the same day as before
-@@ -257,7 +316,7 @@ WeatherProvider.register("openweathermap", {
- 			weather.date = moment(forecast.dt, "X");
+@@ -258,7 +317,7 @@ WeatherProvider.register("openweathermap", {
+ 			weather.date = moment.unix(forecast.dt);
  			weather.minTemperature = forecast.temp.min;
  			weather.maxTemperature = forecast.temp.max;
 -			weather.weatherType = this.convertWeatherType(forecast.weather[0].icon);
@@ -302,9 +291,9 @@ index b0f5eedf..c1033313 100644
  			weather.rain = 0;
  			weather.snow = 0;
  
-@@ -306,7 +365,10 @@ WeatherProvider.register("openweathermap", {
- 			current.sunrise = moment(data.current.sunrise, "X").utcOffset(data.timezone_offset / 60);
- 			current.sunset = moment(data.current.sunset, "X").utcOffset(data.timezone_offset / 60);
+@@ -307,7 +366,10 @@ WeatherProvider.register("openweathermap", {
+ 			current.sunrise = moment.unix(data.current.sunrise).utcOffset(data.timezone_offset / 60);
+ 			current.sunset = moment.unix(data.current.sunset).utcOffset(data.timezone_offset / 60);
  			current.temperature = data.current.temp;
 -			current.weatherType = this.convertWeatherType(data.current.weather[0].icon);
 +			current.weatherType = this.convertWeatherType(data.current.weather[0].icon, data.current.weather[0].id);
@@ -326,10 +315,11 @@ index b0f5eedf..c1033313 100644
  				precip = false;
  				if (hour.hasOwnProperty("rain") && !isNaN(hour.rain["1h"])) {
  					if (this.config.units === "imperial") {
-@@ -375,6 +440,13 @@ WeatherProvider.register("openweathermap", {
- 		if (data.hasOwnProperty("daily")) {
- 			for (const day of data.daily) {
- 				weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60);
+@@ -377,12 +442,20 @@ WeatherProvider.register("openweathermap", {
+ 				weather.date = moment.unix(day.dt).utcOffset(data.timezone_offset / 60);
+ 				weather.sunrise = moment.unix(day.sunrise).utcOffset(data.timezone_offset / 60);
+ 				weather.sunset = moment.unix(day.sunset).utcOffset(data.timezone_offset / 60);
++
 +				if (!this.config.expandDaySections) {
 +					weather.temperature = day.temp.day;
 +					weather.feelsLikeTemp = day.feels_like.day;
@@ -337,10 +327,8 @@ index b0f5eedf..c1033313 100644
 +				weather.uvi = day.uvi;
 +				weather.precipitationProba = day.pop;
 +				weather.pressure = day.pressure;
- 				weather.sunrise = moment(day.sunrise, "X").utcOffset(data.timezone_offset / 60);
- 				weather.sunset = moment(day.sunset, "X").utcOffset(data.timezone_offset / 60);
  				weather.minTemperature = day.temp.min;
-@@ -382,7 +454,7 @@ WeatherProvider.register("openweathermap", {
+ 				weather.maxTemperature = day.temp.max;
  				weather.humidity = day.humidity;
  				weather.windSpeed = day.wind_speed;
  				weather.windDirection = day.wind_deg;
@@ -349,16 +337,18 @@ index b0f5eedf..c1033313 100644
  				precip = false;
  				if (!isNaN(day.rain)) {
  					if (this.config.units === "imperial") {
-@@ -406,10 +478,57 @@ WeatherProvider.register("openweathermap", {
+@@ -405,11 +478,58 @@ WeatherProvider.register("openweathermap", {
+ 				}
  
  				days.push(weather);
- 				weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
+-				weather = new WeatherObject();
++				weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
 +				if (this.config.expandDaySections) {
 +					const offset = [6, 12, 18, 0]; // 6 hours between each section
 +					const sections_temp = [day.temp.morn, day.temp.day, day.temp.eve, day.temp.night];
 +					const sections_feelsLike = [day.feels_like.morn, day.feels_like.day, day.feels_like.eve, day.feels_like.night];
 +					for (i = 0; i < offset.length; i++) {
-+						weather.date = moment(day.dt, "X").utcOffset(data.timezone_offset / 60).startOf('day').add(offset[i], 'hours');
++						weather.date = moment.unix(day.dt).utcOffset(data.timezone_offset / 60).startOf('day').add(offset[i], 'hours');
 +						weather.temperature = sections_temp[i];
 +						weather.feelsLikeTemp = sections_feelsLike[i];
 +
@@ -377,8 +367,8 @@ index b0f5eedf..c1033313 100644
 +		if (data.hasOwnProperty("alerts")) {
 +			for (const alert of data.alerts) {
 +				alertDesc = {};
-+				alertDesc.start = moment(alert.start, "X").utcOffset(data.timezone_offset / 60);
-+				alertDesc.end = moment(alert.end, "X").utcOffset(data.timezone_offset / 60);
++				alertDesc.start = moment.unix(alert.start).utcOffset(data.timezone_offset / 60);
++				alertDesc.end = moment.unix(alert.end).utcOffset(data.timezone_offset / 60);
 +				alertDesc.event = alert.event;
 +				alertDesc.description = alert.description;
 +
@@ -398,7 +388,7 @@ index b0f5eedf..c1033313 100644
 +		for (const pollution of pollutions.list) {
 +			const result = { date: null, aqi: null };
 +
-+			result.date = moment(pollution.dt, "X");
++			result.date = moment.unix(pollution.dt);
 +			result.aqi = pollution.main.aqi;
 +
 +			results.push(result);
@@ -408,7 +398,7 @@ index b0f5eedf..c1033313 100644
  	},
  
  	/*
-@@ -440,6 +559,98 @@ WeatherProvider.register("openweathermap", {
+@@ -440,6 +560,98 @@ WeatherProvider.register("openweathermap", {
  		return weatherTypes.hasOwnProperty(weatherType) ? weatherTypes[weatherType] : null;
  	},
  
@@ -508,10 +498,19 @@ index b0f5eedf..c1033313 100644
  	 * Generates an url with api parameters based on the config.
  	 *
 diff --git a/modules/default/weather/weather.js b/modules/default/weather/weather.js
-index 6a02d182..2331bada 100644
+index ab989f96..8a304418 100644
 --- a/modules/default/weather/weather.js
 +++ b/modules/default/weather/weather.js
-@@ -27,6 +27,8 @@ Module.register("weather", {
+@@ -14,7 +14,7 @@ Module.register("weather", {
+ 		type: "current", // current, forecast, daily (equivalent to forecast), hourly (only with OpenWeatherMap /onecall endpoint)
+ 		units: config.units,
+ 		tempUnits: config.units,
+-		windUnits: config.units,
++		windUnits: "kmh",
+ 		updateInterval: 10 * 60 * 1000, // every 10 minutes
+ 		animationSpeed: 1000,
+ 		timeFormat: config.timeFormat,
+@@ -25,6 +25,8 @@ Module.register("weather", {
  		lang: config.language,
  		showHumidity: false,
  		showSun: true,
@@ -520,7 +519,7 @@ index 6a02d182..2331bada 100644
  		degreeLabel: false,
  		decimalSymbol: ".",
  		showIndoorTemperature: false,
-@@ -53,6 +55,8 @@ Module.register("weather", {
+@@ -51,6 +53,8 @@ Module.register("weather", {
  	// Can be used by the provider to display location of event if nothing else is specified
  	firstEvent: null,
  
@@ -529,7 +528,7 @@ index 6a02d182..2331bada 100644
  	// Define required scripts.
  	getStyles: function () {
  		return ["font-awesome.css", "weather-icons.css", "weather.css"];
-@@ -104,10 +108,10 @@ Module.register("weather", {
+@@ -110,10 +114,10 @@ Module.register("weather", {
  					}
  				}
  			}
@@ -542,7 +541,7 @@ index 6a02d182..2331bada 100644
  			this.indoorHumidity = this.roundValue(payload);
  			this.updateDom(300);
  		}
-@@ -136,6 +140,7 @@ Module.register("weather", {
+@@ -142,6 +146,7 @@ Module.register("weather", {
  		return {
  			config: this.config,
  			current: this.weatherProvider.currentWeather(),
@@ -550,7 +549,7 @@ index 6a02d182..2331bada 100644
  			forecast: forecast,
  			hourly: this.weatherProvider.weatherHourly(),
  			indoor: {
-@@ -147,22 +152,25 @@ Module.register("weather", {
+@@ -153,22 +158,25 @@ Module.register("weather", {
  
  	// What to do when the weather provider has new information available?
  	updateAvailable: function () {
@@ -591,7 +590,7 @@ index 6a02d182..2331bada 100644
  	},
  
  	scheduleUpdate: function (delay = null) {
-@@ -174,17 +182,24 @@ Module.register("weather", {
+@@ -180,17 +188,24 @@ Module.register("weather", {
  		setTimeout(() => {
  			switch (this.config.type.toLowerCase()) {
  				case "current":
@@ -617,16 +616,16 @@ index 6a02d182..2331bada 100644
  			}
  		}, nextLoad);
  	},
-@@ -245,6 +260,8 @@ Module.register("weather", {
- 					}
- 				} else if (type === "humidity") {
+@@ -251,6 +266,8 @@ Module.register("weather", {
  					value += "%";
+ 				} else if (type === "wind") {
+ 					value = WeatherUtils.convertWind(value, this.config.windUnits);
 +				} else if (type === "probability") {
 +					value += "%";
  				}
- 
  				return value;
-@@ -298,5 +315,13 @@ Module.register("weather", {
+ 			}.bind(this)
+@@ -303,5 +320,13 @@ Module.register("weather", {
  				}
  			}.bind(this)
  		);
@@ -641,7 +640,7 @@ index 6a02d182..2331bada 100644
  	}
  });
 diff --git a/modules/default/weather/weatherprovider.js b/modules/default/weather/weatherprovider.js
-index d24623b8..5d582064 100644
+index e7bfe5b7..7893b594 100644
 --- a/modules/default/weather/weatherprovider.js
 +++ b/modules/default/weather/weatherprovider.js
 @@ -84,6 +84,16 @@ const WeatherProvider = Class.extend({
@@ -679,7 +678,7 @@ index d24623b8..5d582064 100644
  	updateAvailable: function () {
  		this.delegate.updateAvailable(this);
 diff --git a/translations/en.json b/translations/en.json
-index 60217b96..faf0713c 100644
+index 4bb50182..e7d0dacf 100644
 --- a/translations/en.json
 +++ b/translations/en.json
 @@ -27,6 +27,12 @@
@@ -696,7 +695,7 @@ index 60217b96..faf0713c 100644
  	"MODULE_CONFIG_ERROR": "Error in the {MODULE_NAME} module. {ERROR}",
  	"MODULE_ERROR_MALFORMED_URL": "Malformed url.",
 diff --git a/translations/fr.json b/translations/fr.json
-index 97cccc59..dcb149b5 100644
+index 181bc572..f55570fd 100644
 --- a/translations/fr.json
 +++ b/translations/fr.json
 @@ -27,6 +27,12 @@
