@@ -396,8 +396,7 @@ let config = {
 				//showIndoorHumidity: true,
 
 				type: "current",
-				useBeaufort: false,
-				useKmh: true,
+				windUnits: "kmh",
 				showHumidity: true,
 				showSun: false,
 				showAQI: true,
