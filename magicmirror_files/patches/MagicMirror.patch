@@ -108,7 +108,7 @@ index 31922a58..8fec532f 100644
  				"</span>";
  			digitalWrapper.appendChild(moonWrapper);
 diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
-index ae542caa..573f6f33 100644
+index ae542caa..5d44b1b8 100644
 --- a/modules/default/weather/current.njk
 +++ b/modules/default/weather/current.njk
 @@ -1,7 +1,12 @@
@@ -118,7 +118,7 @@ index ae542caa..573f6f33 100644
 +            {% if config.windUnits === "beaufort" %}
              <span class="wi wi-strong-wind dimmed"></span>
 +            {% else %}
-+            <span class="wi wi-wind-beaufort-{{ current.beaufortWindSpeed() | round }} dimmed"></span>
++            <span class="wi wi-wind-beaufort-{{ current.windSpeed | unit("beaufort", config.windUnits) }} dimmed"></span>
 +            {% endif %}
 +            <span>
              <span>
@@ -498,7 +498,7 @@ index f5f786fa..d4a4ed36 100644
  	 * Generates an url with api parameters based on the config.
  	 *
 diff --git a/modules/default/weather/weather.js b/modules/default/weather/weather.js
-index ab989f96..8a304418 100644
+index ab989f96..d6c9ff3d 100644
 --- a/modules/default/weather/weather.js
 +++ b/modules/default/weather/weather.js
 @@ -14,7 +14,7 @@ Module.register("weather", {
@@ -616,16 +616,18 @@ index ab989f96..8a304418 100644
  			}
  		}, nextLoad);
  	},
-@@ -251,6 +266,8 @@ Module.register("weather", {
+@@ -251,6 +266,10 @@ Module.register("weather", {
  					value += "%";
  				} else if (type === "wind") {
  					value = WeatherUtils.convertWind(value, this.config.windUnits);
++				} else if (type === "beaufort") {
++					value = WeatherUtils.convertWind(value, "beaufort");
 +				} else if (type === "probability") {
 +					value += "%";
  				}
  				return value;
  			}.bind(this)
-@@ -303,5 +320,13 @@ Module.register("weather", {
+@@ -303,5 +322,13 @@ Module.register("weather", {
  				}
  			}.bind(this)
  		);
