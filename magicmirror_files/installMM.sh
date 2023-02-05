@@ -103,13 +103,18 @@ $SCRIPT_DIR/applyPatches.sh
 find . -name .git -print -execdir npm install --only=production \;
 #find . -name .git -print -execdir npm update \;
 
+# Go into modules folder
+cd modules/
+
 # Specific case for i2c-bus dependency in MMM-MPR121
-cd modules/MMM-MPR121/; npm install; npm rebuild i2c-bus --update-binary; cd -
+cd MMM-MPR121/; npm install; npm rebuild i2c-bus --update-binary; cd -
 # Specific update for MMM-Bosch-BME680-sensor
 cd MMM-Bosch-BME680-sensor/; npm install; npm rebuild i2c-bus --update-binary; cd -
 # Specific case for rpio dependency in MMM-IT8951
-cd modules/MMM-IT8951/; npm install; npm rebuild rpio --update-binary; cd -
+cd MMM-IT8951/; npm install; npm rebuild rpio --update-binary; cd -
 
+# Go out of modules folder
+cd ..
 
 # Copy config file and css
 cp $SCRIPT_DIR/config.js ./config/

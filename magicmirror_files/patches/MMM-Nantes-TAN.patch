@@ -79,10 +79,33 @@ index 4e168e3..bd0b85a 100644
          break;
      }
 diff --git a/node_helper.js b/node_helper.js
-index 165884b..d051101 100644
+index 165884b..be409d7 100644
 --- a/node_helper.js
 +++ b/node_helper.js
-@@ -83,7 +83,6 @@ module.exports = NodeHelper.create({
+@@ -45,7 +45,7 @@ module.exports = NodeHelper.create({
+     }, nextLoad);
+   },
+ 
+-  getResponse: function(_url, _processFunction, _stopConfig, _stopData) {
++  getResponse: async function(_url, _processFunction, _stopConfig, _stopData) {
+     var self = this;
+     var retry = true;
+     if (this.config.debug) { console.log (' *** fetching: ' + _url);}
+@@ -53,7 +53,7 @@ module.exports = NodeHelper.create({
+         .header({
+           'Accept': 'application/json;charset=utf-8'
+         })
+-        .end(function(response){
++        .then(function(response){
+           if (response && response.body) {
+             if (self.config.debug) {
+               console.log (' *** received answer for: ' + _url);
+@@ -79,19 +79,22 @@ module.exports = NodeHelper.create({
+   /* updateTimetable(transports)
+    * Calls processTrains on successful response.
+   */
+-  updateTimetable: function() {
++  updateTimetable: async function() {
      var self = this;
      var urlArret, urlHoraire, stopConfig;
      if (this.config.debug) { console.log (' *** fetching update');}
@@ -90,12 +113,15 @@ index 165884b..d051101 100644
      for (var index in self.config.busStations) {
          var stopData = {};
        stopConfig = self.config.busStations[index];
-@@ -92,6 +91,10 @@ module.exports = NodeHelper.create({
+       urlArret = self.config.tanURL+'horairesarret.json/'+stopConfig.arret+'/'+stopConfig.ligne+'/'+stopConfig.sens;
+-      self.getResponse(urlArret, self.processArret.bind(this), stopConfig, stopData);
++      await self.getResponse(urlArret, self.processArret.bind(this), stopConfig, stopData);
        urlHoraire = self.config.tanURL+'tempsattente.json/'+stopConfig.arret;
-       self.getResponse(urlHoraire, self.processHorairesLigne.bind(this), stopConfig, stopData);
+-      self.getResponse(urlHoraire, self.processHorairesLigne.bind(this), stopConfig, stopData);
++      await self.getResponse(urlHoraire, self.processHorairesLigne.bind(this), stopConfig, stopData);
      }
 +    urlInfoTrafic = 'https://data.nantesmetropole.fr/api/records/1.0/search/?dataset=244400404_info-trafic-tan-temps-reel&q=';
-+    self.getResponse(urlInfoTrafic, self.processInfoTrafic.bind(this), self.config.busStations);
++    await self.getResponse(urlInfoTrafic, self.processInfoTrafic.bind(this), self.config.busStations);
 +
 +    self.sendSocketNotification("UPDATE", { lastUpdate : new Date()});
    },
