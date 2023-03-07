@@ -145,6 +145,14 @@ Add following line:
 SUBSYSTEM=="bcm2835-gpiomem", KERNEL=="gpiomem", GROUP="gpio", MODE="0660"
 ```
 
+### Removing unused services
+
+`cups` is not needed for this project and can be deactivated.
+
+```sh
+sudo systemctl disable cups
+```
+
 ### Installation of the necessary packages
 
 ```sh
