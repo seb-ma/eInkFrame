@@ -79,6 +79,10 @@ header {
 	transform: translate(0, -3px);
 }
 
+.precipitationLeadText {
+	display: none;
+}
+
 
 /* MMM-Freebox-Monitor
  ---------------------- */
