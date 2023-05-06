@@ -225,7 +225,7 @@ let config = {
 				animationSpeed: configPrivateParts.animationSpeed,
 				showNotification: false,
 				showDescription: false, // No more description provided since v2.0
-				showRiskLegend: false,
+				showRiskLegend: true,
 				hideGreenLevel: true,
 				useColorLegend: false,
 			}

@@ -12,6 +12,20 @@ index 7f6b3804..c015787e 100644
  			trimBlocks: true,
  			lstripBlocks: true
  		});
+diff --git a/modules/default/calendar/calendar.js b/modules/default/calendar/calendar.js
+index 2ef9ca9c..7b69446b 100644
+--- a/modules/default/calendar/calendar.js
++++ b/modules/default/calendar/calendar.js
+@@ -108,7 +108,8 @@ Module.register("calendar", {
+ 		}
+ 
+ 		// Set locale.
+-		moment.updateLocale(config.language, this.getLocaleSpecification(config.timeFormat));
++		//moment.updateLocale(config.language, this.getLocaleSpecification(config.timeFormat));
++		moment.locale(config.language);
+ 
+ 		// clear data holder before start
+ 		this.calendarData = {};
 diff --git a/modules/default/clock/clock.js b/modules/default/clock/clock.js
 index 595057c4..b792de00 100644
 --- a/modules/default/clock/clock.js
