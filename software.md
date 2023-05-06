@@ -354,6 +354,7 @@ Follow each procedure:
 - MMM-FreeBox-Monitor: [https://github.com/tataille/MMM-FreeBox-Monitor#readme](https://github.com/tataille/MMM-FreeBox-Monitor#readme)
 - MMM-Spotify: [https://github.com/skuethe/MMM-Spotify#install](https://github.com/skuethe/MMM-Spotify#install)
 - MMM-Trello: [https://github.com/Jopyth/MMM-Trello#readme](https://github.com/Jopyth/MMM-Trello#readme)
+- MMM-VigilanceMeteoFrance: [https://github.com/grenagit/MMM-VigilanceMeteoFrance#readme](https://github.com/grenagit/MMM-VigilanceMeteoFrance#readme)
 
 ### Modify display styles
 
