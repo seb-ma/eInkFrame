@@ -162,6 +162,8 @@ sudo apt install -y unattended-upgrades
 sudo apt install -y npm nodejs
 # Installation of tools (probably already present by default)
 sudo apt install -y git make gcc-c++
+# Installation of modules dependencies
+sudo apt install -y chromium-browser
 ```
 
 ### Installation of more up-to-date nodejs package
