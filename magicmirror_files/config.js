@@ -397,7 +397,7 @@ let config = {
 				decimalSymbol: configPrivateParts.decimalSymbol,
 				appendLocationNameToHeader: false,
 				showPrecipitationAmount: true,
-				showUV: true,
+				showUVIndex: true,
 				//showIndoorTemperature: true,
 				//showIndoorHumidity: true,
 
@@ -444,7 +444,7 @@ let config = {
 				showHumidity: false,
 				showWind: false,
 				showAQI: false,
-				showUVI: false,
+				showUVIndex: false,
 			}
 		},
 		{
@@ -473,7 +473,7 @@ let config = {
 				showHumidity: true,
 				showWind: true,
 				showAQI: true,
-				showUVI: true,
+				showUVIndex: true,
 			}
 		},
 		{
