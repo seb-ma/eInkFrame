@@ -34,7 +34,7 @@ index cc0f65e..c6ac71e 100644
                  });
  	});
 diff --git a/package.json b/package.json
-index 05a2a15..d375c0e 100644
+index 05a2a15..f642c64 100644
 --- a/package.json
 +++ b/package.json
 @@ -24,9 +24,17 @@
@@ -48,9 +48,9 @@ index 05a2a15..d375c0e 100644
 -    "electron-rebuild": "^1.2.1"
 -  }
 +    "gyp": "^0.5.0",
-+    "node-abi": "^3.45.0",
++    "node-abi": "^3.47.0",
 +    "node-gyp": "^9.4.0",
-+		"@electron/rebuild": "^3.2.13"
++		"@electron/rebuild": "^3.3.0"
 +  },
 +	"overrides": {
 +		"i2c-bus": {

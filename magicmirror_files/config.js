@@ -69,7 +69,7 @@ let config = {
 																// or IPv4 range of 192.168.3.0 --> 192.168.3.15 use CIDR format : ["127.0.0.1", "::ffff:127.0.0.1", "::1", "::ffff:192.168.3.0/28"],
 	electronOptions: { fullscreen: true, width: 1872, height: 1404 },
 
-	logLevel: ["INFO", "LOG", "WARN", "ERROR"], // Add "DEBUG" for even more logging
+	logLevel: ["INFO", /*"LOG",*/ "WARN", "ERROR"], // Add "DEBUG" for even more logging
 
 	language: "fr",
 	locale: "fr-FR",
@@ -275,7 +275,7 @@ let config = {
 					{
 						symbol: "umbrella-beach",
 						displaySymbol: true,
-						url: "https://cache.media.education.gouv.fr/ics/Calendrier_Scolaire_Zone_B.ics",
+						url: "https://fr.ftp.opendatasoft.com/openscol/fr-en-calendrier-scolaire/Zone-B.ics",
 					},
 					{
 						symbol: "bell-slash",
