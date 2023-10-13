@@ -26,11 +26,11 @@ This section deals with the installation and configuration of the operating syst
 ### Preparing the SD card
 
 Create the SD card with Raspberry Pi Imager: [Raspberry Pi OS - Raspberry Pi](https://www.raspberrypi.com/software/)
-May be installed from linux distribution of manually.
+May be installed from Linux distribution of manually.
 
-⚠️ This project requires a `desktop` version and not `lite`.
+This project requires a `lite 64-bits` version.
 
-⚠️ Because of a dependency on a module that does not seem to compile on a 32-bit version (i2c_bus for adafruit-mpr121), it is necessary to use a 64-bit version:
+⚠️ Because of a dependency on a module that does not seem to compile on a 32-bit version (`i2c_bus` for `adafruit-mpr121`), it is necessary to use a 64-bit version:
 [https://downloads.raspberrypi.org/raspios_full_arm64/images/](https://downloads.raspberrypi.org/raspios_full_arm64/images/)
 
 ### SSH activation
@@ -71,10 +71,6 @@ passwd
 sudo raspi-config
 ```
 
-- Disabling the graphical interface
-  - System Options
-  - Boot / Auto login
-  - Console
 - Change timezone
   - Location Options
   - Change Timezone
@@ -83,10 +79,10 @@ sudo raspi-config
   - Change Keyboard Layout
 - Enable SPI
   - Interfacing options
-  - P4 SPI Enable / Disable automatic loading of SPI core module
+  - SPI Enable / Disable automatic loading of SPI core module
 - Enable i²c
   - Interfacing options
-  - P5 I2C Enable / Disable automatic loading of the I2C kernel module
+  - I2C Enable / Disable automatic loading of the I2C kernel module
 
 ### Creation and privileges of a specific user
 
@@ -145,14 +141,6 @@ Add following line:
 SUBSYSTEM=="bcm2835-gpiomem", KERNEL=="gpiomem", GROUP="gpio", MODE="0660"
 ```
 
-### Removing unused services
-
-`cups` is not needed for this project and can be deactivated.
-
-```sh
-sudo systemctl disable cups
-```
-
 ### Installation of the necessary packages
 
 ```sh
@@ -160,8 +148,11 @@ sudo systemctl disable cups
 sudo apt install -y unattended-upgrades
 # Installation of MagicMirror dependencies
 sudo apt install -y npm nodejs
-# Installation of tools (probably already present by default)
+# Installation of tools
 sudo apt install -y git make gcc-c++
+sudo apt install -y ca-certificates curl gnupg
+# To compile and install native addons from npm you may also need to install build tools
+sudo apt install -y build-essential
 # Installation of modules dependencies
 sudo apt install -y chromium-browser
 ```
@@ -171,11 +162,14 @@ sudo apt install -y chromium-browser
 Installation of a required nodejs version using project https://github.com/nodesource/distributions.
 
 ```sh
-# Execute script used to add repository
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt-get install -y nodejs
-# To compile and install native addons from npm you may also need to install build tools
-apt-get install -y build-essential
+# Download and import the Nodesource GPG key
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+# Create deb repository
+NODE_MAJOR=20
+echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | sudo tee /etc/apt/sources.list.d/nodesource.list
+# Install nodejs
+sudo apt install -y nodejs
 ```
 
 ### Automatic updates
@@ -258,26 +252,24 @@ tmpfs /var/log tmpfs defaults,noatime,nosuid,nodev,noexec,mode=0755,size=10M 0 0
 
 ### Limit log files size
 
-To limit size of logs to `1M`, edit the `/etc/rsyslog.conf` file:
+To limit size of logs to `1M`, edit the `/etc/systemd/journald.conf` file:
 
 ```sh
-sudo nano /etc/rsyslog.conf
+sudo nano /etc/systemd/journald.conf
 ```
 
 Replace the following lines:
 
 ```sh
-*.*;auth,authpriv.none         -/var/log/syslog
-daemon.*                       -/var/log/daemon.log
+#Storage=volatile
+#RuntimeMaxUse=
 ```
 
 by:
 
 ```sh
-$outchannel mysyslog,/var/log/syslog,1048576
-$outchannel mydaemon,/var/log/daemon.log,1048576
-*.*;auth,authpriv.none          :omfile:$mysyslog
-daemon.*                        :omfile:$daemonlog
+Storage=volatile
+RuntimeMaxUse=1M
 ```
 
 ### Set hostname

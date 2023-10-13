@@ -13,7 +13,7 @@ index 4ef3ab1d..0fb8a1b1 100644
  			lstripBlocks: true
  		});
 diff --git a/modules/default/calendar/calendar.js b/modules/default/calendar/calendar.js
-index 681177d5..06e9a523 100644
+index 681177d5..da5788f8 100644
 --- a/modules/default/calendar/calendar.js
 +++ b/modules/default/calendar/calendar.js
 @@ -109,7 +109,8 @@ Module.register("calendar", {
@@ -26,6 +26,14 @@ index 681177d5..06e9a523 100644
  
  		// clear data holder before start
  		this.calendarData = {};
+@@ -188,6 +189,7 @@ Module.register("calendar", {
+ 		} else if (notification === "CALENDAR_ERROR") {
+ 			let error_message = this.translate(payload.error_type);
+ 			this.error = this.translate("MODULE_CONFIG_ERROR", { MODULE_NAME: this.name, ERROR: error_message });
++			if (this.loaded) {return}; // Keep previously loaded events - probably a temporary failed
+ 			this.loaded = true;
+ 		}
+ 
 diff --git a/modules/default/clock/clock.js b/modules/default/clock/clock.js
 index c063d4dc..3339351a 100644
 --- a/modules/default/clock/clock.js
