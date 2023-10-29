@@ -149,7 +149,7 @@ sudo apt install -y unattended-upgrades
 # Installation of MagicMirror dependencies
 sudo apt install -y npm nodejs
 # Installation of tools
-sudo apt install -y git make gcc-c++
+sudo apt install -y git make gcc g++
 sudo apt install -y ca-certificates curl gnupg
 # To compile and install native addons from npm you may also need to install build tools
 sudo apt install -y build-essential
