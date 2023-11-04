@@ -23,12 +23,6 @@
 	--font-secondary: "Fira Sans Condensed";
 	font-feature-settings: "lnum";
 	font-feature-settings: "liga", "clig";
-
-	/* Gray levels for IT8951 */
-	--gray4levels-1: #fff;
-	--gray4levels-2: #aaa;
-	--gray4levels-3: #666;
-	--gray4levels-4: #000;
 }
 
 body {
