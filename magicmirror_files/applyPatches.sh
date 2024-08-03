@@ -29,11 +29,6 @@ echo Applying patch MMM-MPR121.patch
 git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-MPR121.patch
 cd -
 
-cd ./modules/MMM-FreeBox-Monitor
-echo Applying patch MMM-FreeBox-Monitor.patch
-git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-FreeBox-Monitor.patch
-cd -
-
 cd ./modules/MMM-Trello
 echo Applying patch MMM-Trello.patch
 git apply --ignore-whitespace --whitespace=nowarn $SCRIPT_DIR/patches/MMM-Trello.patch
