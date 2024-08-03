@@ -19,8 +19,7 @@ const configPrivateParts = {
 	"apikey_openweather": "xxx",
 	"apikey_tomtom": "xxx",
 	"apikey_meteofrance": {
-		"key": "xxx",
-		"secret": "xxx"
+		"appid": "xxx"
 	},
 	"vCard": {
 		"url": "https://xxx",
@@ -225,8 +224,7 @@ let config = {
 			position: "top_left",
 			pages: { mainPage: "top_left", musicPage: "top_left" }, // Config for MMM-Page-Selector
 			config: {
-				apiConsumerKey: configPrivateParts.apikey_meteofrance.key,
-				apiConsumerSecret: configPrivateParts.apikey_meteofrance.secret,
+				appid: configPrivateParts.apikey_meteofrance.appid,
 				department: configPrivateParts.department, // Department number
 				updateInterval: 10 * 60 * 1000, // 10 minutes
 				animationSpeed: configPrivateParts.animationSpeed,
