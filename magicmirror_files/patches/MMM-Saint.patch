@@ -1,13 +1,13 @@
 diff --git a/MMM-Saint.js b/MMM-Saint.js
-index 19306fc..1de9789 100644
+index 8a9f830..3081bf6 100644
 --- a/MMM-Saint.js
 +++ b/MMM-Saint.js
-@@ -46,7 +46,7 @@ Module.register("MMM-Saint", {
- 
-   displayData: function() {
-     var saint = document.getElementById("SAINT")
--    saint.innerHTML = "<span class=\"fas fa-bible\"></span> " + this.Saint
-+    saint.innerHTML = "<span class=\"fas fa-crown\"></span> " + this.Saint
-   },
- 
- /*
+@@ -58,7 +58,7 @@ Module.register("MMM-Saint", {
+   displayData () {
+     var today = document.getElementById("TODAY");
+     var tomorrow = document.getElementById("TOMORROW");
+-    if (this.config.personalize.displayIcon) today.innerHTML = `<span class="fas fa-bible"></span> ${this.Saint.today}`;
++    if (this.config.personalize.displayIcon) today.innerHTML = `<span class="fas fa-crown"></span> ${this.Saint.today}`;
+     else {
+       today.textContent = `${this.config.personalize.todayText} ${this.Saint.today}`;
+       if (this.config.personalize.displayTomorrow) tomorrow.textContent = `${this.config.personalize.tomorrowText} ${this.Saint.tomorrow}`;

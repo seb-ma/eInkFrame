@@ -1,8 +1,8 @@
 diff --git a/js/module.js b/js/module.js
-index 4ef3ab1d..0fb8a1b1 100644
+index 71451763..045c7359 100644
 --- a/js/module.js
 +++ b/js/module.js
-@@ -157,7 +157,8 @@ const Module = Class.extend({
+@@ -154,7 +154,8 @@ const Module = Class.extend({
  			return this._nunjucksEnvironment;
  		}
  
@@ -13,10 +13,10 @@ index 4ef3ab1d..0fb8a1b1 100644
  			lstripBlocks: true
  		});
 diff --git a/modules/default/calendar/calendar.js b/modules/default/calendar/calendar.js
-index 681177d5..da5788f8 100644
+index 4b0409c0..641bb246 100644
 --- a/modules/default/calendar/calendar.js
 +++ b/modules/default/calendar/calendar.js
-@@ -109,7 +109,8 @@ Module.register("calendar", {
+@@ -104,7 +104,8 @@ Module.register("calendar", {
  		}
  
  		// Set locale.
@@ -26,7 +26,7 @@ index 681177d5..da5788f8 100644
  
  		// clear data holder before start
  		this.calendarData = {};
-@@ -188,6 +189,7 @@ Module.register("calendar", {
+@@ -199,6 +200,7 @@ Module.register("calendar", {
  		} else if (notification === "CALENDAR_ERROR") {
  			let error_message = this.translate(payload.error_type);
  			this.error = this.translate("MODULE_CONFIG_ERROR", { MODULE_NAME: this.name, ERROR: error_message });
@@ -35,10 +35,10 @@ index 681177d5..da5788f8 100644
  		}
  
 diff --git a/modules/default/clock/clock.js b/modules/default/clock/clock.js
-index c063d4dc..3339351a 100644
+index 42b066ab..5414e39a 100644
 --- a/modules/default/clock/clock.js
 +++ b/modules/default/clock/clock.js
-@@ -93,6 +93,30 @@ Module.register("clock", {
+@@ -87,6 +87,30 @@ Module.register("clock", {
  		// Set locale.
  		moment.locale(config.language);
  	},
@@ -67,9 +67,9 @@ index c063d4dc..3339351a 100644
 +	},
 +
  	// Override dom generator.
- 	getDom: function () {
+ 	getDom () {
  		const wrapper = document.createElement("div");
-@@ -176,20 +200,27 @@ Module.register("clock", {
+@@ -169,20 +193,27 @@ Module.register("clock", {
  			const sunTimes = SunCalc.getTimes(now, this.config.lat, this.config.lon);
  			const isVisible = now.isBetween(sunTimes.sunrise, sunTimes.sunset);
  			let nextEvent;
@@ -80,7 +80,7 @@ index c063d4dc..3339351a 100644
  				nextEvent = sunTimes.sunrise;
  			} else if (now.isBefore(sunTimes.sunset)) {
 +				const yesterdaySunTimes = SunCalc.getTimes(now.clone().subtract(1, "day"), this.config.lat, this.config.lon);
-+				sunDelta = moment.duration(moment(sunTimes.sunset).diff(sunTimes.sunrise)).subtract(moment(yesterdaySunTimes.sunset).diff(yesterdaySunTimes.sunrise));				
++				sunDelta = moment.duration(moment(sunTimes.sunset).diff(sunTimes.sunrise)).subtract(moment(yesterdaySunTimes.sunset).diff(yesterdaySunTimes.sunrise));
  				nextEvent = sunTimes.sunset;
  			} else {
  				const tomorrowSunTimes = SunCalc.getTimes(now.clone().add(1, "day"), this.config.lat, this.config.lon);
@@ -91,36 +91,38 @@ index c063d4dc..3339351a 100644
 -			const untilNextEventString = `${untilNextEvent.hours()}h ${untilNextEvent.minutes()}m`;
 +			//const untilNextEventString = `${untilNextEvent.hours()}h ${untilNextEvent.minutes()}m`;
 +			const untilNextEventString = ((sunDelta.minutes() > 0) ? "+" : "") + sunDelta.minutes() + "m";
- 			sunWrapper.innerHTML =
--				`<span class="${isVisible ? "bright" : ""}"><i class="fas fa-sun" aria-hidden="true"></i> ${untilNextEventString}</span>` +
--				`<span><i class="fas fa-arrow-up" aria-hidden="true"></i> ${formatTime(this.config, sunTimes.sunrise)}</span>` +
--				`<span><i class="fas fa-arrow-down" aria-hidden="true"></i> ${formatTime(this.config, sunTimes.sunset)}</span>`;
-+				`<span class="${isVisible ? "bright" : ""}"><i class="wi weathericon wi-day-sunny" aria-hidden="true"></i> ${untilNextEventString}</span>` +
-+				`<span><i class="wi weathericon wi-sunrise" aria-hidden="true"></i> ${formatTime(this.config, sunTimes.sunrise)}</span>` +
-+				`<span><i class="wi weathericon wi-sunset" aria-hidden="true"></i> ${formatTime(this.config, sunTimes.sunset)}</span>`;
+ 			sunWrapper.innerHTML
+-				= `<span class="${isVisible ? "bright" : ""}"><i class="fas fa-sun" aria-hidden="true"></i> ${untilNextEventString}</span>`
+-				+ `<span><i class="fas fa-arrow-up" aria-hidden="true"></i> ${formatTime(this.config, sunTimes.sunrise)}</span>`
+-				+ `<span><i class="fas fa-arrow-down" aria-hidden="true"></i> ${formatTime(this.config, sunTimes.sunset)}</span>`;
++				= `<span class="${isVisible ? "bright" : ""}"><i class="wi weathericon wi-day-sunny" aria-hidden="true"></i> ${untilNextEventString}</span>`
++				+ `<span><i class="wi weathericon wi-sunrise" aria-hidden="true"></i> ${formatTime(this.config, sunTimes.sunrise)}</span>`
++				+ `<span><i class="wi weathericon wi-sunset" aria-hidden="true"></i> ${formatTime(this.config, sunTimes.sunset)}</span>`;				
  			digitalWrapper.appendChild(sunWrapper);
  		}
  
-@@ -209,10 +240,11 @@ Module.register("clock", {
- 			}
- 			const isVisible = now.isBetween(moonRise, moonSet) || moonTimes.alwaysUp === true;
+@@ -204,12 +235,13 @@ Module.register("clock", {
+ 			const showFraction = ["both", "percent"].includes(this.config.showMoonTimes);
+ 			const showUnicode = ["both", "phase"].includes(this.config.showMoonTimes);
  			const illuminatedFractionString = `${Math.round(moonIllumination.fraction * 100)}%`;
 +			const moonIcon = this.getMoonIcon(moonIllumination.phase);
- 			moonWrapper.innerHTML =
--				`<span class="${isVisible ? "bright" : ""}"><i class="fas fa-moon" aria-hidden="true"></i> ${illuminatedFractionString}</span>` +
--				`<span><i class="fas fa-arrow-up" aria-hidden="true"></i> ${moonRise ? formatTime(this.config, moonRise) : "..."}</span>` +
--				`<span><i class="fas fa-arrow-down" aria-hidden="true"></i> ${moonSet ? formatTime(this.config, moonSet) : "..."}</span>`;
-+				`<span class="${isVisible ? "bright" : ""}"><i class="wi weathericon wi-${moonIcon}" aria-hidden="true"></i> ${illuminatedFractionString}</span>` +
-+				`<span><i class="wi weathericon wi-moonrise" aria-hidden="true"></i> ${moonRise ? formatTime(this.config, moonRise) : "..."}</span>` +
-+				`<span><i class="wi weathericon wi-moonset" aria-hidden="true"></i> ${moonSet ? formatTime(this.config, moonSet) : "..."}</span>`;
+ 			const image = showUnicode ? [..."🌑🌒🌓🌔🌕🌖🌗🌘"][Math.floor(moonIllumination.phase * 8)] : "<i class=\"fas fa-moon\" aria-hidden=\"true\"></i>";
+ 
+ 			moonWrapper.innerHTML
+-				= `<span class="${isVisible ? "bright" : ""}">${image} ${showFraction ? illuminatedFractionString : ""}</span>`
+-				+ `<span><i class="fas fa-arrow-up" aria-hidden="true"></i> ${moonRise ? formatTime(this.config, moonRise) : "..."}</span>`
+-				+ `<span><i class="fas fa-arrow-down" aria-hidden="true"></i> ${moonSet ? formatTime(this.config, moonSet) : "..."}</span>`;
++				= `<span class="${isVisible ? "bright" : ""}"><i class="wi weathericon wi-${moonIcon}" aria-hidden="true"></i> ${illuminatedFractionString}</span>`
++				+ `<span><i class="wi weathericon wi-moonrise" aria-hidden="true"></i> ${moonRise ? formatTime(this.config, moonRise) : "..."}</span>`
++				+ `<span><i class="wi weathericon wi-moonset" aria-hidden="true"></i> ${moonSet ? formatTime(this.config, moonSet) : "..."}</span>`;			
  			digitalWrapper.appendChild(moonWrapper);
  		}
  
 diff --git a/modules/default/weather/current.njk b/modules/default/weather/current.njk
-index e2fa2f51..88c33309 100644
+index d1984895..ed2ac77c 100644
 --- a/modules/default/weather/current.njk
 +++ b/modules/default/weather/current.njk
-@@ -1,7 +1,12 @@
+@@ -6,7 +6,12 @@
  {% if current %}
      {% if not config.onlyTemp %}
          <div class="normal medium">
@@ -133,7 +135,7 @@ index e2fa2f51..88c33309 100644
              <span>
                  {{ current.windSpeed | unit("wind") | round }}
                  {% if config.showWindDirection %}
-@@ -65,6 +70,7 @@
+@@ -80,6 +85,7 @@
              {% endif %}
              {% if config.showPrecipitationAmount and current.precipitationAmount %}
                  <span class="dimmed">
@@ -141,9 +143,9 @@ index e2fa2f51..88c33309 100644
                      <span class="precipitationLeadText">{{ "PRECIP_AMOUNT" | translate }}</span> {{ current.precipitationAmount | unit("precip", current.precipitationUnits) }}
                  </span>
                  <br />
-@@ -76,6 +82,13 @@
-             {% endif %}
-         </div>
+@@ -94,6 +100,13 @@
+     {% if config.showHumidity === "below" %}
+         <span class="medium dimmed">{{ humidity() }}</span>
      {% endif %}
 +    {% if currentPollution and showAqiAtLevel <= currentPollution.aqi %}
 +        <div class="normal medium pollution">
@@ -156,20 +158,18 @@ index e2fa2f51..88c33309 100644
      <div class="dimmed light small">{{ "LOADING" | translate }}</div>
  {% endif %}
 diff --git a/modules/default/weather/providers/openweathermap.js b/modules/default/weather/providers/openweathermap.js
-index cf65604b..db17fbf0 100644
+index 0999c83f..513c9bb1 100644
 --- a/modules/default/weather/providers/openweathermap.js
 +++ b/modules/default/weather/providers/openweathermap.js
-@@ -23,7 +23,8 @@ WeatherProvider.register("openweathermap", {
+@@ -18,6 +18,7 @@ WeatherProvider.register("openweathermap", {
  		location: false,
  		lat: 0, // the onecall endpoint needs lat / lon values, it doesn't support the locationId
  		lon: 0,
--		apiKey: ""
-+		apiKey: "",
 +		expandDaySections: false,
+ 		apiKey: ""
  	},
  
- 	// Overwrite the fetchCurrentWeather method.
-@@ -88,6 +89,56 @@ WeatherProvider.register("openweathermap", {
+@@ -83,6 +84,81 @@ WeatherProvider.register("openweathermap", {
  			.finally(() => this.updateAvailable());
  	},
  
@@ -223,13 +223,6 @@ index cf65604b..db17fbf0 100644
 +			})
 +	},
 +
- 	/**
- 	 * Overrides method for setting config to check if endpoint is correct for hourly
- 	 * @param {object} config The configuration object
-@@ -120,6 +171,13 @@ WeatherProvider.register("openweathermap", {
- 		return this.config.apiBase + this.config.apiVersion + this.config.weatherEndpoint + this.getParams();
- 	},
- 
 +	/*
 +	 * Gets the complete url for the pollution request
 +	 */
@@ -237,10 +230,28 @@ index cf65604b..db17fbf0 100644
 +		return this.config.apiBase + this.config.apiVersion + "/air_pollution" + weatherEndpoint + this.getParams();
 +	},
 +
- 	/*
- 	 * Generate a WeatherObject based on currentWeatherInformation
- 	 */
-@@ -130,9 +188,10 @@ WeatherProvider.register("openweathermap", {
++	/*
++	 * fetch pollutions information
++	 */
++	fetchPollutionApi(pollutions) {
++		// initial variable declaration
++		const results = [];
++		for (const pollution of pollutions.list) {
++			const result = { date: null, aqi: null };
++
++			result.date = moment.unix(pollution.dt);
++			result.aqi = pollution.main.aqi;
++
++			results.push(result);
++		}
++
++		return results;
++	},
++
+ 	/**
+ 	 * Overrides method for setting config to check if endpoint is correct for hourly
+ 	 * @param {object} config The configuration object
+@@ -125,9 +201,10 @@ WeatherProvider.register("openweathermap", {
  		currentWeather.humidity = currentWeatherData.main.humidity;
  		currentWeather.temperature = currentWeatherData.main.temp;
  		currentWeather.feelsLikeTemp = currentWeatherData.main.feels_like;
@@ -252,7 +263,7 @@ index cf65604b..db17fbf0 100644
  		currentWeather.sunrise = moment.unix(currentWeatherData.sys.sunrise);
  		currentWeather.sunset = moment.unix(currentWeatherData.sys.sunset);
  
-@@ -204,11 +263,11 @@ WeatherProvider.register("openweathermap", {
+@@ -199,11 +276,11 @@ WeatherProvider.register("openweathermap", {
  				weather.date = moment.unix(forecast.dt);
  
  				// If the first value of today is later than 17:00, we have an icon at least!
@@ -266,7 +277,7 @@ index cf65604b..db17fbf0 100644
  			}
  
  			// the same day as before
-@@ -251,7 +310,7 @@ WeatherProvider.register("openweathermap", {
+@@ -246,7 +323,7 @@ WeatherProvider.register("openweathermap", {
  			weather.date = moment.unix(forecast.dt);
  			weather.minTemperature = forecast.temp.min;
  			weather.maxTemperature = forecast.temp.max;
@@ -275,7 +286,7 @@ index cf65604b..db17fbf0 100644
  			weather.rain = 0;
  			weather.snow = 0;
  
-@@ -293,7 +352,9 @@ WeatherProvider.register("openweathermap", {
+@@ -288,7 +365,9 @@ WeatherProvider.register("openweathermap", {
  			current.sunrise = moment.unix(data.current.sunrise).utcOffset(data.timezone_offset / 60);
  			current.sunset = moment.unix(data.current.sunset).utcOffset(data.timezone_offset / 60);
  			current.temperature = data.current.temp;
@@ -286,20 +297,35 @@ index cf65604b..db17fbf0 100644
  			current.humidity = data.current.humidity;
  			current.uv_index = data.current.uvi;
  			if (data.current.hasOwnProperty("rain") && !isNaN(data.current["rain"]["1h"])) {
-@@ -350,6 +411,12 @@ WeatherProvider.register("openweathermap", {
+@@ -317,7 +396,7 @@ WeatherProvider.register("openweathermap", {
+ 				weather.humidity = hour.humidity;
+ 				weather.windSpeed = hour.wind_speed;
+ 				weather.windFromDirection = hour.wind_deg;
+-				weather.weatherType = this.convertWeatherType(hour.weather[0].icon);
++				weather.weatherType = this.convertWeatherType(hour.weather[0].icon, hour.weather[0].id);
+ 				weather.precipitationProbability = hour.pop ? hour.pop * 100 : undefined;
+ 				weather.uv_index = hour.uvi;
+ 				precip = false;
+@@ -345,12 +424,17 @@ WeatherProvider.register("openweathermap", {
  				weather.date = moment.unix(day.dt).utcOffset(data.timezone_offset / 60);
  				weather.sunrise = moment.unix(day.sunrise).utcOffset(data.timezone_offset / 60);
  				weather.sunset = moment.unix(day.sunset).utcOffset(data.timezone_offset / 60);
-+
 +				if (!this.config.expandDaySections) {
 +					weather.temperature = day.temp.day;
 +					weather.feelsLikeTemp = day.feels_like.day;
 +				}
-+				weather.pressure = day.pressure;
++				weather.pressure = day.pressure;		
  				weather.minTemperature = day.temp.min;
  				weather.maxTemperature = day.temp.max;
  				weather.humidity = day.humidity;
-@@ -372,11 +439,58 @@ WeatherProvider.register("openweathermap", {
+ 				weather.windSpeed = day.wind_speed;
+ 				weather.windFromDirection = day.wind_deg;
+-				weather.weatherType = this.convertWeatherType(day.weather[0].icon);
++				weather.weatherType = this.convertWeatherType(day.weather[0].icon, day.weather[0].id);
+ 				weather.precipitationProbability = day.pop ? day.pop * 100 : undefined;
+ 				weather.uv_index = day.uvi;
+ 				precip = false;
+@@ -367,11 +451,39 @@ WeatherProvider.register("openweathermap", {
  				}
  
  				days.push(weather);
@@ -321,9 +347,10 @@ index cf65604b..db17fbf0 100644
 +						weather = new WeatherObject(this.config.units, this.config.tempUnits, this.config.windUnits, this.config.useKmh);
 +					}
 +				}
-+			}
-+		}
-+
+ 			}
+ 		}
+ 
+-		return { current: current, hours: hours, days: days };
 +		const alerts = [];
 +		if (data.hasOwnProperty("alerts")) {
 +			for (const alert of data.alerts) {
@@ -334,136 +361,117 @@ index cf65604b..db17fbf0 100644
 +				alertDesc.description = alert.description;
 +
 +				alerts.push(alertDesc);
- 			}
- 		}
++				}
++			}
 +		return { current: current, hours: hours, days: days, alerts: alerts };
-+	},
-+
-+	/*
-+	 * fetch pollutions information
-+	 */
-+	fetchPollutionApi(pollutions) {
-+		// initial variable declaration
-+		const results = [];
- 
--		return { current: current, hours: hours, days: days };
-+		for (const pollution of pollutions.list) {
-+			const result = { date: null, aqi: null };
-+
-+			result.date = moment.unix(pollution.dt);
-+			result.aqi = pollution.main.aqi;
-+
-+			results.push(result);
-+		}
-+
-+		return results;
  	},
  
  	/*
-@@ -407,6 +521,98 @@ WeatherProvider.register("openweathermap", {
+@@ -402,6 +514,99 @@ WeatherProvider.register("openweathermap", {
  		return weatherTypes.hasOwnProperty(weatherType) ? weatherTypes[weatherType] : null;
  	},
  
-+	/*	convertWeatherType(weatherIcon, weatherId) {
-+			const weatherTypes = {
-+				// "11d": "thunderstorm",
-+				// "11n": "night-thunderstorm",
-+				"200": ["day-storm-showers", "night-alt-storm-showers"],
-+				"201": ["day-thunderstorm", "night-alt-thunderstorm"],
-+				"202": ["thunderstorm", "thunderstorm"],
-+				"210": ["day-storm-showers", "night-alt-storm-showers"],
-+				"211": ["day-thunderstorm", "night-alt-thunderstorm"],
-+				"212": ["thunderstorm", "thunderstorm"],
-+				"221": ["thunderstorm", "thunderstorm"],
-+				"230": ["day-storm-showers", "night-alt-storm-showers"],
-+				"231": ["day-thunderstorm", "night-alt-thunderstorm"],
-+				"232": ["thunderstorm", "thunderstorm"],
-+	
-+				// "09d": "showers",
-+				// "09n": "night-showers",
-+				"300": ["showers", "showers"],
-+				"301": ["rain-mix", "rain-mix"],
-+				"302": ["rain", "rain"],
-+				"310": ["showers", "showers"],
-+				"311": ["rain-mix", "rain-mix"],
-+				"312": ["rain", "rain"],
-+				"313": ["showers", "showers"],
-+				"314": ["rain-mix", "rain-mix"],
-+				"321": ["rain", "rain"],
-+	
-+				// "10d": "rain",
-+				// "10n": "night-rain",
-+				"500": ["day-showers", "night-alt-showers"],
-+				"501": ["day-rain-mix", "night-alt-rain-mix"],
-+				"502": ["day-rain", "night-alt-rain"],
-+				"503": ["rain", "rain"],
-+				"504": ["rain", "rain"],
-+				// "13d": "snow",
-+				// "13n": "night-snow",
-+				"511": ["day-snow", "night-alt-snow"],
-+				// "09d": "showers",
-+				// "09n": "night-showers",
-+				"520": ["day-showers", "night-alt-showers"],
-+				"521": ["day-rain-mix", "night-alt-rain-mix"],
-+				"522": ["rain", "rain"],
-+				"531": ["rain", "rain"],
-+	
-+				// "13d": "snow",
-+				// "13n": "night-snow",
-+				"600": ["day-snow", "night-alt-snow"],
-+				"601": ["day-snow", "night-alt-snow"],
-+				"602": ["snow", "snow"],
-+				"611": ["day-sleet", "night-alt-sleet"],
-+				"612": ["day-sleet", "night-alt-sleet"],
-+				"613": ["day-sleet", "night-alt-sleet"],
-+				"615": ["day-snow", "night-alt-snow"],
-+				"616": ["day-snow", "night-alt-snow"],
-+				"620": ["day-snow", "night-alt-snow"],
-+				"621": ["day-snow", "night-alt-snow"],
-+				"622": ["snow", "wi-day-snow"],
-+	
-+				// "50d": "fog",
-+				// "50n": "night-alt-cloudy-windy"
-+				"701": ["day-fog", "night-fog"],
-+				"711": ["smoke", "smoke"],
-+				"721": ["day-haze", "night-fog"],
-+				"731": ["sandstorm", "sandstorm"],
-+				"741": ["day-fog", "night-fog"], // or neutral "fog"
-+				"751": ["sandstorm", "sandstorm"],
-+				"761": ["dust", "dust"],
-+				"762": ["volcan", "volcan"],
-+				"771": ["", ""],
-+				"781": ["tornado", "tornado"],
-+	
-+				// "01d": "day-sunny",
-+				// "01n": "night-clear",
-+				"800": ["day-sunny", "night-clear"],
-+	
-+				// "02d": "day-cloudy",
-+				// "02n": "night-cloudy",
-+				"801": ["day-cloudy-high", "night-cloudy-high"],
-+				// "03d": "cloudy",
-+				// "03n": "night-cloudy",
-+				"802": ["day-cloudy", "night-cloudy"],
-+				// "04d": "cloudy-windy",
-+				// "04n": "night-cloudy",
-+				"803": ["cloud", "cloud"],
-+				"804": ["cloudy", "cloudy"],
-+			};
-+	
-+			const idxDay = weatherIcon.match(/n$/) ? 1 : 0;
-+			return weatherTypes.hasOwnProperty(weatherId) ? weatherTypes[weatherId][idxDay] : null;
-+		},
++	/*
++	convertWeatherType(weatherIcon, weatherId) {
++		const weatherTypes = {
++			// "11d": "thunderstorm",
++			// "11n": "night-thunderstorm",
++			"200": ["day-storm-showers", "night-alt-storm-showers"],
++			"201": ["day-thunderstorm", "night-alt-thunderstorm"],
++			"202": ["thunderstorm", "thunderstorm"],
++			"210": ["day-storm-showers", "night-alt-storm-showers"],
++			"211": ["day-thunderstorm", "night-alt-thunderstorm"],
++			"212": ["thunderstorm", "thunderstorm"],
++			"221": ["thunderstorm", "thunderstorm"],
++			"230": ["day-storm-showers", "night-alt-storm-showers"],
++			"231": ["day-thunderstorm", "night-alt-thunderstorm"],
++			"232": ["thunderstorm", "thunderstorm"],
++
++			// "09d": "showers",
++			// "09n": "night-showers",
++			"300": ["showers", "showers"],
++			"301": ["rain-mix", "rain-mix"],
++			"302": ["rain", "rain"],
++			"310": ["showers", "showers"],
++			"311": ["rain-mix", "rain-mix"],
++			"312": ["rain", "rain"],
++			"313": ["showers", "showers"],
++			"314": ["rain-mix", "rain-mix"],
++			"321": ["rain", "rain"],
++
++			// "10d": "rain",
++			// "10n": "night-rain",
++			"500": ["day-showers", "night-alt-showers"],
++			"501": ["day-rain-mix", "night-alt-rain-mix"],
++			"502": ["day-rain", "night-alt-rain"],
++			"503": ["rain", "rain"],
++			"504": ["rain", "rain"],
++			// "13d": "snow",
++			// "13n": "night-snow",
++			"511": ["day-snow", "night-alt-snow"],
++			// "09d": "showers",
++			// "09n": "night-showers",
++			"520": ["day-showers", "night-alt-showers"],
++			"521": ["day-rain-mix", "night-alt-rain-mix"],
++			"522": ["rain", "rain"],
++			"531": ["rain", "rain"],
++
++			// "13d": "snow",
++			// "13n": "night-snow",
++			"600": ["day-snow", "night-alt-snow"],
++			"601": ["day-snow", "night-alt-snow"],
++			"602": ["snow", "snow"],
++			"611": ["day-sleet", "night-alt-sleet"],
++			"612": ["day-sleet", "night-alt-sleet"],
++			"613": ["day-sleet", "night-alt-sleet"],
++			"615": ["day-snow", "night-alt-snow"],
++			"616": ["day-snow", "night-alt-snow"],
++			"620": ["day-snow", "night-alt-snow"],
++			"621": ["day-snow", "night-alt-snow"],
++			"622": ["snow", "wi-day-snow"],
++
++			// "50d": "fog",
++			// "50n": "night-alt-cloudy-windy"
++			"701": ["day-fog", "night-fog"],
++			"711": ["smoke", "smoke"],
++			"721": ["day-haze", "night-fog"],
++			"731": ["sandstorm", "sandstorm"],
++			"741": ["day-fog", "night-fog"], // or neutral "fog"
++			"751": ["sandstorm", "sandstorm"],
++			"761": ["dust", "dust"],
++			"762": ["volcan", "volcan"],
++			"771": ["", ""],
++			"781": ["tornado", "tornado"],
++
++			// "01d": "day-sunny",
++			// "01n": "night-clear",
++			"800": ["day-sunny", "night-clear"],
++
++			// "02d": "day-cloudy",
++			// "02n": "night-cloudy",
++			"801": ["day-cloudy-high", "night-cloudy-high"],
++			// "03d": "cloudy",
++			// "03n": "night-cloudy",
++			"802": ["day-cloudy", "night-cloudy"],
++			// "04d": "cloudy-windy",
++			// "04n": "night-cloudy",
++			"803": ["cloud", "cloud"],
++			"804": ["cloudy", "cloudy"],
++		};
++
++		const idxDay = weatherIcon.match(/n$/) ? 1 : 0;
++		return weatherTypes.hasOwnProperty(weatherId) ? weatherTypes[weatherId][idxDay] : null;
++	},
 +	*/
 +
  	/* getParams(compliments)
  	 * Generates an url with api parameters based on the config.
  	 *
 diff --git a/modules/default/weather/weather.js b/modules/default/weather/weather.js
-index 57c91d7b..11456663 100644
+index 224aba06..2243a6b9 100644
 --- a/modules/default/weather/weather.js
 +++ b/modules/default/weather/weather.js
-@@ -32,6 +32,7 @@ Module.register("weather", {
+@@ -26,6 +26,7 @@ Module.register("weather", {
  		showSun: true,
  		showWindDirection: true,
  		showWindDirectionAsArrow: false,
@@ -471,16 +479,16 @@ index 57c91d7b..11456663 100644
  		degreeLabel: false,
  		decimalSymbol: ".",
  		maxNumberOfDays: 5,
-@@ -55,6 +56,8 @@ Module.register("weather", {
+@@ -49,6 +50,8 @@ Module.register("weather", {
  	// Can be used by the provider to display location of event if nothing else is specified
  	firstEvent: null,
  
 +	nbUpdateWait: 0,
 +
  	// Define required scripts.
- 	getStyles: function () {
+ 	getStyles () {
  		return ["font-awesome.css", "weather-icons.css", "weather.css"];
-@@ -114,10 +117,10 @@ Module.register("weather", {
+@@ -112,10 +115,10 @@ Module.register("weather", {
  					}
  				}
  			}
@@ -493,7 +501,7 @@ index 57c91d7b..11456663 100644
  			this.indoorHumidity = this.roundValue(payload);
  			this.updateDom(300);
  		} else if (notification === "CURRENT_WEATHER_OVERRIDE" && this.config.allowOverrideNotification) {
-@@ -152,6 +155,7 @@ Module.register("weather", {
+@@ -150,6 +153,7 @@ Module.register("weather", {
  		return {
  			config: this.config,
  			current: currentData,
@@ -501,47 +509,26 @@ index 57c91d7b..11456663 100644
  			forecast: forecastData,
  			hourly: hourlyData,
  			indoor: {
-@@ -163,22 +167,25 @@ Module.register("weather", {
+@@ -161,6 +165,9 @@ Module.register("weather", {
  
  	// What to do when the weather provider has new information available?
- 	updateAvailable: function () {
--		Log.log("New weather information available.");
--		this.updateDom(0);
--		this.scheduleUpdate();
+ 	updateAvailable () {
 +		this.nbUpdateWait--;
 +		if (this.nbUpdateWait <= 0) {
-+			Log.log("New weather information available.");
-+			this.updateDom(0);
-+			this.scheduleUpdate();
- 
--		if (this.weatherProvider.currentWeather()) {
--			this.sendNotification("CURRENTWEATHER_TYPE", { type: this.weatherProvider.currentWeather().weatherType.replace("-", "_") });
-+			if (this.weatherProvider.currentWeather()) {
-+				this.sendNotification("CURRENTWEATHER_TYPE", { type: this.weatherProvider.currentWeather().weatherType.replace("-", "_") });
-+			}
-+	
-+			const notificationPayload = {
-+				currentWeather: this.weatherProvider?.currentWeatherObject?.simpleClone() ?? null,
-+				forecastArray: this.weatherProvider?.weatherForecastArray?.map((ar) => ar.simpleClone()) ?? [],
-+				hourlyArray: this.weatherProvider?.weatherHourlyArray?.map((ar) => ar.simpleClone()) ?? [],
-+				locationName: this.weatherProvider?.fetchedLocationName,
-+				providerName: this.weatherProvider.providerName
-+			};
-+			this.sendNotification("WEATHER_UPDATED", notificationPayload);
- 		}
--
--		const notificationPayload = {
--			currentWeather: this.weatherProvider?.currentWeatherObject?.simpleClone() ?? null,
--			forecastArray: this.weatherProvider?.weatherForecastArray?.map((ar) => ar.simpleClone()) ?? [],
--			hourlyArray: this.weatherProvider?.weatherHourlyArray?.map((ar) => ar.simpleClone()) ?? [],
--			locationName: this.weatherProvider?.fetchedLocationName,
--			providerName: this.weatherProvider.providerName
--		};
--		this.sendNotification("WEATHER_UPDATED", notificationPayload);
++
+ 		Log.log("New weather information available.");
+ 		this.updateDom(0);
+ 		this.scheduleUpdate();
+@@ -177,6 +184,8 @@ Module.register("weather", {
+ 			providerName: this.weatherProvider.providerName
+ 		};
+ 		this.sendNotification("WEATHER_UPDATED", notificationPayload);
++
++		}
  	},
  
- 	scheduleUpdate: function (delay = null) {
-@@ -190,17 +197,24 @@ Module.register("weather", {
+ 	scheduleUpdate (delay = null) {
+@@ -188,17 +197,24 @@ Module.register("weather", {
  		setTimeout(() => {
  			switch (this.config.type.toLowerCase()) {
  				case "current":
@@ -568,10 +555,10 @@ index 57c91d7b..11456663 100644
  		}, nextLoad);
  	},
 diff --git a/modules/default/weather/weatherprovider.js b/modules/default/weather/weatherprovider.js
-index d3bdb78d..1475b9b9 100644
+index 36464410..6a4fb41b 100644
 --- a/modules/default/weather/weatherprovider.js
 +++ b/modules/default/weather/weatherprovider.js
-@@ -84,6 +84,16 @@ const WeatherProvider = Class.extend({
+@@ -77,6 +77,16 @@ const WeatherProvider = Class.extend({
  		return this.fetchedLocationName || "";
  	},
  
@@ -584,11 +571,11 @@ index d3bdb78d..1475b9b9 100644
 +	pollutionForecast: function () {
 +		return this.pollutionForecastArray;
 +	},
-+
++	
  	// Set the currentWeather and notify the delegate that new information is available.
- 	setCurrentWeather: function (currentWeatherObject) {
+ 	setCurrentWeather (currentWeatherObject) {
  		// We should check here if we are passing a WeatherDay
-@@ -106,6 +116,16 @@ const WeatherProvider = Class.extend({
+@@ -99,6 +109,16 @@ const WeatherProvider = Class.extend({
  		this.fetchedLocationName = name;
  	},
  
@@ -603,10 +590,10 @@ index d3bdb78d..1475b9b9 100644
 +	},
 +
  	// Notify the delegate that new weather is available.
- 	updateAvailable: function () {
+ 	updateAvailable () {
  		this.delegate.updateAvailable(this);
 diff --git a/translations/en.json b/translations/en.json
-index eb9200c6..2a12dbc6 100644
+index e10801e5..c498b486 100644
 --- a/translations/en.json
 +++ b/translations/en.json
 @@ -29,6 +29,12 @@
@@ -623,7 +610,7 @@ index eb9200c6..2a12dbc6 100644
  	"MODULE_CONFIG_ERROR": "Error in the {MODULE_NAME} module. {ERROR}",
  	"MODULE_ERROR_MALFORMED_URL": "Malformed url.",
 diff --git a/translations/fr.json b/translations/fr.json
-index 319e0fda..3ee4408f 100644
+index b7f9d027..c8e3a442 100644
 --- a/translations/fr.json
 +++ b/translations/fr.json
 @@ -31,6 +31,12 @@

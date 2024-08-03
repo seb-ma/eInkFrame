@@ -13,10 +13,10 @@ index c86846d..af595f3 100644
        for (let i = 0; i < this.config.notificationsOnSuspend.length; i++) {
          this.sendNotification(this.config.notificationsOnSuspend[i].notification, this.config.notificationsOnSuspend[i].payload)
 diff --git a/Spotify.js b/Spotify.js
-index da28e28..4a1af88 100644
+index 31743f1..3205d84 100644
 --- a/Spotify.js
 +++ b/Spotify.js
-@@ -237,7 +237,7 @@ class Spotify {
+@@ -240,7 +240,7 @@ class Spotify {
  
    async waitForFileExists(filePath, currentTime = 0, timeout = 0) {
      if (fs.existsSync(filePath)) return this.logMessage + " Authentication successful"
