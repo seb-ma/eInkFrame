@@ -64,8 +64,6 @@ git clone https://github.com/n-gao/MMM-vCard2Calendar
 git clone https://github.com/tataille/MMM-FreeBox-Monitor
 ### Managing capacitive touchs with MPR121
 git clone https://github.com/PatriceG/MMM-MPR121
-### Displaying data from Pronote
-#git clone https://github.com/bugsounet/MMM-Pronote
 ### Displaying Trello cards
 git clone https://github.com/Jopyth/MMM-Trello
 
@@ -101,6 +99,8 @@ $SCRIPT_DIR/applyPatches.sh
 # Copy config file and css
 cp $SCRIPT_DIR/config.js ./config/
 cp $SCRIPT_DIR/custom.css ./css/
+# Copy user scripts (MMM-NotifCustomActions)
+cp $SCRIPT_DIR/user_client.js $SCRIPT_DIR/user_node.js ./config/
 
 
 # Install MagicMirror² and modules
@@ -113,7 +113,7 @@ cd modules/
 # Specific update for MMM-Bosch-BME680-sensor
 cd MMM-Bosch-BME680-sensor/; npm rebuild i2c-bus --update-binary; cd -
 # Specific case for rpio dependency in MMM-IT8951
-cd MMM-IT8951/; npm install --no-audit --no-fund --no-update-notifier ; npm rebuild rpio --update-binary; cd -
+cd MMM-IT8951/; npm install --no-audit --no-fund --no-update-notifier; npm rebuild rpio --update-binary; cd -
 # Specific update for MMM-MPR121
 cd MMM-MPR121/; npm install --no-audit --no-fund --no-update-notifier; npm rebuild i2c-bus --update-binary; cd -
 

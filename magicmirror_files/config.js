@@ -51,7 +51,7 @@ let config = {
 							// local for armv6l processors, default - starts serveronly and then starts chrome browser
 							// false, default for all NON-armv6l devices
 							// true, force serveronly mode, because you want to.. no UI on this device
-	address: "localhost", 	// Address to listen on, can be:
+	address: "0.0.0.0", 	// Address to listen on, can be:
 							// - "localhost", "127.0.0.1", "::1" to listen on loopback interface
 							// - another specific IPv4/6 to listen on a specific interface
 							// - "0.0.0.0", "::" to listen on any interface
@@ -100,6 +100,13 @@ let config = {
 
 					{ notification: "PAGE_CHANGED", action_client: function (self, sender, payload) { setTimeout(() => { self.sendNotification("IT8951_ASK_FULL_REFRESH"); }, 1000); } },
 					{ notification: "MAIN_PAGE_SELECT", action_client: function (self, sender, payload) { self.sendNotification("PAGE_SELECT", self.isSpotify ? "musicPage" : "mainPage"); } },
+
+					{ notification: "DOM_OBJECTS_CREATED", action_client: function (self, sender, payload) {
+						setInterval(() => {
+							// Fake sender to be able to receive the notification (sender is not notified by MM)
+							MM.getModules()[0].sendNotification("HEARTBEAT"); }, 1 * 60 * 1000); }
+					},
+					{ notification: "HEARTBEAT", action_node: function (self, sender, payload) { user.scheduleWatchdog(); } },
 				]
 			}
 		},
